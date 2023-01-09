@@ -1,6 +1,4 @@
-# Industry Knowledge CA
-
-## Design Brief
+# Industry Knowledge CA - Design Brief
 
 Noroff has requested a job agency web application to allow for students to interact with industry partners to find placements. As a member of the design team your role will involve User Journey planning, User Experience and Interaction Design.
 
@@ -28,16 +26,10 @@ Once you have completed all of your work items check with your team if there are
 
 All work should be done using the shared Team Project on Figma. You should be able to access the project using the link below:
 
-https://www.figma.com/team_invite/redeem/rUtvliWUCyEWu1aFubq3hX
-https://www.figma.com/files/project/78324144/agency.noroff.dev?fuid=1194169844201401532
+[Team Invite](https://www.figma.com/team_invite/redeem/rUtvliWUCyEWu1aFubq3hX)
+[Project Invite](https://www.figma.com/files/project/78324144/agency.noroff.dev?fuid=1194169844201401532)
 
 Please strive to name your files and components in a way that is easy to understand. It is common to match up the name of a component with the CSS class used to style it. This approach allows for an effortless design review working component by component to check accuracy.
-
-## Deliverables
-
-- [ ] Low Fi Wireframes for all views
-- [ ] Style Guide / Design System
-- [ ] High Fi Wireframes for all views
 
 ### List of Views
 
@@ -56,3 +48,9 @@ Applications and Offers will both be exposed in the Listing and Profile views re
 Admin users require a table view to manage all listings, offers and applications and users. As this is not public facing design fidelity is less important however it must be functional. (Examples, Figma Studio, Strapi, etc).
 
 Note that each of these views has various states, for example, Authentication can be used to register, login and potentially reset password.
+
+## Deliverables
+
+- [ ] Low Fi Wireframes for all views
+- [ ] Style Guide / Design System
+- [ ] High Fi Wireframes for all views
