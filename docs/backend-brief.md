@@ -4,7 +4,7 @@ Noroff has requested a job agency web application to allow for students to inter
 
 This document outlines the API requirements for this project. It is important to note that this document is not a design document and does not contain any information about the front end application.
 
-### Users
+## Users
 
 This application uses `roles` to separate users into different groups. These roles are:
 
@@ -22,11 +22,7 @@ An administrator represents an authenticated user browsing the site with the int
 
 Only Clients and Applicants can register and admin users will be added manually by the Product Owner. Clients and Applicants should have their own registration form at a different URL.
 
-#### User Models
-
-It is conventional to use `TypeScript` syntax to describe the models for a project. This is because TypeScript allows for type notation and can help developers to create the correct database schema for each object. This can also be achieved with `JSDocs` or using `schema`.
-
-#### User Endpoints
+### User Endpoints
 
 The following API endpoints are required for Users:
 
@@ -39,11 +35,11 @@ DELETE /users/:id
 POST /users/login
 ```
 
-### Listings
+## Listings
 
 A listing represents an industry partner's job listing. Listings are created by clients and can be viewed by applicants. Listings can be created, updated and deleted by clients. A listing can be viewed by anyone and can be applied to by applicants.
 
-#### Listing Endpoints
+### Listing Endpoints
 
 The following API endpoints are required for Listings:
 
@@ -55,11 +51,11 @@ PUT /listings/:id
 DELETE /listings/:id
 ```
 
-### Applications
+## Applications
 
 An application represents an applicant's application to a listing. Applications are created by applicants and can be viewed by clients. Applications can be created, updated and deleted by applicants. An application can be viewed by anyone and can be responded to by clients.
 
-#### Application Endpoints
+### Application Endpoints
 
 The following API endpoints are required for Applications:
 
@@ -71,11 +67,11 @@ PUT /applications/:id
 DELETE /applications/:id
 ```
 
-### Offers
+## Offers
 
 An offer represents an industry partner's offer to an applicant. Offers are created by clients and can be viewed by applicants. Offers can be created, updated and deleted by clients. An applicant can accept or reject an offer.
 
-#### Offer Endpoints
+### Offer Endpoints
 
 The following API endpoints are required for Offers:
 
@@ -93,7 +89,7 @@ DELETE /offers/:id
 - [Express](https://expressjs.com/)
 - [Prisma](https://www.prisma.io/)
 
-These libraries will handle the majority of the databasing and interaction work, but this project may require additional libraries that will be identified by the team.
+These libraries will handle the majority of the databasing and interaction work, but this project may require additional libraries that will be identified by the team. In particular QA will require a testing library to be installed and used.
 
 ## Quality Assurance
 
@@ -108,3 +104,8 @@ The QA role is responsible for ensuring that the application is working as expec
 5. Once your work item has been reviewed and approved it will be merged into the `master` branch.
 6. If there are remaining work items to complete, repeat this until the end of the scrum period.
 7. If there are no remaining work items, offer assistance with other outstanding tasks - especially QA.
+
+## Deliverables
+
+- [ ] Swagger documentation for delivered endpoints
+- [ ] A passing test suite for delivered features
