@@ -57,6 +57,6 @@ Please document your code where appropriate and ensure that it is linted and for
 
 ## Deliverables
 
-- [ ] At least one work item branch merged into master
-- [ ] Record of team collaboration in the GitHub channel
-- [ ] Documentation for your feature
+- [ ] At least one work item branch merged into main per developer
+- [ ] Record of team collaboration / communication in the GitHub channel
+- [ ] Documentation for delivered features
