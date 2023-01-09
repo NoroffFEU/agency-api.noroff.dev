@@ -1,8 +1,15 @@
 class Application {
   uuid: string
   listingId: string
+  listing: Listing
   applicantId: string
+  application: Application
   coverLetter: string
+}
+
+enum ListingState {
+  Active,
+  Ended
 }
 
 class Listing {
@@ -16,12 +23,27 @@ class Listing {
   updated: Date
 }
 
+enum OfferState {
+  Pending,
+  Accepted,
+  Rejected
+}
+
 class Offer {
   uuid: string
   listingId: string
+  listing: Listing
   applicationId: string
+  application: Application
   applicantId: string
-  state: boolean
+  applicant: Applicant
+  state: OfferState
+}
+
+enum UserRole {
+  Applicant,
+  Client,
+  Admin
 }
 
 class User {
@@ -30,7 +52,7 @@ class User {
   firstName: string
   lastName: string
   password: string
-  role: string
+  role: UserRole
 }
 
 class Applicant extends User {
@@ -38,6 +60,7 @@ class Applicant extends User {
   profile: string
   avatar: string
   phone: string
+  offers: Offer[]
 }
 
 class Client extends User {
