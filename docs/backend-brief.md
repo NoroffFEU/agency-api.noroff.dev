@@ -95,6 +95,10 @@ DELETE /offers/:id
 
 These libraries will handle the majority of the databasing and interaction work, but this project may require additional libraries that will be identified by the team.
 
+## Quality Assurance
+
+The QA role is responsible for ensuring that the application is working as expected. This includes testing the application for bugs and ensuring that the application is secure. Testing can be done manually and with the assistance of automated tools. Each team should support their QA in creating test routines that can be used to benchmark the API throughout the project.
+
 ## Approach
 
 1. Pass your GitHub username onto your Scrum Master so that you can be added to the team repository.
