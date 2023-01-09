@@ -1,6 +1,4 @@
-# Industry Knowledge CA
-
-## Design Brief
+# Industry Knowledge CA - Design Brief
 
 Noroff has requested a job agency web application to allow for students to interact with industry partners to find placements. As a member of the design team your role will involve User Journey planning, User Experience and Interaction Design.
 

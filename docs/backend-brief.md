@@ -1,6 +1,4 @@
-# Industry Knowledge CA Backend Requirements
-
-## Brief
+# Industry Knowledge CA - Backend Brief
 
 Noroff has requested a job agency web application to allow for students to interact with industry partners to find placements. As a member of the development team your role will involve the creation of a RESTful API to serve the front end application.
 

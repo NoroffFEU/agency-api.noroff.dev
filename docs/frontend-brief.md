@@ -1,0 +1,1 @@
+# Industry Knowledge CA - Frontend Brief
