@@ -31,12 +31,6 @@ All work should be done using the shared Team Project on Figma. You should be ab
 
 Please strive to name your files and components in a way that is easy to understand. It is common to match up the name of a component with the CSS class used to style it. This approach allows for an effortless design review working component by component to check accuracy.
 
-## Deliverables
-
-- [ ] Low Fi Wireframes for all views
-- [ ] Style Guide / Design System
-- [ ] High Fi Wireframes for all views
-
 ### List of Views
 
 1. Public - Home
@@ -54,3 +48,9 @@ Applications and Offers will both be exposed in the Listing and Profile views re
 Admin users require a table view to manage all listings, offers and applications and users. As this is not public facing design fidelity is less important however it must be functional. (Examples, Figma Studio, Strapi, etc).
 
 Note that each of these views has various states, for example, Authentication can be used to register, login and potentially reset password.
+
+## Deliverables
+
+- [ ] Low Fi Wireframes for all views
+- [ ] Style Guide / Design System
+- [ ] High Fi Wireframes for all views
