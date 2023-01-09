@@ -54,3 +54,9 @@ Note that each of these views has various states, for example, Authentication ca
 9. When all of your tasks are completed, offer assistance to other teams - especially QA
 
 Please document your code where appropriate and ensure that it is linted and formatted.
+
+## Deliverables
+
+- [ ] At least one work item branch merged into master
+- [ ] Record of team collaboration in the GitHub channel
+- [ ] Documentation for your feature
