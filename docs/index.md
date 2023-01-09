@@ -1,5 +1,7 @@
 # Industry Knowledge CA
 
+[Loom Presentation](https://www.loom.com/share/000115dcb95e479f91b294db364d503f)
+
 ## Purpose of the CA
 
 The purpose of this exercise is twofold:
