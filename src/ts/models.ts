@@ -3,7 +3,7 @@ class Application {
   listingId: string
   listing: Listing
   applicantId: string
-  application: Application
+  applicant: Applicant
   coverLetter: string
 }
 
