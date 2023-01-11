@@ -1,6 +1,6 @@
 {
   "name": "noroff-job-agency-api",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A web application to allow students to interact with industry partners to find placements",
   "main": "index.js",
   "type": "module",
