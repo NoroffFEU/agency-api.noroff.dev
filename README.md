@@ -50,7 +50,7 @@ Then generate the prisma client using
 npx prisma generate
 ```
 
-To test your database you can POST on the `/users` endpoint, in Postman with a body set to raw, and type JSON
+To test your database you can POST on the `/users` endpoint, in Postman with a body set to raw JSON, and setting a content type of JSON in the request headers.
 
 ```
 {
