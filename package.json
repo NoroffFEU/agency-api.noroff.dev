@@ -9,7 +9,12 @@
   },
   "scripts": {
     "start": "node src/app.js",
-    "watch": "nodemon src/app.js"
+    "watch": "nodemon src/app.js",
+    "lint": "eslint src/**/*.js",
+    "lint-fix": "eslint src/**/*.js --cache --fix",
+    "prepare": "husky install",
+    "test": "npm run test-unit",
+    "test-unit": "jest"
   },
   "repository": {
     "type": "git",
@@ -34,7 +39,19 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
+    "eslint": "^8.31.0",
+    "eslint-plugin-jest": "^27.2.1",
+    "husky": "^8.0.3",
+    "jest": "^29.2.0",
+    "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
+    "prettier": "^2.8.2",
     "prisma": "^4.8.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }
