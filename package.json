@@ -1,0 +1,40 @@
+{
+  "name": "noroff-job-agency-api",
+  "version": "0.0.0",
+  "description": "A web application to allow students to interact with industry partners to find placements",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "watch": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoroffFEU/agency-api.noroff.dev.git"
+  },
+  "keywords": [
+    "Noroff",
+    "Jobs"
+  ],
+  "author": "Noroff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NoroffFEU/agency-api.noroff.dev/issues"
+  },
+  "homepage": "https://github.com/NoroffFEU/agency-api.noroff.dev#readme",
+  "dependencies": {
+    "@prisma/client": "^4.8.1",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "nodemon": "^2.0.20",
+    "prisma": "^4.8.1"
+  }
+}
