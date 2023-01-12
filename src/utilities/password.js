@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
  * Compares plain text password to hashed password
  * @param {Object} profile users profile with hashed password
  * @param {String} password plain text string provided in request
- * @returns {Boolean} true/false
+ * @returns {Promise<Boolean>} true/false
  */
 export async function verifyPassword(profile, password) {
   return bcrypt.compareSync(password, profile.password);

@@ -31,7 +31,8 @@ usersRouter.post("/login", async (req, res) => {
     const data = await handleLogin(req);
     res.status(200).json(data);
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
+
     const errorObject = await JSON.parse(err.message);
     if (errorObject.status) {
       res.status(errorObject.status).json(errorObject.message);
