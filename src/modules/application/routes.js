@@ -12,9 +12,12 @@ applicationsRouter.get("/", async (req, res) => {
 
 applicationsRouter.post("/", async (req, res) => {
   try {
-    const { coverLetter } = req.body;
+    const { applicantId, applicant, listing, coverLetter } = req.body;
     const result = await databasePrisma.application.create({
       data: {
+        applicantId,
+        applicant,
+        listing,
         coverLetter,
       },
     });
