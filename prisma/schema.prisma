@@ -31,12 +31,13 @@ enum UserRole {
 
 model Application {
   id          String  @id @default(uuid())
-  applicantId String
-  applicate   User    @relation(fields: [userId], references: [id])
+  applicantId String  
+  applicant   User    @relation(fields: [userId], references: [id])
   userId      String
   Offers      Offer[]
   listing     Listing @relation(fields: [listingId], references: [id])
   listingId   String
+  coverLetter String
 }
 
 model Offer {
