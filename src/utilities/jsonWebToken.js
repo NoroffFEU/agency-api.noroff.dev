@@ -1,7 +1,7 @@
 import jsonwebtoken from "jsonwebtoken";
 import * as dotenv from "dotenv";
 const { sign, decode, verify } = jsonwebtoken;
-import { databasePrisma } from "../prismaClient";
+import { databasePrisma } from "../prismaClient.js";
 
 /**
  * Takes a token and verifies it
@@ -18,6 +18,8 @@ export function verifyToken(token) {
  * @returns
  */
 export function signToken({ id, email }) {
-  const token = sign({ userId: id, email: email }, process.env.SECRETSAUCE, { expiresIn: "1h" });
+  const token = sign({ userId: id, email: email }, process.env.SECRETSAUCE, {
+    expiresIn: "1h",
+  });
   return token;
 }
