@@ -16,7 +16,6 @@ model User {
   firstName    String
   lastName     String
   password     String
-  salt         String
   role         UserRole      @default(Applicant)
   applications Application[]
   offers       Offer[]
