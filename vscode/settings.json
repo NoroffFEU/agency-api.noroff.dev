@@ -1,0 +1,34 @@
+{
+	// Settings for esLint, Prettier, and Prisma
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	"editor.formatOnSave": true,
+
+	"[javascript]": {
+		"editor.formatOnSave": false
+	},
+
+         "[prisma]": {
+                "editor.defaultFormatter": "Prisma.prisma",
+		"editor.formatOnSave": true
+	},
+
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true
+	},
+
+	"eslint.alwaysShowStatus": true,
+
+	"eslint.validate": "javascript",
+
+	// Settings for Prettier
+	"prettier.useTabs": true,
+
+	"prettier.jsxSingleQuote": false,
+
+	"prettier.tabWidth": 2,
+
+	"prettier.arrowParens": "avoid",
+
+	"prettier.singleQuote": true
+}
