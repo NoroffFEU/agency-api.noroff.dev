@@ -31,7 +31,6 @@ enum UserRole {
 
 model Application {
   id          String  @id @default(uuid())
-  applicantId String  
   applicant   User    @relation(fields: [userId], references: [id])
   userId      String
   Offers      Offer[]
