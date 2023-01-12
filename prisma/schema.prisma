@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  firstName    String
+  lastName     String
+  password     String
+  salt         String
+  role         UserRole      @default(Applicant)
+  applications Application[]
+  offers       Offer[]
+  listings     Listing[]
+}
+
+enum UserRole {
+  Applicant
+  Client
+  Admin
+}
+
+model Application {
+  id          String  @id @default(uuid())
+  applicantId String
+  applicate   User    @relation(fields: [userId], references: [id])
+  userId      String
+  Offers      Offer[]
+  listing     Listing @relation(fields: [listingId], references: [id])
+  listingId   String
+}
+
+model Offer {
+  id            String      @id @default(uuid())
+  listingId     String
+  listing       Listing     @relation(fields: [listingId], references: [id])
+  application   Application @relation(fields: [applicantId], references: [id])
+  applicationId String
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String
+  applicantId   String
+  applicant     UserRole
+  state         OfferState
+}
+
+enum OfferState {
+  Pending
+  Accepted
+  Rejected
+}
+
+model Listing {
+  id           String        @id @default(uuid())
+  title        String
+  tags         String[]
+  description  String
+  requirements String[]
+  deadline     DateTime
+  created      DateTime      @default(now())
+  updated      DateTime
+  Applications Application[]
+  Offer        Offer[]
+  author       User          @relation(fields: [authorId], references: [id])
+  authorId     String
+}
+
+enum ListingState {
+  Active
+  Ended
+}
