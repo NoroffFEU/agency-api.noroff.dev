@@ -31,12 +31,12 @@ enum UserRole {
 
 model Application {
   id          String  @id @default(uuid())
+  applicant   User    @relation(fields: [applicantId], references: [id])
   applicantId String
-  applicate   User    @relation(fields: [userId], references: [id])
-  userId      String
   Offers      Offer[]
   listing     Listing @relation(fields: [listingId], references: [id])
   listingId   String
+  coverLetter String
 }
 
 model Offer {
