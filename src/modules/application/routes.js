@@ -7,3 +7,21 @@ export const applicationsRouter = express.Router();
 applicationsRouter.get("/", async (req, res) => {
   res.send("This is the app request");
 });
+
+// POST /application
+
+applicationsRouter.post("/", async (req, res) => {
+  try {
+    const { coverLetter } = req.body;
+    const result = await databasePrisma.application.create({
+      data: {
+        coverLetter,
+      },
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: `${err}`, code: "400" });
+  }
+});
