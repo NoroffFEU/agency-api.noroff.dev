@@ -50,12 +50,12 @@ usersRouter.get("/:id", async (req, res) => {
       message: "Something went wrong",
     });
 
-    // const errorUser = await json.parse(err.message);
-    // if (errorUser.status) {
-    //   res.status(errorUser.status).json(errorUser.message);
-    // } else {
-    //   res.status(404).json("Could not find user!");
-    // }
+    const errorUser = await json.parse(error.message);
+    if (errorUser.status) {
+      res.status(errorUser.status).json(errorUser.message);
+    } else {
+      res.status(404).json("Could not find user!");
+    }
   }
 });
 
