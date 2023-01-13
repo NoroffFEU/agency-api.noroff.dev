@@ -25,8 +25,9 @@ applicationsRouter
             });
             if (applicationById === null) {
                 res.status(404).json({ message: `no application found with id "${URLid}"` });
+            } else {
+                res.json(applicationById);
             }
-            res.json(applicationById);
         } catch (err) {
             console.log(err);
             res.status(500).json({ message: `internal server error`, code: "500" });
