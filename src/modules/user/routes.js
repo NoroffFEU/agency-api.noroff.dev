@@ -38,12 +38,12 @@ usersRouter.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const userId = await databasePrisma.user.findUnique({
+    const user = await databasePrisma.user.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
     });
-    res.json(userId);
+    res.status(200).json(user);
   } catch (error) {
     res.status(401).json({
       message: "Something went wrong",
