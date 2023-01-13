@@ -18,10 +18,11 @@ usersRouter.post("/", async (req, res) => {
         password: hash,
       },
     });
-    res.json(result);
+
+    res.status(200).json(result);
   } catch (err) {
     console.log(err);
-    res.json({ message: "oops" });
+    res.status(400).json({ message: `${err}` });
   }
 });
 
