@@ -23,3 +23,13 @@ export function signToken({ id, email }) {
   });
   return token;
 }
+
+/**
+ * Decodes information from a access token
+ * @param {String} token needs to be a string and not include Bearer at beginning
+ * @returns {Object} user and token details
+ */
+export function decodeToken(token) {
+  const data = decode(token);
+  return data;
+}
