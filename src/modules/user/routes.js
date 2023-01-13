@@ -34,7 +34,22 @@ usersRouter.get("/", async (req, res) => {
 });
 
 // GET /users/:id
-usersRouter.get("/:id", async (req, res) => {});
+usersRouter.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const userId = await databasePrisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.json(userId);
+  } catch (error) {
+    res.status(401).json({
+      message: "Something went wrong",
+    });
+  }
+});
 
 // PUT /users/:id
 usersRouter.put("/:id", async (req, res) => {});
