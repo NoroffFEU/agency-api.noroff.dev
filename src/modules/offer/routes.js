@@ -26,37 +26,3 @@ offersRouter.get("/:id", async (req, res) => {
     res.status(500).json({ message: `${error}` });
   }
 });
-
-offersRouter.post("/", async (req, res) => {
-  const { title, description, price, userId } = req.body;
-  const offer = await databasePrisma.offer.create({
-    data: {
-      userId,
-    },
-  });
-  res.send(offer);
-});
-
-offersRouter.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const { state } = req.body;
-  const offer = await databasePrisma.offer.update({
-    where: {
-      id: parseInt(id),
-    },
-    data: {
-      state,
-    },
-  });
-  res.send(offer);
-});
-
-offersRouter.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  const offer = await databasePrisma.offer.delete({
-    where: {
-      id: parseInt(id),
-    },
-  });
-  res.send(offer);
-});
