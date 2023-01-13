@@ -46,25 +46,29 @@ listingsRouter.put("/:id", async (req, res) => {
   const now = new Date().toISOString();
   const deadlineToString = new Date(deadline).toISOString();
 
-  const listings = await databasePrisma.listing.update({
-    where: {
-      id: id,
-    },
-    data: {
-      id: id,
-      ...req.body,
-    },
-  });
-  if (deadlineToString > now) {
-    res.status(200).json({
+  try {
+    const listings = await databasePrisma.listing.update({
+      where: {
+        id: id,
+      },
       data: {
-        listings,
+        id: id,
+        ...req.body,
       },
     });
-  } else {
-    res.status(400).json({
-      message: "deadline must be a future date",
-    });
+    if (deadlineToString > now) {
+      res.status(200).json({
+        data: {
+          listings,
+        },
+      });
+    } else {
+      res.status(400).json({
+        message: "deadline must be a future date",
+      });
+    }
+  } catch (error) {
+    throw new Error(error, "An error occured in listingsRouter.put()");
   }
 });
 
