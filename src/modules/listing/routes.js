@@ -18,7 +18,6 @@ listingsRouter.post("/", async (req, res) => {
         description: req.body.description,
         requirements: req.body.requirements,
         deadline: req.body.deadline,
-        updated: new Date(),
         authorId: req.body.authorId,
       },
     });
