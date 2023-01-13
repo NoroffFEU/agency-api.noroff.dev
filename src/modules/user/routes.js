@@ -1,3 +1,4 @@
+import json from "body-parser/lib/types/json.js";
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 
@@ -45,9 +46,16 @@ usersRouter.get("/:id", async (req, res) => {
     });
     res.status(200).json(user);
   } catch (error) {
-    res.status(401).json({
+    res.status(400).json({
       message: "Something went wrong",
     });
+
+    // const errorUser = await json.parse(err.message);
+    // if (errorUser.status) {
+    //   res.status(errorUser.status).json(errorUser.message);
+    // } else {
+    //   res.status(404).json("Could not find user!");
+    // }
   }
 });
 
