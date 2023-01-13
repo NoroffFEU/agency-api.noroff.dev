@@ -2,6 +2,8 @@
 
 ## Installation
 
+linjeskift
+
 Clone the repo in your desired manner.
 
 Install dependencies
