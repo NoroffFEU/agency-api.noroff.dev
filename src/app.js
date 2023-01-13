@@ -16,9 +16,18 @@ app.use(
   })
 );
 
+//stops html response on unexpected json token
+const jsonErrorHandler = function (err, req, res, next) {
+  res.setHeader("Content-Type", "application/json");
+  res.status(500).send(JSON.stringify(err));
+};
+app.use(jsonErrorHandler);
+
 app.use("/users", usersRouter);
 app.use("/applications", applicationsRouter);
 app.use("/listings", listingsRouter);
 app.use("/offers", offersRouter);
 
-const server = app.listen(PORT, () => console.log(`🚀 Server ready at: http://localhost:${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(`🚀 Server ready at: http://localhost:${PORT}`)
+);

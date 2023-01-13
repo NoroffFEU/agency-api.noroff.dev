@@ -1,5 +1,7 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
+import { generateHash } from "../../utilities/password.js";
+import { handleLogin } from "./controllers/controllerLogin.js";
 
 export const usersRouter = express.Router();
 
@@ -7,13 +9,13 @@ export const usersRouter = express.Router();
 usersRouter.post("/", async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
+    const hash = await generateHash(password);
     const result = await databasePrisma.user.create({
       data: {
         firstName,
         lastName,
         email,
-        password,
-        salt: "salty",
+        password: hash,
       },
     });
 
@@ -25,7 +27,21 @@ usersRouter.post("/", async (req, res) => {
 });
 
 //  POST /users/login
-usersRouter.post("/login", async (req, res) => {});
+usersRouter.post("/login", async (req, res) => {
+  try {
+    const data = await handleLogin(req);
+    res.status(200).json(data);
+  } catch (err) {
+    console.log(err.message);
+
+    const errorObject = await JSON.parse(err.message);
+    if (errorObject.status) {
+      res.status(errorObject.status).json(errorObject.message);
+    } else {
+      res.status(500).json("Internal server error.");
+    }
+  }
+});
 
 // GET /users
 usersRouter.get("/", async (req, res) => {
