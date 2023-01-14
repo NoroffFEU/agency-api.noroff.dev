@@ -31,6 +31,8 @@ enum UserRole {
 
 model Application {
   id          String  @id @default(uuid())
+  created     DateTime      @default(now())
+  updated     DateTime      @updatedAt
   applicant   User    @relation(fields: [applicantId], references: [id])
   applicantId String
   Offers      Offer[]
