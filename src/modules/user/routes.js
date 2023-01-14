@@ -1,4 +1,3 @@
-import json from "body-parser/lib/types/json.js";
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 
@@ -37,7 +36,7 @@ usersRouter.get("/", async (req, res) => {
 // GET /users/:id
 usersRouter.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params;
 
     const user = await databasePrisma.user.findUnique({
       where: {
@@ -46,16 +45,11 @@ usersRouter.get("/:id", async (req, res) => {
     });
     res.status(200).json(user);
   } catch (error) {
-    res.status(400).json({
-      message: "Something went wrong",
-    });
-
-    const errorUser = await json.parse(error.message);
-    if (errorUser.status) {
-      res.status(errorUser.status).json(errorUser.message);
-    } else {
-      res.status(404).json("Could not find user!");
-    }
+    res
+      .status(404)
+      .send({
+        errors: [{ title: "User Error!", detail: "Could not find user!" }],
+      });
   }
 });
 
