@@ -2,7 +2,7 @@ import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 import { generateHash } from "../../utilities/password.js";
 import { handleLogin } from "./controllers/controllerLogin.js";
-import { handleUserId } from "./controllers/controllerUserId.js";
+import { createThrownError } from "../../utilities/errorMessages.js";
 
 export const usersRouter = express.Router();
 
@@ -53,7 +53,21 @@ usersRouter.get("/", async (req, res) => {
 // GET /users/:id
 usersRouter.get("/:id", async (req, res) => {
   try {
-    const user = await handleUserId(req);
+    const id = req.params.id;
+    const user = await databasePrisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw createThrownError(404, "Could not find user!");
+    }
+
+    if (id === undefined) {
+      throw createThrownError(400, "Bad request, user id is undefined");
+    }
+
     res.status(200).json(user);
   } catch (err) {
     const errorObject = await JSON.parse(err.message);
