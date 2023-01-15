@@ -27,3 +27,23 @@ applicationsRouter.post("/", async (req, res) => {
     res.status(400).json({ message: `${err}`, code: "400" });
   }
 });
+
+// DELETE /application/:id
+applicationsRouter.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const result = await databasePrisma.application.delete({
+      where: {
+        id: id,
+      },
+    });
+    res
+      .status(200)
+      .json({
+        message: "Succefully deleted application with id: " + id,
+        code: "200",
+      });
+  } catch (err) {
+    res.status(400).json({ message: `${err}`, code: "400" });
+  }
+});
