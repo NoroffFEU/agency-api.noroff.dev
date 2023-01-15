@@ -1,4 +1,4 @@
-import { generateHash } from "../../../utilities/password.js";
+import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
 import {
   decodeToken,
@@ -16,8 +16,7 @@ export const handleUpdate = async function (req) {
   // Find the user to be updated
   const id = req.params.id;
   const user = await findUserById(id);
-  const jwt = signToken(user);
-  console.log(jwt);
+
   //Throw 404 if user doesn't exist
   if (!user) {
     throw createThrownError(404, `User not found`);
@@ -46,23 +45,26 @@ export const handleUpdate = async function (req) {
   if (verified.userId != id || tokenUser.userId != id) {
     throw createThrownError(401, `User does not match user to be edited`);
   } else {
-    try {
-      // removes id from body stopping user from updating it
-      let idMsg = "User details updated successfully.";
-      if ("id" in req.body == true) {
-        delete req.body.id;
-        idMsg = "An ID was found in the body and was removed pre update.";
-      }
-      let newPass;
-      console.log(req.body);
-      if ("password" in req.body == true) {
-        newPass = req.body.password;
-        const hash = await generateHash(newPass);
-        console.log(hash);
+    // removes id from body stopping user from updating it
+    let idMsg = "User details updated successfully.";
+    if ("id" in req.body == true) {
+      delete req.body.id;
+      idMsg = "An ID was found in the body and was removed pre update.";
+    }
+
+    // Handles password changes
+    if ("password" in req.body == true) {
+      if ((await verifyPassword(user, req.body.oldpassword)) == true) {
+        delete req.body.oldpassword;
+        const hash = await generateHash(req.body.password);
         req.body.password = hash;
+      } else {
+        throw createThrownError(401, `Incorrect Password`);
       }
-      console.log(req.body);
-      // Updates the user
+    }
+
+    // Updates the user
+    try {
       const result = await databasePrisma.user.update({
         where: { id },
         data: req.body,
