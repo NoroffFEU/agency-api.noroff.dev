@@ -2,27 +2,38 @@ import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 import { generateHash } from "../../utilities/password.js";
 import { handleLogin } from "./controllers/controllerLogin.js";
+import validator from 'express-validator'
+const { body, validationResult } = validator
+import { signToken } from "../../utilities/jsonWebToken.js";
+import { handleRegister } from "./controllers/controllerRegister.js";
 
 export const usersRouter = express.Router();
 
 // POST /users
-usersRouter.post("/", async (req, res) => {
+usersRouter.post("/",
+  // email must be actual email
+  body('email').isEmail(),
+  // password must be at least 5 chars long
+  body('password').isLength({ min: 5, max: 20}),
+   async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
-    const hash = await generateHash(password);
-    const result = await databasePrisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        password: hash,
-      },
-    });
-
-    res.status(200).json(result);
+    // returns with errors if any
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const data = await handleRegister(req);
+    if (data.status === 409) {
+      return res.status(409).json({ message: 'User already exists' });
+    }
+    if (data.status === 400) {
+      return res.status(400).json({message: "Bad image url"});
+    }
+    res.status(201).json(data);
   } catch (err) {
-    console.log(err);
-    res.status(400).json({ message: `${err}` });
+    // Send a 500 error if there was a problem with the insertion
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
