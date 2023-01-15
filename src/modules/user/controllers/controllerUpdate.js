@@ -1,10 +1,6 @@
 import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
-import {
-  decodeToken,
-  signToken,
-  verifyToken,
-} from "../../../utilities/jsonWebToken.js";
+import { decodeToken, verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 import { createThrownError } from "../../../utilities/errorMessages.js";
 
