@@ -47,6 +47,3 @@ listingsRouter.post("/", async (req, res) => {
     res.status(500).json({ message: `${e}` });
   }
 });
-
-//TODO ADD RELATION TO authorId
-//Deadline has to be after now
