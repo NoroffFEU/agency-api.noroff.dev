@@ -15,10 +15,11 @@ export async function verifyPassword(profile, password) {
  * @param {String} password Plain text password
  * @returns {Object} hash
  */
-export async function generateHash(password) {
+ export async function generateHash(password) {
   const saltRounds = 10;
   const salt = bcrypt.genSaltSync(saltRounds);
   const hash = await bcrypt.hash(password, salt);
 
   return hash;
 }
+

@@ -18,7 +18,7 @@ export function verifyToken(token) {
  * @returns {String} access token
  */
 export function signToken({ id, email }) {
-  const token = sign({ userId: id, email: email }, process.env.SECRETSAUCE, {
+  const token = sign({ userId: id, email: email }, process.env.SECRET_SAUCE, {
     expiresIn: "1h",
   });
   return token;
