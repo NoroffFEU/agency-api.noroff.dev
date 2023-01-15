@@ -9,22 +9,44 @@ listingsRouter.get("/", async (req, res) => {
 });
 
 listingsRouter.post("/", async (req, res) => {
-  console.log(req.body);
   try {
-    const result = await databasePrisma.listing.create({
-      data: {
-        title: req.body.title,
-        tags: req.body.tags,
-        description: req.body.description,
-        requirements: req.body.requirements,
-        deadline: req.body.deadline,
-        authorId: req.body.authorId,
-      },
-    });
+    const { title, tags, description, requirements, deadline, authorId } =
+      req.body;
 
-    res.status(200).json(result);
+    const now = new Date().getTime();
+    const valid = now < new Date(deadline).getTime();
+
+    if (!valid) {
+      res
+        .status(400)
+        .json({ message: "Deadline must be greater than todays date" });
+    } else if (
+      title &&
+      tags &&
+      description &&
+      requirements &&
+      deadline &&
+      authorId
+    ) {
+      const result = await databasePrisma.listing.create({
+        data: {
+          title: title,
+          tags: tags,
+          description: description,
+          requirements: requirements,
+          deadline: deadline,
+          authorId: authorId,
+        },
+      });
+
+      res.status(200).json(result);
+    } else {
+      res.status(400).json({ message: "Please fill in all required fields" });
+    }
   } catch (e) {
-    console.log(e);
-    res.json({ error: e });
+    res.status(500).json({ message: `${e}` });
   }
 });
+
+//TODO ADD RELATION TO authorId
+//Deadline has to be after now
