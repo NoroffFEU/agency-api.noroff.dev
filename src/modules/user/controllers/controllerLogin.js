@@ -32,7 +32,7 @@ export const handleLogin = async function (req) {
       firstName: profile.firstName,
       lastName: profile.lastName,
       email: profile.email,
-      password: profile.password,
+      avatar: profile.avatar,
       token: token,
     },
   };
