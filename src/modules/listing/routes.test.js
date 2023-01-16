@@ -11,7 +11,7 @@ const testListings = {
   tags: ["test", "listing"],
   description: "This is a test listing",
   requirements: ["test", "listing"],
-  deadline: "2023-11-30T20:57:00.000Z",
+  deadline: "2024-11-30T20:57:00.000Z",
   authorId: "9b454993-7e9b-4322-bd56-922897099cca",
 };
 

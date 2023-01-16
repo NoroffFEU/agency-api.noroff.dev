@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">79.59% </span>
+                <span class="strong">74% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>39/49</span>
+                <span class='fraction'>37/50</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/16</span>
+                <span class='fraction'>14/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">79.59% </span>
+                <span class="strong">74% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>39/49</span>
+                <span class='fraction'>37/50</span>
             </div>
         
             
@@ -214,7 +214,9 @@
 <a name='L149'></a><a href='#L149'>149</a>
 <a name='L150'></a><a href='#L150'>150</a>
 <a name='L151'></a><a href='#L151'>151</a>
-<a name='L152'></a><a href='#L152'>152</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -300,12 +302,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -316,12 +313,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -348,13 +352,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -362,8 +367,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
@@ -447,9 +451,14 @@ listingsRouter.put("/:id", async (req, res) =&gt; {
   const { deadline } = req.body;
 &nbsp;
   const now = new Date().getTime();
-  const valid = now &lt; new Date(deadline).getTime();
-  console.log(valid);
+  const newDeadline = new Date(deadline).getTime();
+  const valid = now &lt; newDeadline;
 &nbsp;
+  if (deadline !== undefined &amp;&amp; !valid) {
+    res.status(400).json({
+      message: "deadline must be a future date",
+    });
+  }
   try {
     const listings = await databasePrisma.listing.update({
       where: {
@@ -460,24 +469,21 @@ listingsRouter.put("/:id", async (req, res) =&gt; {
         ...req.body,
       },
     });
-    if (!valid) {
-      res.status(200).json({
-        data: {
-          listings,
-        },
-      });
-    } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-<span class="cstat-no" title="statement not covered" >      res.status(400).json({</span>
-        message: "deadline must be a future date",
-      });
-    }
+&nbsp;
+    res.status(200).json({
+      data: {
+        listings,
+      },
+    });
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    throw new Error(error, "An error occured in listingsRouter.put()");</span>
+    console.log(error);
+    res.status(500);
+    // throw new Error(error, "An error occured in listingsRouter.put()");
   }
 });
 &nbsp;
 // DELETE /listings/:id
-listingsRouter.delete("/:id", getListing, async (req, res) =&gt; {
+listingsRouter.delete("/:id", async (req, res) =&gt; {
   try {
     await databasePrisma.listing.delete({
       where: {
@@ -497,15 +503,16 @@ listingsRouter.delete("/:id", getListing, async (req, res) =&gt; {
  * @param {*} next
  * @returns "status 404" with error message if listing doesn't exist.
  */
-async function getListing(req, res, next) {
+async function <span class="fstat-no" title="function not covered" >getListing(</span>req, res, next) {
   let listing;
-  try {
-    listing = await databasePrisma.listing.findUnique({
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    listing = await databasePrisma.listing.findUnique({</span>
       where: {
         id: req.params.id,
       },
     });
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (listing == null) {
+<span class="cstat-no" title="statement not covered" >    next();</span>
+<span class="cstat-no" title="statement not covered" >    if (listing == null) {</span>
       // return res.status(404).json({ message: `Listing with id: ${req.params.id} doesn't exist.` });
 <span class="cstat-no" title="statement not covered" >      return res.status(404).json({ message: `Listing with id: ${req.params.id} doesn't exist.` });</span>
     }
@@ -513,8 +520,7 @@ async function getListing(req, res, next) {
 <span class="cstat-no" title="statement not covered" >    return res.status(500).json({ message: err.message });</span>
   }
 &nbsp;
-  res.listing = listing;
-  next();
+<span class="cstat-no" title="statement not covered" >  res.listing = listing;</span>
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -523,7 +529,7 @@ async function getListing(req, res, next) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-01-16T20:21:22.152Z
+                at 2023-01-16T21:01:08.230Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
