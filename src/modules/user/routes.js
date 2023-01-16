@@ -65,8 +65,18 @@ usersRouter.post(
 
 // GET /users
 usersRouter.get("/", async (req, res) => {
-  const users = await databasePrisma.user.findMany();
-  res.json(users);
+  try {
+    const users = await databasePrisma.user.findMany();
+
+    users.forEach((user) => {
+      delete user.password;
+      delete user.salt;
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ ...error, message: "Internal server error" })
+  }
 });
 
 // GET /users/:id
