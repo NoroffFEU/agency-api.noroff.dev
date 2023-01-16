@@ -4,6 +4,32 @@ import { databasePrisma } from "../../prismaClient.js";
 export const offersRouter = express.Router();
 
 // Handling request using router
-offersRouter.get("/", async (req, res) => {
-  res.send("This is the offers request");
+offersRouter.put("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const {
+    listingId,
+    applicationId,
+    userId,
+    applicantId,
+    userRole,
+    offerState,
+  } = req.body;
+
+  try {
+    const offer = await databasePrisma.offer.update({
+      where: {
+        id: id,
+      },
+      data: {
+        id: id,
+        ...req.body,
+      },
+    });
+
+    res.status(200).json(offer);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+  }
 });

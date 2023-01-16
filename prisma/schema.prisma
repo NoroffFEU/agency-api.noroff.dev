@@ -50,6 +50,8 @@ model Offer {
   applicantId   String
   applicant     UserRole
   state         OfferState
+  created       DateTime    @default(now())
+  updated       DateTime    @updatedAt
 }
 
 enum OfferState {
