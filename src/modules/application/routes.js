@@ -1,5 +1,5 @@
 import express from "express";
-import { databasePrisma } from "../../prismaClient.js";
+import { handleUpdate } from "./controllers/controllerCreate.js";
 
 export const applicationsRouter = express.Router();
 
@@ -12,14 +12,8 @@ applicationsRouter.get("/", async (req, res) => {
 
 applicationsRouter.post("/", async (req, res) => {
   try {
-    const { applicant, listing, coverLetter } = req.body;
-    const result = await databasePrisma.application.create({
-      data: {
-        applicant,
-        listing,
-        coverLetter,
-      },
-    });
+    // NEEDS MORE TESTING
+    const result = await handleUpdate(req);
 
     res.status(200).json(result);
   } catch (err) {
