@@ -11,7 +11,7 @@ const testListings = {
   tags: ["test", "listing"],
   description: "This is a test listing",
   requirements: ["test", "listing"],
-  deadline: "2024-11-30T20:57:00.000Z",
+  deadline: "2023-11-30T20:57:00.000Z",
   authorId: "9b454993-7e9b-4322-bd56-922897099cca",
 };
 
@@ -57,14 +57,14 @@ describe("PUT /listings/:id", () => {
     expect(response.status).toBe(200);
   });
 
-  // it("should return 400 and a message", async () => {
-  //   const id = listing.id;
-  //   const response = await request(server)
-  //     .put(`${baseURL}/${id}`)
-  //     .send({ deadline: "2020-11-30T20:57:09.586Z" });
-  //   expect(response.status).toBe(400);
-  //   expect(response.body.message).toEqual("deadline must be a future date");
-  // });
+  it("should return 400 and a message", async () => {
+    const id = listing.id;
+    const response = await request(server)
+      .put(`${baseURL}/${id}`)
+      .send({ deadline: "2020-11-30T20:57:00.000Z" });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual("deadline must be a future date");
+  });
 });
 
 describe("DELETE /listings/:id", () => {

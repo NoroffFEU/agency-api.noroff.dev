@@ -80,7 +80,8 @@ listingsRouter.put("/:id", async (req, res) => {
   const { deadline } = req.body;
 
   const now = new Date().getTime();
-  const deadlineToString = new Date(deadline).getTime();
+  const valid = now < new Date(deadline).getTime();
+  console.log(valid);
 
   try {
     const listings = await databasePrisma.listing.update({
@@ -92,7 +93,7 @@ listingsRouter.put("/:id", async (req, res) => {
         ...req.body,
       },
     });
-    if (deadlineToString > now) {
+    if (!valid) {
       res.status(200).json({
         data: {
           listings,
@@ -104,6 +105,7 @@ listingsRouter.put("/:id", async (req, res) => {
       });
     }
   } catch (error) {
+    res.status(500).json({ message: error.message });
     throw new Error(error, "An error occured in listingsRouter.put()");
   }
 });
