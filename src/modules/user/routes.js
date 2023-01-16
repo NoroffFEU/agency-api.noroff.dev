@@ -103,13 +103,8 @@ usersRouter.put("/:id", async (req, res) => {
   try {
     const data = await handleUpdate(req);
     res.status(200).json(data);
-  } catch (err) {
-    const errorObject = await JSON.parse(err.message);
-    if (errorObject.status) {
-      res.status(errorObject.status).json(errorObject.message);
-    } else {
-      res.status(500).json("Internal server error.");
-    }
+  } catch (error) {
+    res.json(error.message);
   }
 });
 
