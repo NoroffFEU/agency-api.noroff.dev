@@ -1,6 +1,4 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
-
-import { createThrownError } from "../../../utilities/errorMessages.js";
 import { databasePrisma } from "../../../prismaClient.js";
 
 export const handleUpdate = async function (req) {
@@ -11,10 +9,10 @@ export const handleUpdate = async function (req) {
   // Get token if there is one
   let readyToken = token;
   if (!token) {
-    throw createThrownError(
-      401,
-      `User has to be authenticated to make this request`
-    );
+    return Promise.resolve({
+      status: 401,
+      message: "User has to be authenticated to make this request",
+    });
   } else if (token.includes("Bearer")) {
     readyToken = token.slice(7);
   }
@@ -26,7 +24,7 @@ export const handleUpdate = async function (req) {
     try {
       verified = verifyToken(readyToken);
     } catch (error) {
-      throw createThrownError(401, `Auth token not valid.`);
+      return Promise.resolve({ status: 401, message: "Auth token not valid." });
     }
   }
 
@@ -45,16 +43,19 @@ export const handleUpdate = async function (req) {
       if (!error.status) {
         // Checks for database related errors
         if (error.meta !== undefined) {
-          throw createThrownError(
-            409,
-            `You've already created an application on this listing`
-          );
+          return Promise.resolve({
+            status: 409,
+            message: `You've already created an application on this listing`,
+          });
         } else {
-          throw createThrownError(400, `${error.message}`);
+          return Promise.resolve({ status: 409, message: `${error.message}` });
         }
       } else {
         if (error.status) {
-          throw createThrownError(error.status, error.message);
+          return Promise.resolve({
+            status: error.status,
+            message: error.message,
+          });
         }
       }
     }
