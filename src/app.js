@@ -26,17 +26,17 @@ const options = {
         name: "Licensed Under MIT",
         url: "https://spdx.org/licenses/MIT.html",
       },
-      contact: {
-        name: "Contact Placeholder",
-        url: "https://placeholder.com",
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "apiKey",
+          name: "Authorization",
+          scheme: "bearer",
+          in: "header",
+        },
       },
     },
-    servers: [
-      {
-        url: `http://localhost:${PORT}`,
-        description: "Development server",
-      },
-    ],
   },
   apis: ["./src/modules/**/*.js"],
 };

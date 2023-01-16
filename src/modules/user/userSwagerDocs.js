@@ -127,12 +127,19 @@
  *                       example: Smith
  *                     email:
  *                       type: string
+ *                       format: email
  *                       description: The user's email.
  *                       example: example@example.com
+ *                     avatar:
+ *                       type: string
+ *                       format: URL
+ *                       description: Avatar URL.
+ *                       example: example.com/example.jpeg
  *                     token:
  *                       type: string
  *                       description: The user's access token.
  *                       example: "string"
+ *
  */
 
 //------------------ POST /users/login --------------------
@@ -205,7 +212,7 @@
  *   get:
  *     summary: Get an array of users.
  *     tags: [Users]
- *     description: Retrieve a list of users from JSONPlaceholder. Can be used to populate a list of fake users when prototyping or testing an API.
+ *     description: Returns an array of all users.
  *     responses:
  *       200:
  *         description: A list of users.
@@ -214,7 +221,59 @@
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/User'
+ *                   properties:
+ *                     id:
+ *                       type: String
+ *                       description: The user ID.
+ *                       example: fcadcac5-b894-4150-818c-7d6f0e730c59
+ *                     firstName:
+ *                       type: string
+ *                       description: The user's first name.
+ *                       example: John
+ *                     lastName:
+ *                       type: string
+ *                       description: The user's last name.
+ *                       example: Smith
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       description: The user's email.
+ *                       example: example@example.com
+ *                     avatar:
+ *                       type: string
+ *                       format: URL
+ *                       description: Avatar URL.
+ *                       example: example.com/example.jpeg
+ *                     about:
+ *                       type: string
+ *                       description: Details about te user.
+ *                       example: "I'm a student of front-end....."
+ *                     skills:
+ *                       type: [string]
+ *                       description: Array of users skills.
+ *                       example: [HTML, CSS, JavaScript, Git, GitHub]
+ *                     applications:
+ *                       type: [object]
+ *                       description: An array of application objects
+ *                       example: [application]
+ *                     offers:
+ *                       type: [object]
+ *                       description: An array of offers objects
+ *                       example: [offer]
+ *                     listings:
+ *                       type: [object]
+ *                       description: An array of listing objects
+ *                       example: [listing]
+ *                     Created:
+ *                       type: string
+ *                       format: date
+ *                       description: Date user joined.
+ *                       example: 2023-01-16T19:55:13.609Z
+ *                     Updated:
+ *                       type: string
+ *                       format: date
+ *                       description: Most recent update.
+ *                       example: 2023-01-16T19:55:13.609Z
  */
 
 //------------------ GET /users/{id} --------------------
@@ -224,14 +283,14 @@
  *   get:
  *     summary: Get a specific user.
  *     tags: [Users]
- *     description: Retrieve a single JSONPlaceholder user. Can be used to populate a user profile when prototyping or testing an API.
+ *     description: Gets a specific users info.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Numeric ID of the user to retrieve.
+ *         description: String ID of the user to retrieve.
  *         schema:
- *           type: integer
+ *           type: String
  *     responses:
  *       200:
  *         description: A single user.
@@ -244,13 +303,57 @@
  *                   type: object
  *                   properties:
  *                     id:
- *                       type: integer
+ *                       type: String
  *                       description: The user ID.
- *                       example: 0
- *                     name:
+ *                       example: fcadcac5-b894-4150-818c-7d6f0e730c59
+ *                     firstName:
  *                       type: string
- *                       description: The user's name.
- *                       example: Leanne Graham
+ *                       description: The user's first name.
+ *                       example: John
+ *                     lastName:
+ *                       type: string
+ *                       description: The user's last name.
+ *                       example: Smith
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       description: The user's email.
+ *                       example: example@example.com
+ *                     avatar:
+ *                       type: string
+ *                       format: URL
+ *                       description: Avatar URL.
+ *                       example: example.com/example.jpeg
+ *                     about:
+ *                       type: string
+ *                       description: Details about te user.
+ *                       example: "I'm a student of front-end....."
+ *                     skills:
+ *                       type: [string]
+ *                       description: Array of users skills.
+ *                       example: [HTML, CSS, JavaScript, Git, GitHub]
+ *                     applications:
+ *                       type: [object]
+ *                       description: An array of application objects
+ *                       example: [application]
+ *                     offers:
+ *                       type: [object]
+ *                       description: An array of offers objects
+ *                       example: [offer]
+ *                     listings:
+ *                       type: [object]
+ *                       description: An array of listing objects
+ *                       example: [listing]
+ *                     Created:
+ *                       type: string
+ *                       format: date
+ *                       description: Date user joined.
+ *                       example: 2023-01-16T19:55:13.609Z
+ *                     Updated:
+ *                       type: string
+ *                       format: date
+ *                       description: Most recent update.
+ *                       example: 2023-01-16T19:55:13.609Z
  */
 
 //------------------ PUT /users/{id} --------------------
@@ -260,7 +363,7 @@
  *   put:
  *     summary: Update user details.
  *     tags: [Users]
- *     description: Retrieve a single JSONPlaceholder user. Can be used to populate a user profile when prototyping or testing an API.
+ *     description: Updates users details, for password and email changes the current password is required.
  *     components:
  *       BearerAuth:
  *         type: jsonToken
@@ -270,9 +373,9 @@
  *       - in: path
  *         name: id
  *         required: true
- *         description: Numeric ID of the user to retrieve.
+ *         description: String ID of the user to retrieve.
  *         schema:
- *           type: integer
+ *           type: String
  *     responses:
  *       200:
  *         description: A single user.
@@ -285,13 +388,59 @@
  *                   type: object
  *                   properties:
  *                     id:
- *                       type: integer
+ *                       type: String
  *                       description: The user ID.
- *                       example: 0
- *                     name:
+ *                       example: fcadcac5-b894-4150-818c-7d6f0e730c59
+ *                     firstName:
  *                       type: string
- *                       description: The user's name.
- *                       example: Leanne Graham
+ *                       description: The user's first name.
+ *                       example: John
+ *                     lastName:
+ *                       type: string
+ *                       description: The user's last name.
+ *                       example: Smith
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                       description: The user's email.
+ *                       example: example@example.com
+ *                     avatar:
+ *                       type: string
+ *                       format: URL
+ *                       description: Avatar URL.
+ *                       example: example.com/example.jpeg
+ *                     about:
+ *                       type: string
+ *                       description: Details about te user.
+ *                       example: "I'm a student of front-end....."
+ *                     skills:
+ *                       type: [string]
+ *                       description: Array of users skills.
+ *                       example: [HTML, CSS, JavaScript, Git, GitHub]
+ *                     applications:
+ *                       type: [object]
+ *                       description: An array of application objects
+ *                       example: [application]
+ *                     offers:
+ *                       type: [object]
+ *                       description: An array of offers objects
+ *                       example: [offer]
+ *                     listings:
+ *                       type: [object]
+ *                       description: An array of listing objects
+ *                       example: [listing]
+ *                     Created:
+ *                       type: string
+ *                       format: date
+ *                       description: Date user joined.
+ *                       example: 2023-01-16T19:55:13.609Z
+ *                     Updated:
+ *                       type: string
+ *                       format: date
+ *                       description: Most recent update.
+ *                       example: 2023-01-16T19:55:13.609Z
+ *     security:
+ *       - bearerAuth: []
  */
 
 //------------------ DELETE /users/{id} --------------------
@@ -301,17 +450,17 @@
  *   delete:
  *     summary: delete a user.
  *     tags: [Users]
- *     description: Retrieve a single JSONPlaceholder user. Can be used to populate a user profile when prototyping or testing an API.
+ *     description: Deletes a users account and all related applications and offers. User ID must match user being deleted.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Numeric ID of the user to retrieve.
+ *         description: String ID of the user to retrieve.
  *         schema:
- *           type: integer
+ *           type: String
  *     responses:
  *       200:
- *         description: A single user.
+ *         description: Account deleted.
  *         content:
  *           application/json:
  *             schema:
@@ -320,12 +469,10 @@
  *                 data:
  *                   type: object
  *                   properties:
- *                     id:
- *                       type: integer
- *                       description: The user ID.
- *                       example: 0
- *                     name:
+ *                     message:
  *                       type: string
- *                       description: The user's name.
- *                       example: Leanne Graham
+ *                       description: Success message.
+ *                       example: Account deleted.
+ *     security:
+ *       - bearerAuth: []
  */
