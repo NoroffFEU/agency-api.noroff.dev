@@ -24,6 +24,12 @@ applicationsRouter.post("/", async (req, res) => {
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
-    res.status(400).json({ message: `${err}`, code: "400" });
+
+    const errorObject = await JSON.parse(err.message);
+    if (errorObject.status) {
+      res.status(errorObject.status).json(errorObject.message);
+    } else {
+      res.status(500).json("Internal server error.");
+    }
   }
 });
