@@ -1,6 +1,10 @@
 import request from "supertest";
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
-const baseURL = "http://localhost:3000"
+dotenv.config()
+
+const PORT = process.env.PORT;
+const baseURL = `http://localhost:${PORT}`;
 
 const testUser = {
     "firstName": "John",
