@@ -1,8 +1,11 @@
 import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
-import { decodeToken, verifyToken } from "../../../utilities/jsonWebToken.js";
+import {
+  decodeToken,
+  signToken,
+  verifyToken,
+} from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
-import { createThrownError } from "../../../utilities/errorMessages.js";
 
 /**
  * validates request body, signs jwt token and returns response object
@@ -12,19 +15,18 @@ export const handleUpdate = async function (req) {
   // Find the user to be updated
   const id = req.params.id;
   const user = await findUserById(id);
-
   //Throw 404 if user doesn't exist
   if (!user) {
-    throw createThrownError(404, `User not found`);
+    return Promise.resolve({ status: 401, message: "User not found" });
   }
   //Make sure user has token and removes Bearer if need be
   const token = req.headers.authorization;
   var readyToken = token;
   if (!token) {
-    throw createThrownError(
-      401,
-      `User has to be authenticated to make this request`
-    );
+    return Promise.resolve({
+      status: 401,
+      message: "User has to be authenticated to make this request",
+    });
   } else if (token.includes("Bearer")) {
     readyToken = token.slice(7);
   }
@@ -34,12 +36,15 @@ export const handleUpdate = async function (req) {
       var verified = verifyToken(readyToken);
       var tokenUser = decodeToken(readyToken);
     } catch (error) {
-      throw createThrownError(401, `Auth token not valid.`);
+      return Promise.resolve({ status: 401, message: "Auth token not valid." });
     }
   }
   //Throw 401 error if user isn't the correct user
   if (verified.userId != id || tokenUser.userId != id) {
-    throw createThrownError(401, `User does not match user to be edited`);
+    return Promise.resolve({
+      status: 401,
+      message: "User does not match user to be edited",
+    });
   } else {
     // removes id from body stopping user from updating it
     let idMsg = "User details updated successfully.";
@@ -49,14 +54,45 @@ export const handleUpdate = async function (req) {
     }
 
     // Handles password changes
-    if ("password" in req.body == true) {
-      if ((await verifyPassword(user, req.body.oldpassword)) == true) {
-        delete req.body.oldpassword;
-        const hash = await generateHash(req.body.password);
-        req.body.password = hash;
+    if (
+      "password" in req.body == true &&
+      req.body.currentpassword != undefined
+    ) {
+      if (req.body.password.length >= 5 && req.body.password.length <= 20) {
+        if ((await verifyPassword(user, req.body.currentpassword)) == true) {
+          delete req.body.currentpassword;
+          const hash = await generateHash(req.body.password);
+          req.body.password = hash;
+        } else {
+          return Promise.resolve({
+            status: 401,
+            message: "Incorrect Password",
+          });
+        }
       } else {
-        throw createThrownError(401, `Incorrect Password`);
+        return Promise.resolve({
+          status: 401,
+          message:
+            "Password does not meet required parameters length: min 5, max 20",
+        });
       }
+    } else if (
+      "password" in req.body == true &&
+      req.body.currentpassword == undefined
+    ) {
+      return Promise.resolve({
+        status: 401,
+        message: "No current password provided",
+      });
+    }
+
+    // Email update request meets email parameters
+    const emailReg = /^\S+@\S+\.\S+$/;
+    if ("email" in req.body == true && emailReg.test(req.body.email) == false) {
+      return Promise.resolve({
+        status: 403,
+        message: "Email provided does not meet email format requirements",
+      });
     }
 
     // Updates the user
@@ -71,19 +107,23 @@ export const handleUpdate = async function (req) {
       if (!error.status) {
         // Checks for database related errors
         if (error.meta != undefined) {
-          throw createThrownError(
-            409,
-            `The unique input ${error.meta.target[0]} already exists for another user`
-          );
+          return Promise.resolve({
+            status: 409,
+            message:
+              "The unique input ${error.meta.target[0]} already exists for another user",
+          });
         } else {
-          throw createThrownError(
-            400,
-            `An argument or input value does not exist or cannot be edited in the database ${error.message}`
-          );
+          return Promise.resolve({
+            status: 400,
+            message: `An argument or input value does not exist or cannot be edited in the database ${error.message}`,
+          });
         }
       } else {
         if (error.status) {
-          throw createThrownError(error.status, error.message);
+          return Promise.resolve({
+            status: error.status,
+            message: error.message,
+          });
         }
       }
     }
