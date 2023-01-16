@@ -1,5 +1,4 @@
 import request from "supertest";
-import { verifyPassword } from "../../utilities/password";
 
 const baseURL = "http://localhost:3000"
 
