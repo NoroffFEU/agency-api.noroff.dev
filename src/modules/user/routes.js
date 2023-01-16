@@ -72,7 +72,7 @@ usersRouter.put("/:id", async (req, res) => {
     const data = await handleUpdate(req);
     res.status(200).json(data);
   } catch (error) {
-    res.status(error.status).json(error.message);
+    res.json(error.message);
   }
 });
 
