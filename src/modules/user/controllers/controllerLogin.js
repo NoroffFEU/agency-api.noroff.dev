@@ -28,7 +28,7 @@ export const handleLogin = async function (req) {
   return {
     status: 200,
     data: {
-      userId: profile.id,
+      id: profile.id,
       firstName: profile.firstName,
       lastName: profile.lastName,
       email: profile.email,
