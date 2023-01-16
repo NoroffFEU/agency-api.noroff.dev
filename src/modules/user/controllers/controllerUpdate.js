@@ -1,10 +1,6 @@
 import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
-import {
-  decodeToken,
-  signToken,
-  verifyToken,
-} from "../../../utilities/jsonWebToken.js";
+import { decodeToken, verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 
 /**
@@ -102,6 +98,8 @@ export const handleUpdate = async function (req) {
         data: req.body,
       });
       result.response = idMsg;
+      delete result.password;
+      delete result.salt;
       return result;
     } catch (error) {
       if (!error.status) {
