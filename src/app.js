@@ -17,9 +17,13 @@ app.use(
 );
 
 //stops html response on unexpected json token
-const jsonErrorHandler = function (err, req, res, next) {
+const jsonErrorHandler = function (error, req, res, next) {
   res.setHeader("Content-Type", "application/json");
-  res.status(500).send(JSON.stringify(err));
+  res
+    .status(error.status)
+    .send(
+      JSON.stringify({ ...error, message: "Bad request, json parse failed." })
+    );
 };
 app.use(jsonErrorHandler);
 
