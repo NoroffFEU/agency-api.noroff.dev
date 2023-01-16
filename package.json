@@ -50,7 +50,8 @@
     "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.2",
-    "prisma": "^4.8.1"
+    "prisma": "^4.8.1",
+    "supertest": "^6.3.3"
   },
   "lint-staged": {
     "*.js": [
