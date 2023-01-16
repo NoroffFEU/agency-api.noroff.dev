@@ -58,7 +58,7 @@ export const handleUpdate = async function (req) {
   }
 
   // if user is a applicant or client don't allow an update of role
-  if (user.role == "Applicant" || user.role == "Client") {
+  if ("role" in req.body == true && user.role == "Admin") {
     delete req.body.role;
     idMsg +=
       " Argument role was found in request body and was removed as user doesn't have authority to update this.";
