@@ -1,12 +1,7 @@
-import { generateHash } from "../../../utilities/password.js";
+import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
-import {
-  decodeToken,
-  signToken,
-  verifyToken,
-} from "../../../utilities/jsonWebToken.js";
+import { decodeToken, verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
-import { createThrownError } from "../../../utilities/errorMessages.js";
 
 /**
  * validates request body, signs jwt token and returns response object
@@ -16,20 +11,18 @@ export const handleUpdate = async function (req) {
   // Find the user to be updated
   const id = req.params.id;
   const user = await findUserById(id);
-  const jwt = signToken(user);
-  console.log(jwt);
   //Throw 404 if user doesn't exist
   if (!user) {
-    throw createThrownError(404, `User not found`);
+    return Promise.resolve({ status: 401, message: "User not found" });
   }
   //Make sure user has token and removes Bearer if need be
   const token = req.headers.authorization;
   var readyToken = token;
   if (!token) {
-    throw createThrownError(
-      401,
-      `User has to be authenticated to make this request`
-    );
+    return Promise.resolve({
+      status: 401,
+      message: "User has to be authenticated to make this request",
+    });
   } else if (token.includes("Bearer")) {
     readyToken = token.slice(7);
   }
@@ -39,54 +32,108 @@ export const handleUpdate = async function (req) {
       var verified = verifyToken(readyToken);
       var tokenUser = decodeToken(readyToken);
     } catch (error) {
-      throw createThrownError(401, `Auth token not valid.`);
+      return Promise.resolve({ status: 401, message: "Auth token not valid." });
     }
   }
   //Throw 401 error if user isn't the correct user
-  if (verified.userId != id || tokenUser.userId != id) {
-    throw createThrownError(401, `User does not match user to be edited`);
-  } else {
-    try {
-      // removes id from body stopping user from updating it
-      let idMsg = "User details updated successfully.";
-      if ("id" in req.body == true) {
-        delete req.body.id;
-        idMsg = "An ID was found in the body and was removed pre update.";
-      }
-      let newPass;
-      console.log(req.body);
-      if ("password" in req.body == true) {
-        newPass = req.body.password;
-        const hash = await generateHash(newPass);
-        console.log(hash);
-        req.body.password = hash;
-      }
-      console.log(req.body);
-      // Updates the user
-      const result = await databasePrisma.user.update({
-        where: { id },
-        data: req.body,
+  if (user.role != "Admin") {
+    if (verified.userId != id || tokenUser.userId != id) {
+      return Promise.resolve({
+        status: 401,
+        message: "User does not match user to be edited",
       });
-      result.response = idMsg;
-      return result;
-    } catch (error) {
-      if (!error.status) {
-        // Checks for database related errors
-        if (error.meta != undefined) {
-          throw createThrownError(
-            409,
-            `The unique input ${error.meta.target[0]} already exists for another user`
-          );
-        } else {
-          throw createThrownError(
-            400,
-            `An argument or input value does not exist or cannot be edited in the database ${error.message}`
-          );
-        }
+    }
+  }
+  // removes id from body stopping user from updating it
+  let idMsg = "User details updated successfully.";
+  if ("id" in req.body == true) {
+    delete req.body.id;
+    idMsg += " Argument id was found in request body and was removed.";
+  }
+
+  // removes createdAt from body to stop user created date being edited
+  if ("createdAt" in req.body == true) {
+    delete req.body.createdAt;
+    idMsg += " Argument createdAt was found in request body and was removed.";
+  }
+
+  // if user is a applicant or client don't allow an update of role
+  if ("role" in req.body == true && user.role == "Admin") {
+    delete req.body.role;
+    idMsg +=
+      " Argument role was found in request body and was removed as user doesn't have authority to update this.";
+  }
+
+  // Handles password changes
+  if ("password" in req.body == true && req.body.currentpassword != undefined) {
+    if (req.body.password.length >= 5 && req.body.password.length <= 20) {
+      if ((await verifyPassword(user, req.body.currentpassword)) == true) {
+        delete req.body.currentpassword;
+        const hash = await generateHash(req.body.password);
+        req.body.password = hash;
       } else {
-        if (error.status) {
-          throw createThrownError(error.status, error.message);
-        }
+        return Promise.resolve({
+          status: 401,
+          message: "Incorrect Password",
+        });
+      }
+    } else {
+      return Promise.resolve({
+        status: 401,
+        message:
+          "Password does not meet required parameters length: min 5, max 20",
+      });
+    }
+  } else if (
+    "password" in req.body == true &&
+    req.body.currentpassword == undefined
+  ) {
+    return Promise.resolve({
+      status: 401,
+      message: "No current password provided",
+    });
+  }
+
+  // Email update request meets email parameters
+  const emailReg = /^\S+@\S+\.\S+$/;
+  if ("email" in req.body == true && emailReg.test(req.body.email) == false) {
+    return Promise.resolve({
+      status: 403,
+      message: "Email provided does not meet email format requirements",
+    });
+  }
+
+  // Updates the user
+  try {
+    const result = await databasePrisma.user.update({
+      where: { id },
+      data: req.body,
+    });
+    result.response = idMsg;
+    delete result.password;
+    delete result.salt;
+    return result;
+  } catch (error) {
+    if (!error.status) {
+      // Checks for database related errors
+      if (error.meta != undefined) {
+        return Promise.resolve({
+          status: 409,
+          message:
+            "The unique input ${error.meta.target[0]} already exists for another user",
+        });
+      } else {
+        return Promise.resolve({
+          status: 400,
+          message: `An argument or input value does not exist or cannot be edited in the database ${error.message}`,
+        });
+      }
+    } else {
+      if (error.status) {
+        return Promise.resolve({
+          status: error.status,
+          message: error.message,
+        });
       }
     }
   }
