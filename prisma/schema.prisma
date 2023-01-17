@@ -45,11 +45,15 @@ model Offer {
   listing       Listing     @relation(fields: [listingId], references: [id])
   application   Application @relation(fields: [applicantId], references: [id])
   applicationId String
+  company       Company     @relation(fields: [companyId], references: [id])
+  companyId     String
   user          User        @relation(fields: [userId], references: [id])
   userId        String
   applicantId   String
   applicant     UserRole
   state         OfferState
+  created       DateTime      @default(now())
+  updated       DateTime      @updatedAt
 }
 
 enum OfferState {
