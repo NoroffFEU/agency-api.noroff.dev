@@ -34,6 +34,7 @@ export const handleLogin = async function (req) {
       email: profile.email,
       avatar: profile.avatar,
       token: token,
+      role: profile.role,
     },
   };
 };
