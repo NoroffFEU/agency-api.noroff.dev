@@ -8,7 +8,7 @@ offersRouter.get("/", async (req, res) => {
   res.send("This is the offers request");
 });
 
-offersRouter.post("/offers/create", async (req, res) => {
+offersRouter.post("/", async (req, res) => {
   try {
     const {
       listingId,
