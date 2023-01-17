@@ -4,7 +4,7 @@ import { databasePrisma } from "../../prismaClient";
 
 export const putOffers = express.Router();
 
-putOffers.put("/offer/:id", async (req, res) => {
+putOffers.put("/:id", async (req, res) => {
   const { id } = req.params;
 
   const {
