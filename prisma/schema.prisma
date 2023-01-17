@@ -23,6 +23,7 @@ model User {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   role         UserRole      @default(Applicant)
+  skills       String[]      @default([])
   applications Application[]
   offers       Offer[]
   listings     Listing[]
