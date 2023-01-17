@@ -37,14 +37,8 @@ export const handleRegister = async function (req) {
   });
   const { id } = result;
   result["token"] = signToken({ id, email });
-  [
-    "title",
-    "password",
-    "salt",
-    "about",
-    "createdAt",
-    "updatedAt",
-    "role",
-  ].forEach((field) => delete result[field]);
+  ["title", "password", "salt", "about", "createdAt", "updatedAt"].forEach(
+    (field) => delete result[field]
+  );
   return result;
 };
