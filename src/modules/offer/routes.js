@@ -36,3 +36,21 @@ offersRouter.post("/", async (req, res) => {
     res.status(400);
   }
 });
+
+/*
+offersRouter.post("/", async (req, res) => {
+  await createOffer(databasePrisma, req, res);
+});
+
+offersRouter.get("/:id", async (req, res) => {
+  await readOffer(databasePrisma, req, res);
+});
+
+offersRouter.put("/:id", async (req, res) => {
+  await updateOffer(databasePrisma, req, res);
+});
+
+offersRouter.delete("/:id", async (req, res) => {
+  await removeOffer(databasePrisma, req, res);
+});
+*/
