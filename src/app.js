@@ -5,10 +5,43 @@ import { listingsRouter } from "./modules/listing/routes.js";
 import { offersRouter } from "./modules/offer/routes.js";
 import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
+import swaggerUI from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
+
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+
+// options for swagger jsdocs
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Noroff Agency API",
+      version: "0.0.1",
+      description:
+        "An Express and Prisma rest API to server a Noroff students and industry partners in finding jobs and placements.",
+      license: {
+        name: "Licensed Under MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "apiKey",
+          name: "Authorization",
+          scheme: "bearer",
+          in: "header",
+        },
+      },
+    },
+  },
+  apis: ["./src/modules/**/*.js"],
+};
+const specs = swaggerJsDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(
   bodyParser.json({
