@@ -105,6 +105,7 @@ listingsRouter.put("/:id", async (req, res) => {
       data: {
         listings,
       },
+      message: `Listing updated successfully`,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

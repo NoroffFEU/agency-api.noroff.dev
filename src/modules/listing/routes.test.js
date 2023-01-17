@@ -48,16 +48,21 @@ describe("GET /listings/:id", () => {
 });
 
 describe("PUT /listings/:id", () => {
-  it("should return 200 and a message", async () => {
-    const { id } = listingTest;
-    const data = { title: "Updated Title" };
+  it("should return 200 and a successful updated message", async () => {
+    const id = listingTest.id;
+    const data = {
+      title: "Test Listing 2",
+      description: "This is a test listing 2",
+      deadline: "2024-11-30T20:57:00.000Z",
+    };
     const response = await request(server).put(`${baseURL}/${id}`).send(data);
     expect(response.status).toBe(200);
+    expect(response.body.message).toEqual("Listing updated successfully");
   });
 });
 
 describe("DELETE /listings/:id", () => {
-  it("should return 200 and a message", async () => {
+  it("should return 200 and a successful delete message", async () => {
     const id = listingTest.id;
     console.log(id);
     const response = await request(server).delete(`${baseURL}/${id}`);
@@ -66,12 +71,13 @@ describe("DELETE /listings/:id", () => {
   });
 });
 
-describe("PUT /listings", () => {
-  it("should return 400 and a message", async () => {
-    const id = listingTest;
-    const response = await request(server)
-      .put(`${baseURL}/${id}`)
-      .send({ deadline: "2020-11-30T20:57:00.000Z" });
+describe("PUT /listings/:id deadline", () => {
+  it("should return 400 and an error message on deadline", async () => {
+    const id = listingTest.id;
+    const data = {
+      deadline: "2020-11-30T20:57:00.000Z",
+    };
+    const response = await request(server).put(`${baseURL}/${id}`).send(data);
     expect(response.status).toBe(400);
     expect(response.body.message).toEqual("deadline must be a future date");
   });
