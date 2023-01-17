@@ -1,9 +1,10 @@
+import { OfferState } from "@prisma/client";
 import express from "express";
 import { databasePrisma } from "../../prismaClient";
 
 export const putOffers = express.Router();
 
-putOffers.put("/:id", async (req, res) => {
+putOffers.put("/offer/:id", async (req, res) => {
   const { id } = req.params;
 
   const {
@@ -20,6 +21,7 @@ putOffers.put("/:id", async (req, res) => {
     const updateOffer = await databasePrisma.offer.update({
       where: {
         id: id,
+        state: OfferState.Pending,
       },
       data: {
         id: id,
