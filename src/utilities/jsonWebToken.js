@@ -24,7 +24,7 @@ export function verifyToken(token) {
  */
 export function signToken({ id, email }) {
   const token = sign({ userId: id, email: email }, process.env.SECRETSAUCE, {
-    expiresIn: "1h",
+    expiresIn: "24h",
   });
   return token;
 }
