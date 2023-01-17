@@ -83,7 +83,9 @@ listingsRouter.put("/:id", async (req, res) => {
   const newDeadline = new Date(deadline).getTime();
   const valid = now < newDeadline;
 
-  if (deadline !== undefined && !valid) {
+  if (!deadline) {
+    res.status(400).json({ message: "deadline is required" });
+  } else if (deadline !== undefined && !valid) {
     res.status(400).json({
       message: "deadline must be a future date",
     });
@@ -105,14 +107,13 @@ listingsRouter.put("/:id", async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500);
-    // throw new Error(error, "An error occured in listingsRouter.put()");
+    res.status(500).json({ message: error.message });
+    throw new Error(error, "An error occurred in listingsRouter.put()");
   }
 });
 
 // DELETE /listings/:id
-listingsRouter.delete("/:id", async (req, res) => {
+listingsRouter.delete("/:id", getListing, async (req, res) => {
   try {
     await databasePrisma.listing.delete({
       where: {
@@ -142,7 +143,6 @@ async function getListing(req, res, next) {
     });
     next();
     if (listing == null) {
-      // return res.status(404).json({ message: `Listing with id: ${req.params.id} doesn't exist.` });
       return res.status(404).json({ message: `Listing with id: ${req.params.id} doesn't exist.` });
     }
   } catch (err) {

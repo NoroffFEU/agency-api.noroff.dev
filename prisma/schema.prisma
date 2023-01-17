@@ -67,8 +67,8 @@ model Listing {
   deadline     DateTime
   created      DateTime      @default(now())
   updated      DateTime      @updatedAt
-  Applications Application[]
-  Offer        Offer[]
+  applications Application[]
+  offer        Offer[]
   author       User          @relation(fields: [authorId], references: [id])
   authorId     String
 }

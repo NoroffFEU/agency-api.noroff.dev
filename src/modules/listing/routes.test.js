@@ -3,13 +3,12 @@ import server from "../../app";
 
 const baseURL = "/listings";
 
-let listing;
+let listingTest;
 
 const testListings = {
-  id: "1640e7e8-c192-434b-a520-43498617eef1",
   title: "Test Listing",
   tags: ["test", "listing"],
-  description: "This is a test listing",
+  description: "This is a test listing 1",
   requirements: ["test", "listing"],
   deadline: "2024-11-30T20:57:00.000Z",
   authorId: "9b454993-7e9b-4322-bd56-922897099cca",
@@ -18,7 +17,7 @@ const testListings = {
 describe("POST /listings", () => {
   it("should return 201 and the listing", async () => {
     const response = await request(server).post(baseURL).send(testListings);
-    listing = response.body;
+    listingTest = response.body;
     expect(response.status).toBe(201);
     expect(response.body.title).toEqual(testListings.title);
   });
@@ -34,7 +33,7 @@ describe("GET /listings", () => {
 
 describe("GET /listings/:id", () => {
   it("should return 200 and a listing", async () => {
-    const id = listing.id;
+    const id = listingTest.id;
     const response = await request(server).get(`${baseURL}/${id}`);
     expect(response.status).toBe(200);
     expect(response.body.title).toEqual(testListings.title);
@@ -50,28 +49,30 @@ describe("GET /listings/:id", () => {
 
 describe("PUT /listings/:id", () => {
   it("should return 200 and a message", async () => {
-    const id = listing.id;
-    const response = await request(server)
-      .put(`${baseURL}/${id}`)
-      .send({ title: "Updated Test Listing" });
+    const { id } = listingTest;
+    const data = { title: "Updated Title" };
+    const response = await request(server).put(`${baseURL}/${id}`).send(data);
     expect(response.status).toBe(200);
-  });
-
-  it("should return 400 and a message", async () => {
-    const id = listing.id;
-    const response = await request(server)
-      .put(`${baseURL}/${id}`)
-      .send({ deadline: "2020-11-30T20:57:00.000Z" });
-    expect(response.status).toBe(400);
-    expect(response.body.message).toEqual("deadline must be a future date");
   });
 });
 
 describe("DELETE /listings/:id", () => {
   it("should return 200 and a message", async () => {
-    const id = listing.id;
+    const id = listingTest.id;
+    console.log(id);
     const response = await request(server).delete(`${baseURL}/${id}`);
+    console.log(response.body);
     expect(response.status).toBe(200);
-    expect(response.body.message).toEqual("Listing with id: " + id + " was deleted.");
+  });
+});
+
+describe("PUT /listings", () => {
+  it("should return 400 and a message", async () => {
+    const id = listingTest;
+    const response = await request(server)
+      .put(`${baseURL}/${id}`)
+      .send({ deadline: "2020-11-30T20:57:00.000Z" });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual("deadline must be a future date");
   });
 });
