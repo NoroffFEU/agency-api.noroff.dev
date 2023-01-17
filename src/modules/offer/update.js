@@ -1,4 +1,3 @@
-import { OfferState, prisma } from "@prisma/client";
 import express from "express";
 import { databasePrisma } from "../../prismaClient";
 
@@ -18,7 +17,7 @@ putOffers.put("/:id", async (req, res) => {
   } = req.body;
 
   try {
-    const updateOffer = await prisma.offer.update({
+    const updateOffer = await databasePrisma.offer.update({
       where: {
         id: id,
       },
