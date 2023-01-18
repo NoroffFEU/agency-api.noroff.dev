@@ -13,8 +13,18 @@ const testUser = {
     "password": "strongPassword"
 }
 
+const secondTestUser = {
+    "firstName": "Kari",
+    "lastName": "Nordmann",
+    "email": "kari@email.com",
+    "password": "olaolaolaola"
+}
+
 let createdUser;
+let secondCreatedUser;
+
 let loggedInUser;
+let secondLoggedInUser;
 
 
 describe("POST /users", () => {
@@ -73,9 +83,30 @@ describe("PUT /users/:id", () => {
 })
 
 describe("DELETE /users/:id", () => {
-    it("should return 200", async () => {
+    beforeAll(async () => {
+        //Creating and login in a second user in order to mix properly created tokens
+        const createUser = await request(baseURL).post("/users").send(secondTestUser);
+        const loginUser = await request(baseURL).post("/users/login").send({ "email": secondTestUser.email, "password": secondTestUser.password });
+
+        secondCreatedUser = createUser.body;
+        secondLoggedInUser = loginUser.body;
+    })
+
+    it("should return status 200", async () => {
         const { id } = createdUser;
-        const response = await request(baseURL).delete(`/users/${id}`);
+        const response = await request(baseURL).delete(`/users/${id}`).set('Authorization', `Bearer ${loggedInUser.token}`);
         expect(response.statusCode).toBe(200);
+    })
+    it("should return a status 401 when provided with an other users token", async () =>{
+        const { id } = secondCreatedUser;
+        const response = await request(baseURL).delete(`/users/${id}`).set('Authorization', `Bearer ${loggedInUser.token}`);
+        expect(secondLoggedInUser.token).not.toEqual(loggedInUser.token);
+        expect(response.statusCode).toEqual(401);
+    })
+
+    it("should return a status 401 when not provided with a token", async () =>{
+        const { id } = secondCreatedUser;
+        const response = await request(baseURL).delete(`/users/${id}`);
+        expect(response.statusCode).toEqual(401);
     })
 })
