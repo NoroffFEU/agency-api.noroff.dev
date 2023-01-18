@@ -16,11 +16,16 @@ model User {
   firstName    String
   lastName     String
   password     String
-  salt         String
+  avatar       String?
+  profile      String?
+  skills       String[]
   role         UserRole      @default(Applicant)
   applications Application[]
   offers       Offer[]
-  listings     Listing[]
+  company      Company       @relation(fields: [companyId], references: [id])
+  companyId    String
+  created      DateTime      @default(now())
+  updated      DateTime      @updatedAt
 }
 
 enum UserRole {
@@ -29,14 +34,32 @@ enum UserRole {
   Admin
 }
 
+model Company {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  admin        User[]
+  sector       String?
+  logo         String?
+  phone        String
+  applications Application[]
+  offers       Offer[]
+  listings     Listing[]
+  created      DateTime      @default(now())
+  updated      DateTime      @updatedAt
+}
+
 model Application {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
+  applicant   User     @relation(fields: [applicantId], references: [id])
   applicantId String
-  applicate   User    @relation(fields: [userId], references: [id])
-  userId      String
-  Offers      Offer[]
-  listing     Listing @relation(fields: [listingId], references: [id])
+  company     Company  @relation(fields: [companyId], references: [id])
+  companyId   String
+  offers      Offer[]
+  listing     Listing  @relation(fields: [listingId], references: [id])
   listingId   String
+  coverLetter String
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
 }
 
 model Offer {
@@ -45,11 +68,15 @@ model Offer {
   listing       Listing     @relation(fields: [listingId], references: [id])
   application   Application @relation(fields: [applicantId], references: [id])
   applicationId String
+  company       Company     @relation(fields: [companyId], references: [id])
+  companyId     String
   user          User        @relation(fields: [userId], references: [id])
   userId        String
   applicantId   String
   applicant     UserRole
   state         OfferState
+  created       DateTime    @default(now())
+  updated       DateTime    @updatedAt
 }
 
 enum OfferState {
@@ -66,11 +93,11 @@ model Listing {
   requirements String[]
   deadline     DateTime
   created      DateTime      @default(now())
-  updated      DateTime
-  Applications Application[]
-  Offer        Offer[]
-  author       User          @relation(fields: [authorId], references: [id])
-  authorId     String
+  updated      DateTime      @updatedAt
+  applications Application[]
+  offer        Offer[]
+  company      Company       @relation(fields: [companyId], references: [id])
+  companyId    String
 }
 
 enum ListingState {
