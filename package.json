@@ -14,7 +14,7 @@
     "lint-fix": "eslint src/**/*.js --cache --fix",
     "prepare": "husky install",
     "test": "npm run test-unit",
-    "test-unit": "jest"
+    "test-unit": "jest --coverage --verbose --forceExit"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,8 @@
     "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.2",
-    "prisma": "^4.8.1"
+    "prisma": "^4.8.1",
+    "supertest": "^6.3.3"
   },
   "lint-staged": {
     "*.js": [
