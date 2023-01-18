@@ -99,8 +99,6 @@ model Listing {
   offer        Offer[]
   company      Company       @relation(fields: [companyId], references: [id])
   companyId    String
-  created       DateTime      @default(now())
-  updated       DateTime      @updatedAt
 }
 
 enum ListingState {
