@@ -7,15 +7,47 @@ export const listingsRouter = express.Router();
 // GET /listings
 listingsRouter
   .get("/", async (req, res) => {
+    const isActive = JSON.stringify(req.query.isActive);
+
     try {
       // Get listings from database
+
+      if (isActive) {
+        if (JSON.parse(isActive) === "true") {
+          console.log("it's true");
+          const listings = await databasePrisma.listing.findMany({
+            where: {
+              listingsState: "Active",
+            },
+          });
+          console.log(listings);
+          res.status(200).json(listings);
+        } else if (JSON.parse(isActive) === "false") {
+          console.log("it's false");
+          const listings = await databasePrisma.listing.findMany({
+            where: {
+              listingsState: "Ended",
+            },
+          });
+          console.log(listings);
+          res.status(200).json(listings);
+        } else {
+          console.log("invalid query");
+        }
+      }
+
       const listings = await databasePrisma.listing.findMany();
+      // listings.map((item) => {
+      //   console.log(item.listingsState);
+      // });
 
       // Show the listings in browser
       res.status(200).json(listings);
     } catch (error) {
       // Show error message in browser
-      res.status(500).json({ message: `internal server error`, statusCode: "500" });
+      res
+        .status(500)
+        .json({ message: `internal server error`, statusCode: "500" });
     }
   })
   .get("/:id", async (req, res, next) => {
@@ -32,28 +64,40 @@ listingsRouter
       // Check to see if array is empty
       if (uniqueListing === null) {
         // res.status(404).json({ message: `There are no listings with an id of '${urlID}'` });
-        return res
-          .status(404)
-          .json({ message: `Listing with id: ${req.params.id} doesn't exist.` });
+        return res.status(404).json({
+          message: `Listing with id: ${req.params.id} doesn't exist.`,
+        });
       }
 
       res.status(200).json(uniqueListing);
     } catch (error) {
-      res.status(500).json({ message: `internal server error`, statusCode: "500" });
+      res
+        .status(500)
+        .json({ message: `internal server error`, statusCode: "500" });
     }
   });
 
 // POST /listings
 listingsRouter.post("/", async (req, res) => {
   try {
-    const { title, tags, description, requirements, deadline, authorId } = req.body;
+    const { title, tags, description, requirements, deadline, authorId } =
+      req.body;
 
     const now = new Date().getTime();
     const valid = now < new Date(deadline).getTime();
 
     if (!valid) {
-      res.status(400).json({ message: "Deadline must be greater than todays date" });
-    } else if (title && tags && description && requirements && deadline && authorId) {
+      res
+        .status(400)
+        .json({ message: "Deadline must be greater than todays date" });
+    } else if (
+      title &&
+      tags &&
+      description &&
+      requirements &&
+      deadline &&
+      authorId
+    ) {
       const result = await databasePrisma.listing.create({
         data: {
           title: title,
@@ -77,7 +121,7 @@ listingsRouter.post("/", async (req, res) => {
 // PUT /listings/:id
 listingsRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { deadline } = req.body;
+  const { deadline, editId } = req.body;
 
   const now = new Date().getTime();
   const newDeadline = new Date(deadline).getTime();
@@ -90,6 +134,7 @@ listingsRouter.put("/:id", async (req, res) => {
       message: "deadline must be a future date",
     });
   }
+
   try {
     const listings = await databasePrisma.listing.update({
       where: {
@@ -100,12 +145,17 @@ listingsRouter.put("/:id", async (req, res) => {
         ...req.body,
       },
     });
-
-    res.status(200).json({
-      data: {
-        listings,
-      },
-    });
+    if (editId === listings.authorId) {
+      res.status(200).json({
+        data: {
+          listings,
+        },
+      });
+    } else {
+      res.status(400).json({
+        message: "you can not edit other users listings",
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
     throw new Error(error, "An error occurred in listingsRouter.put()");
@@ -120,7 +170,9 @@ listingsRouter.delete("/:id", getListing, async (req, res) => {
         id: req.params.id,
       },
     });
-    res.status(200).json({ message: `Listing with id: ${req.params.id} was deleted.` });
+    res
+      .status(200)
+      .json({ message: `Listing with id: ${req.params.id} was deleted.` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -143,7 +195,9 @@ async function getListing(req, res, next) {
     });
     next();
     if (listing == null) {
-      return res.status(404).json({ message: `Listing with id: ${req.params.id} doesn't exist.` });
+      return res
+        .status(404)
+        .json({ message: `Listing with id: ${req.params.id} doesn't exist.` });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });

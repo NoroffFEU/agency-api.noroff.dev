@@ -54,6 +54,8 @@ CREATE TABLE "Listing" (
     "created" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated" TIMESTAMP(3) NOT NULL,
     "authorId" TEXT NOT NULL,
+    "editId" TEXT,
+    "listingsState" "ListingState" NOT NULL DEFAULT 'Active',
 
     CONSTRAINT "Listing_pkey" PRIMARY KEY ("id")
 );
