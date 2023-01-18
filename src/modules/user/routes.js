@@ -122,7 +122,7 @@ usersRouter.put("/:id", async (req, res) => {
 usersRouter.delete("/:id", async (req, res) => {
   try {
     const data = await handleDelete(req);
-    res.json(data);
+    res.status(200).json(data);
   } catch (error) {
     res.json(error.message);
   }
