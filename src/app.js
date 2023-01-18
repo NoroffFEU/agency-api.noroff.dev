@@ -7,7 +7,7 @@ import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 dotenv.config();
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT;
 
 app.use(
@@ -21,4 +21,6 @@ app.use("/applications", applicationsRouter);
 app.use("/listings", listingsRouter);
 app.use("/offers", offersRouter);
 
-const server = app.listen(PORT, () => console.log(`🚀 Server ready at: http://localhost:${PORT}`));
+const server = app.listen(PORT, () =>
+  console.log(`🚀 Server ready at: http://localhost:${PORT}`)
+);
