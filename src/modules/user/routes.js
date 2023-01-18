@@ -4,11 +4,11 @@ import { generateHash } from "../../utilities/password.js";
 import { handleLogin } from "./controllers/controllerLogin.js";
 import { createThrownError } from "../../utilities/errorMessages.js";
 import { handleUpdate } from "./controllers/controllerUpdate.js";
+import { handleDelete, errorStatus } from "./controllers/controllerDelete.js";
 import validator from "express-validator";
 const { body, validationResult } = validator;
 import { signToken } from "../../utilities/jsonWebToken.js";
 import { handleRegister } from "./controllers/controllerRegister.js";
-
 
 export const usersRouter = express.Router();
 
@@ -75,7 +75,7 @@ usersRouter.get("/", async (req, res) => {
 
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ ...error, message: "Internal server error" })
+    res.status(500).json({ ...error, message: "Internal server error" });
   }
 });
 
@@ -121,18 +121,9 @@ usersRouter.put("/:id", async (req, res) => {
 // DELETE /users/:id
 usersRouter.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const deletedUser = await databasePrisma.user.delete({
-      where: {
-        id,
-      },
-    });
-
-    res.status(200).json(deletedUser);
+    const data = await handleDelete(req);
+    res.status(errorStatus).json(data);
   } catch (error) {
-    res.status(400).json({
-      message: `${error}`,
-    });
+    res.json(error.message);
   }
 });
