@@ -35,8 +35,10 @@ export const handleUpdate = async function (req) {
       return Promise.resolve({ status: 401, message: "Auth token not valid." });
     }
   }
+
   //Throw 401 error if user isn't the correct user
-  if (user.role != "Admin") {
+  const accessUser = await findUserById(tokenUser.userId);
+  if (accessUser.role != "Admin") {
     if (verified.userId != id || tokenUser.userId != id) {
       return Promise.resolve({
         status: 401,
