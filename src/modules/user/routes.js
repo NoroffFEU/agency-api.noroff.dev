@@ -1,13 +1,11 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
-import { generateHash } from "../../utilities/password.js";
 import { handleLogin } from "./controllers/controllerLogin.js";
-import { createThrownError } from "../../utilities/errorMessages.js";
 import { handleUpdate } from "./controllers/controllerUpdate.js";
-import { handleDelete, errorStatus } from "./controllers/controllerDelete.js";
+import { handleDelete } from "./controllers/controllerDelete.js";
 import validator from "express-validator";
 const { body, validationResult } = validator;
-import { signToken, verifyToken } from "../../utilities/jsonWebToken.js";
+import { verifyToken } from "../../utilities/jsonWebToken.js";
 import { handleRegister } from "./controllers/controllerRegister.js";
 
 export const usersRouter = express.Router();
@@ -132,8 +130,8 @@ usersRouter.put("/:id", async (req, res) => {
 // DELETE /users/:id
 usersRouter.delete("/:id", async (req, res) => {
   try {
-    const data = await handleDelete(req);
-    res.status(errorStatus).json(data);
+    const { status, data } = await handleDelete(req);
+    res.status(status).json(data);
   } catch (error) {
     console.log(error);
     res.status(500).json({ ...error, message: "Internal server error" });

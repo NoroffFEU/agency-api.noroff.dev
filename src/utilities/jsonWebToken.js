@@ -4,7 +4,7 @@ const { sign, decode, verify } = jsonwebtoken;
 import { findUserById } from "./findUser.js";
 
 /**
- * Takes a token and verifies it, as well as verify user still exists
+ * Takes a token and verifies it, as well as verify user still exists returns false or user data
  * @param {String} token
  * @returns {promise<Boolean||Object>}
  */
