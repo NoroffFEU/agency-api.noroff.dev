@@ -4,7 +4,7 @@ import { generateHash } from "../../utilities/password.js";
 import { handleLogin } from "./controllers/controllerLogin.js";
 import { createThrownError } from "../../utilities/errorMessages.js";
 import { handleUpdate } from "./controllers/controllerUpdate.js";
-import { handleDelete } from "./controllers/controllerDelete.js";
+import { handleDelete, errorStatus } from "./controllers/controllerDelete.js";
 import validator from "express-validator";
 const { body, validationResult } = validator;
 import { signToken } from "../../utilities/jsonWebToken.js";
@@ -122,7 +122,7 @@ usersRouter.put("/:id", async (req, res) => {
 usersRouter.delete("/:id", async (req, res) => {
   try {
     const data = await handleDelete(req);
-    res.status(200).json(data);
+    res.status(errorStatus).json(data);
   } catch (error) {
     res.json(error.message);
   }

@@ -6,6 +6,9 @@ import { databasePrisma } from "../../../prismaClient.js";
  * validates request body, signs jwt token and returns response object
  * @param {Object} req API Request
  */
+
+export let errorStatus = 200;
+
 export const handleDelete = async function (req) {
   // Find the user to be updated
 
@@ -14,6 +17,7 @@ export const handleDelete = async function (req) {
 
   //Throw 404 if user doesn't exist
   if (!user) {
+    errorStatus = 401;
     return Promise.resolve({ status: 401, message: "User not found" });
   }
 
@@ -22,6 +26,7 @@ export const handleDelete = async function (req) {
   const token = req.headers.authorization;
   var readyToken = token;
   if (!token) {
+    errorStatus = 401;
     return Promise.resolve({
       status: 401,
       message: "User has to be authenticated to make this request",
@@ -35,6 +40,7 @@ export const handleDelete = async function (req) {
       var verified = verifyToken(readyToken);
       var tokenUser = decodeToken(readyToken);
     } catch (error) {
+      errorStatus = 401;
       return Promise.resolve({ status: 401, message: "Auth token not valid." });
     }
   }
@@ -42,6 +48,7 @@ export const handleDelete = async function (req) {
   //Throw 401 error if user isn't the correct user
   if (user.role != "Admin") {
     if (verified.userId != id || tokenUser.userId != id) {
+      errorStatus = 401;
       return Promise.resolve({
         status: 401,
         message: "User does not match user to be deleted.",
@@ -54,6 +61,7 @@ export const handleDelete = async function (req) {
     await databasePrisma.user.delete({
       where: { id },
     });
+    errorStatus = 200;
     return Promise.resolve({ status: 200, message: "Success" });
   } catch (error) {
     if (error.status) {
