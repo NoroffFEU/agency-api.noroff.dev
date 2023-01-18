@@ -9,7 +9,6 @@ const { body, validationResult } = validator;
 import { signToken } from "../../utilities/jsonWebToken.js";
 import { handleRegister } from "./controllers/controllerRegister.js";
 
-
 export const usersRouter = express.Router();
 
 // POST /users
@@ -24,7 +23,13 @@ usersRouter.post(
       // returns with errors if any
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({message: `${errors.array()[0].msg} in ${errors.array()[0].param}${errors.array()[1]? " and " + errors.array()[1].param : ""} field(s)` });
+        return res
+          .status(400)
+          .json({
+            message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
+              errors.array()[1] ? " and " + errors.array()[1].param : ""
+            } field(s)`,
+          });
       }
       const data = await handleRegister(req);
       if (data.status === 409) {
@@ -52,7 +57,13 @@ usersRouter.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({message: `${errors.array()[0].msg} in ${errors.array()[0].param}${errors.array()[1]? " and " + errors.array()[1].param : ""} field(s)` });
+        return res
+          .status(400)
+          .json({
+            message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
+              errors.array()[1] ? " and " + errors.array()[1].param : ""
+            } field(s)`,
+          });
       }
       const { status, data } = await handleLogin(req);
       res.status(status).json(data);
@@ -75,7 +86,8 @@ usersRouter.get("/", async (req, res) => {
 
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ ...error, message: "Internal server error" })
+    console.log(error);
+    res.status(500).json({ ...error, message: "Internal server error" });
   }
 });
 
@@ -83,6 +95,12 @@ usersRouter.get("/", async (req, res) => {
 usersRouter.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
+    if (id === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Bad request, user id is undefined" });
+    }
+
     const user = await databasePrisma.user.findUnique({
       where: {
         id,
@@ -90,21 +108,13 @@ usersRouter.get("/:id", async (req, res) => {
     });
 
     if (!user) {
-      throw createThrownError(404, "Could not find user!");
-    }
-
-    if (id === undefined) {
-      throw createThrownError(400, "Bad request, user id is undefined");
+      return res.status(400).json({ message: "Could not find user!" });
     }
 
     res.status(200).json(user);
-  } catch (err) {
-    const errorObject = await JSON.parse(err.message);
-    if (errorObject.status) {
-      res.status(errorObject.status).json(errorObject.message);
-    } else {
-      res.status(400).json("User does not exist.");
-    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ ...error, message: "Internal server error" });
   }
 });
 
@@ -114,7 +124,8 @@ usersRouter.put("/:id", async (req, res) => {
     const data = await handleUpdate(req);
     res.status(200).json(data);
   } catch (error) {
-    res.json(error.message);
+    console.log(error);
+    res.status(500).json({ ...error, message: "Internal server error" });
   }
 });
 
@@ -131,8 +142,7 @@ usersRouter.delete("/:id", async (req, res) => {
 
     res.status(200).json(deletedUser);
   } catch (error) {
-    res.status(400).json({
-      message: `${error}`,
-    });
+    console.log(error);
+    res.status(500).json({ ...error, message: "Internal server error" });
   }
 });
