@@ -6,7 +6,7 @@ import { createThrownError } from "../../utilities/errorMessages.js";
 import { handleUpdate } from "./controllers/controllerUpdate.js";
 import validator from "express-validator";
 const { body, validationResult } = validator;
-import { signToken } from "../../utilities/jsonWebToken.js";
+import { signToken, verifyToken } from "../../utilities/jsonWebToken.js";
 import { handleRegister } from "./controllers/controllerRegister.js";
 
 export const usersRouter = express.Router();
@@ -23,13 +23,11 @@ usersRouter.post(
       // returns with errors if any
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res
-          .status(400)
-          .json({
-            message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
-              errors.array()[1] ? " and " + errors.array()[1].param : ""
-            } field(s)`,
-          });
+        return res.status(400).json({
+          message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
+            errors.array()[1] ? " and " + errors.array()[1].param : ""
+          } field(s)`,
+        });
       }
       const data = await handleRegister(req);
       if (data.status === 409) {
@@ -57,15 +55,16 @@ usersRouter.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res
-          .status(400)
-          .json({
-            message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
-              errors.array()[1] ? " and " + errors.array()[1].param : ""
-            } field(s)`,
-          });
+        return res.status(400).json({
+          message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
+            errors.array()[1] ? " and " + errors.array()[1].param : ""
+          } field(s)`,
+        });
       }
+
       const { status, data } = await handleLogin(req);
+
+      console.log(await verifyToken(data.token));
       res.status(status).json(data);
     } catch (error) {
       console.log(error);
@@ -121,8 +120,8 @@ usersRouter.get("/:id", async (req, res) => {
 // PUT /users/:id
 usersRouter.put("/:id", async (req, res) => {
   try {
-    const data = await handleUpdate(req);
-    res.status(200).json(data);
+    const { status, data } = await handleUpdate(req);
+    res.status(status).json(data);
   } catch (error) {
     console.log(error);
     res.status(500).json({ ...error, message: "Internal server error" });

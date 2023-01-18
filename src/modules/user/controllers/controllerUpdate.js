@@ -2,6 +2,8 @@ import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
 import { decodeToken, verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
+import { mediaGuard } from "../../../utilities/mediaGuard.js";
+import { objectEnumValues } from "@prisma/client/runtime/index.js";
 
 /**
  * validates request body, signs jwt token and returns response object
@@ -15,13 +17,14 @@ export const handleUpdate = async function (req) {
   if (!user) {
     return Promise.resolve({ status: 401, message: "User not found" });
   }
+
   //Make sure user has token and removes Bearer if need be
   const token = req.headers.authorization;
-  var readyToken = token;
+  let readyToken = token;
   if (!token) {
     return Promise.resolve({
       status: 401,
-      message: "User has to be authenticated to make this request",
+      data: { message: "User has to be authenticated to make this request" },
     });
   } else if (token.includes("Bearer")) {
     readyToken = token.slice(7);
@@ -30,51 +33,84 @@ export const handleUpdate = async function (req) {
   if (readyToken != undefined) {
     try {
       var verified = verifyToken(readyToken);
-      var tokenUser = decodeToken(readyToken);
     } catch (error) {
-      return Promise.resolve({ status: 401, message: "Auth token not valid." });
-    }
-  }
-  //Throw 401 error if user isn't the correct user
-  if (user.role != "Admin") {
-    if (verified.userId != id || tokenUser.userId != id) {
       return Promise.resolve({
         status: 401,
-        message: "User does not match user to be edited",
+        data: { message: "Auth token not valid." },
       });
     }
   }
-  // removes id from body stopping user from updating it
-  let idMsg = "User details updated successfully.";
-  if ("id" in req.body == true) {
-    delete req.body.id;
-    idMsg += " Argument id was found in request body and was removed.";
+
+  //Throw 401 error if user isn't the correct user
+  if (user.role != "Admin") {
+    if (!verified || verified != id) {
+      return Promise.resolve({
+        status: 401,
+        data: { message: "User does not match user to be edited" },
+      });
+    }
   }
 
-  // removes createdAt from body to stop user created date being edited
-  if ("createdAt" in req.body == true) {
-    delete req.body.createdAt;
-    idMsg += " Argument createdAt was found in request body and was removed.";
+  const {
+    email,
+    title,
+    firstName,
+    lastName,
+    password,
+    avatar,
+    skills,
+    currentpassword,
+    role,
+  } = req.body;
+  let details = {};
+  //if user is a applicant or client don't allow an update of role
+  if (user.role === "Admin") {
+    details.role = role;
+  } else if (role != undefined) {
+    return Promise.resolve({
+      status: 404,
+      data: { message: "You don't have permission to edit roles." },
+    });
   }
 
-  // if user is a applicant or client don't allow an update of role
-  if ("role" in req.body == true && user.role == "Admin") {
-    delete req.body.role;
-    idMsg +=
-      " Argument role was found in request body and was removed as user doesn't have authority to update this.";
+  if (title !== undefined && typeof title === "string") {
+    details.title = title;
+  } else if (title) {
+    return Promise.resolve({
+      status: 400,
+      data: { message: "Title must be a string." },
+    });
+  }
+
+  if (firstName !== undefined && typeof firstName === "string") {
+    details.firstName = firstName;
+  } else if (firstName) {
+    return Promise.resolve({
+      status: 400,
+      data: { message: "First name must be a string." },
+    });
+  }
+
+  if (lastName !== undefined && typeof lastName === "string") {
+    details.lastName = lastName;
+  } else if (lastName) {
+    return Promise.resolve({
+      status: 400,
+      data: { message: "Last name must be a string." },
+    });
   }
 
   // Handles password changes
-  if ("password" in req.body == true && req.body.currentpassword != undefined) {
-    if (req.body.password.length >= 5 && req.body.password.length <= 20) {
-      if ((await verifyPassword(user, req.body.currentpassword)) == true) {
-        delete req.body.currentpassword;
-        const hash = await generateHash(req.body.password);
-        req.body.password = hash;
+  if (password !== undefined && currentpassword !== undefined) {
+    console.log(password === undefined, currentpassword !== undefined);
+    if (password.length >= 5 && password.length <= 20) {
+      if (await verifyPassword(user, currentpassword)) {
+        const hash = await generateHash(password);
+        details.password = hash;
       } else {
         return Promise.resolve({
           status: 401,
-          message: "Incorrect Password",
+          data: { message: "Incorrect Password" },
         });
       }
     } else {
@@ -84,55 +120,84 @@ export const handleUpdate = async function (req) {
           "Password does not meet required parameters length: min 5, max 20",
       });
     }
-  } else if (
-    "password" in req.body == true &&
-    req.body.currentpassword == undefined
-  ) {
+  } else if (password !== undefined && currentpassword === undefined) {
     return Promise.resolve({
       status: 401,
-      message: "No current password provided",
+      data: { message: "No current password provided" },
     });
   }
 
-  // Email update request meets email parameters
+  //Email update request meets email parameters
   const emailReg = /^\S+@\S+\.\S+$/;
-  if ("email" in req.body == true && emailReg.test(req.body.email) == false) {
+  if (email !== undefined && !emailReg.test(email)) {
     return Promise.resolve({
       status: 403,
-      message: "Email provided does not meet email format requirements",
+      data: {
+        message: "Email provided does not meet email format requirements",
+      },
     });
+  } else if (email !== undefined) {
+    details.email = email;
   }
 
+  if (avatar !== undefined) {
+    try {
+      await mediaGuard(avatar);
+      details.avatar = avatar;
+    } catch (err) {
+      console.log(err);
+      return Promise.resolve({
+        status: 400,
+        data: { message: "Bad image URL" },
+      });
+    }
+  }
+
+  if (skills !== undefined) {
+    if (Array.isArray(skills)) {
+      details.skill = skills;
+    } else {
+      return Promise.resolve({
+        status: 400,
+        data: { message: "Skills must be an array." },
+      });
+    }
+  }
   // Updates the user
   try {
     const result = await databasePrisma.user.update({
       where: { id },
-      data: req.body,
+      data: details,
     });
-    result.response = idMsg;
+
+    result.response = "User details updated successfully.";
     delete result.password;
     delete result.salt;
-    return result;
+    return { status: 200, data: result };
   } catch (error) {
     if (!error.status) {
       // Checks for database related errors
       if (error.meta != undefined) {
         return Promise.resolve({
           status: 409,
-          message:
-            "The unique input ${error.meta.target[0]} already exists for another user",
+          data: {
+            message:
+              "The unique input ${error.meta.target[0]} already exists for another user",
+          },
         });
       } else {
         return Promise.resolve({
           status: 400,
-          message: `An argument or input value does not exist or cannot be edited in the database ${error.message}`,
+          data: {
+            message: `An argument or input value does not exist or cannot be edited in the database ${error.message}`,
+          },
         });
       }
     } else {
       if (error.status) {
         return Promise.resolve({
           status: error.status,
-          message: error.message,
+          data: { message: error.message },
         });
       }
     }
