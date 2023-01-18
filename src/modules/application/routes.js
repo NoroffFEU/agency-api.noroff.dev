@@ -1,5 +1,5 @@
 import express from "express";
-import { handleUpdate } from "./controllers/controllerCreate.js";
+import { handleCreate } from "./controllers/controllerCreate.js";
 
 export const applicationsRouter = express.Router();
 
@@ -13,7 +13,7 @@ applicationsRouter.get("/", async (req, res) => {
 applicationsRouter.post("/", async (req, res) => {
   try {
     // NEEDS MORE TESTING
-    const result = await handleUpdate(req);
+    const result = await handleCreate(req);
 
     res.status(200).json(result);
   } catch (err) {

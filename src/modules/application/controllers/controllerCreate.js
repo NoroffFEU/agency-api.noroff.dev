@@ -1,7 +1,7 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 
-export const handleUpdate = async function (req) {
+export const handleCreate = async function (req) {
   const { applicant, listing, coverLetter } = req.body;
 
   //Make sure user has token and removes Bearer if need be
