@@ -59,6 +59,22 @@ enum OfferState {
 }
 
 model Listing {
+<<<<<<< HEAD
+  id            String        @id @default(uuid())
+  title         String
+  tags          String[]
+  description   String
+  requirements  String[]
+  deadline      DateTime
+  created       DateTime      @default(now())
+  updated       DateTime      @updatedAt
+  applications  Application[]
+  offer         Offer[]
+  author        User          @relation(fields: [authorId], references: [id])
+  authorId      String
+  editId        String?
+  listingsState ListingState  @default(Active)
+=======
   id           String        @id @default(uuid())
   title        String
   tags         String[]
@@ -66,11 +82,12 @@ model Listing {
   requirements String[]
   deadline     DateTime
   created      DateTime      @default(now())
-  updated      DateTime
-  Applications Application[]
-  Offer        Offer[]
+  updated      DateTime      @updatedAt
+  applications Application[]
+  offer        Offer[]
   author       User          @relation(fields: [authorId], references: [id])
   authorId     String
+>>>>>>> 828365d562b687167a959a4ecf17aa2fce1919ba
 }
 
 enum ListingState {
