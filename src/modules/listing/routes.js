@@ -2,6 +2,11 @@ import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 
 export const listingsRouter = express.Router();
+import swagger from "swagger-ui-express";
+import swaggerDocs from "../../config/swagger.js";
+
+// Creating swagger docs
+listingsRouter.use("/api-docs", swagger.serve, swagger.setup(swaggerDocs));
 
 // Handling request using router
 listingsRouter
@@ -13,7 +18,7 @@ listingsRouter
       // Show the listings in browser
       res.status(200).json(listings);
     } catch (error) {
-      res.status(500).json({ message: `internal server error`, statusCode: "500" });
+      res.status(500).json({ message: `Internal server error`, statusCode: "500" });
     }
   })
   .get("/:id", async (req, res, next) => {
@@ -34,6 +39,6 @@ listingsRouter
 
       res.status(200).json(uniqueListing);
     } catch (error) {
-      res.status(500).json({ message: `internal server error`, statusCode: "500" });
+      res.status(500).json({ message: `Internal server error`, statusCode: "500" });
     }
   });
