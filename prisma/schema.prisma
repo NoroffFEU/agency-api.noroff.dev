@@ -28,6 +28,7 @@ model User {
   updated      DateTime      @updatedAt
 }
 
+
 enum UserRole {
   Applicant
   Client
@@ -49,17 +50,17 @@ model Company {
 }
 
 model Application {
-  id          String   @id @default(uuid())
-  applicant   User     @relation(fields: [applicantId], references: [id])
+  id          String  @id @default(uuid())
+  applicant   User    @relation(fields: [applicantId], references: [id])
   applicantId String
-  company     Company  @relation(fields: [companyId], references: [id])
+  company     Company @relation(fields: [companyId], references: [id])
   companyId   String
   offers      Offer[]
-  listing     Listing  @relation(fields: [listingId], references: [id])
+  listing     Listing @relation(fields: [listingId], references: [id])
   listingId   String
   coverLetter String
-  created     DateTime @default(now())
-  updated     DateTime @updatedAt
+  created     DateTime      @default(now())
+  updated     DateTime      @updatedAt
 }
 
 model Offer {
@@ -75,8 +76,8 @@ model Offer {
   applicantId   String
   applicant     UserRole
   state         OfferState
-  created       DateTime    @default(now())
-  updated       DateTime    @updatedAt
+  created       DateTime      @default(now())
+  updated       DateTime      @updatedAt
 }
 
 enum OfferState {
@@ -93,11 +94,13 @@ model Listing {
   requirements String[]
   deadline     DateTime
   created      DateTime      @default(now())
-  updated      DateTime      @updatedAt
+  updated      DateTime    @updatedAt
   applications Application[]
   offer        Offer[]
   company      Company       @relation(fields: [companyId], references: [id])
   companyId    String
+  created       DateTime      @default(now())
+  updated       DateTime      @updatedAt
 }
 
 enum ListingState {
