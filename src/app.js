@@ -11,9 +11,9 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(
-  bodyParser.json({
-    extended: false,
-  })
+	bodyParser.json({
+		extended: false,
+	})
 );
 
 app.use("/users", usersRouter);
