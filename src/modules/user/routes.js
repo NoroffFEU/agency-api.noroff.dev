@@ -24,7 +24,7 @@ usersRouter.post(
       // returns with errors if any
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({message: `${errors.array()[0].msg} in ${errors.array()[0].param}${errors.array()[1]? " and " + errors.array()[1].param : ""} field(s)` });
       }
       const data = await handleRegister(req);
       if (data.status === 409) {
@@ -34,10 +34,10 @@ usersRouter.post(
         return res.status(400).json({ message: "Bad image url" });
       }
       res.status(201).json(data);
-    } catch (err) {
+    } catch (error) {
       // Send a 500 error if there was a problem with the insertion
-      console.error(err);
-      res.status(500).json({ message: "Internal server error" });
+      console.error(error);
+      res.status(500).json({ ...error, message: "Internal server error" });
     }
   }
 );
@@ -52,7 +52,7 @@ usersRouter.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({message: `${errors.array()[0].msg} in ${errors.array()[0].param}${errors.array()[1]? " and " + errors.array()[1].param : ""} field(s)` });
       }
       const { status, data } = await handleLogin(req);
       res.status(status).json(data);
