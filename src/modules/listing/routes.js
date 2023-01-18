@@ -8,6 +8,7 @@ listingsRouter.get("/", async (req, res) => {
   res.send("This is the listing request");
 });
 
+// POST /listings
 listingsRouter.post("/", async (req, res) => {
   try {
     const { title, tags, description, requirements, deadline, authorId } =
@@ -39,7 +40,7 @@ listingsRouter.post("/", async (req, res) => {
         },
       });
 
-      res.status(200).json(result);
+      res.status(201).json(result);
     } else {
       res.status(400).json({ message: "Please fill in all required fields" });
     }
