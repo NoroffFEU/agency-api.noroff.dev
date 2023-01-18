@@ -13,7 +13,7 @@ export async function validateImageURL(imageUrl) {
 export async function mediaGuard(imageURL) {
   if (imageURL) {
     if (!(await validateImageURL(imageURL))) {
-      throw new BadRequest(`Image is not accessible, please double check the image address: ${imageURL}`)
+      throw new BadRequest(`Image URL is bad: ${imageURL}`)
     }
     console.log(imageURL);
     return imageURL;

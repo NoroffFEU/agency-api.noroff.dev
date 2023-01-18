@@ -9,7 +9,7 @@ import { databasePrisma } from "../prismaClient.js";
  * @returns {Boolean}
  */
 export function verifyToken(token) {
-  return verify(token, process.env.SECRETSAUCE);
+  return verify(token, process.env.SECRET_SAUCE);
 }
 
 /**
