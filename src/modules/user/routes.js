@@ -122,24 +122,8 @@ usersRouter.put("/:id", async (req, res) => {
 usersRouter.delete("/:id", async (req, res) => {
   try {
     const data = await handleDelete(req);
-    res.status(200).json(data);
+    res.json(data);
   } catch (error) {
     res.json(error.message);
   }
 });
-
-/*usersRouter.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await databasePrisma.user.delete({
-      where: {
-        id,
-      },
-    });
-    res.status(200).json("Successfully deleted user.");
-  } catch (error) {
-    res.status(400).json({
-      message: `${error}`,
-    });
-  }
-}); */
