@@ -22,7 +22,6 @@ export async function createOffer(prismaClient, request, response) {
 
     response.status(200).json(offer);
   } catch (error) {
-    console.log(error);
     response.status(400);
   }
 }
