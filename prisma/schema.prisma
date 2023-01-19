@@ -71,7 +71,6 @@ model Listing {
   offer         Offer[]
   author        User          @relation(fields: [authorId], references: [id])
   authorId      String
-  editId        String?
   listingsState ListingState  @default(Active)
 }
 
