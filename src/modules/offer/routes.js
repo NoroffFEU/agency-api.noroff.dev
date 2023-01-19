@@ -1,9 +1,8 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
+import { offers, offer } from "./read.js";
 
 export const offersRouter = express.Router();
 
-// Handling request using router
-offersRouter.get("/", async (req, res) => {
-  res.send("This is the offers request");
-});
+offersRouter.get("/", offers);
+offersRouter.get("/:id", offer);
