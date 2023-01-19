@@ -9,7 +9,7 @@ import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
 dotenv.config();
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT;
 
 // options for swagger jsdocs
