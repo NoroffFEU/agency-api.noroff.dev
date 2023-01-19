@@ -40,53 +40,32 @@ applicationsRouter
                 res.status(500).send(`internal server error `);
             }
         }
+    })
+    .post("/", async (req, res) => {
+        try {
+            // NEEDS MORE TESTING
+            const result = await handleCreate(req);
+
+            res.status(200).json(result);
+        } catch (err) {
+            console.log(err);
+
+            res.status(400).json({ message: `${err}`, code: "400" });
+        }
+    })
+    .delete("/:id", async (req, res) => {
+        try {
+            const id = req.params.id;
+            const result = await databasePrisma.application.delete({
+                where: {
+                    id: id,
+                },
+            });
+            res.status(200).json({
+                message: "Succefully deleted application with id: " + id,
+                code: "200",
+            });
+        } catch (err) {
+            res.status(400).json({ message: `${err}`, code: "400" });
+        }
     });
-
-// Handling request using router
-applicationsRouter.get("/", async (req, res) => {
-  res.send("This is the app request");
-});
-
-// POST /application
-
-applicationsRouter.post("/", async (req, res) => {
-  try {
-    // NEEDS MORE TESTING
-    const result = await handleCreate(req);
-
-    res.status(200).json(result);
-  } catch (err) {
-    console.log(err);
-    
-    res.status(400).json({ message: `${err}`, code: "400" });
-  }
-});
-
-// DELETE /application/:id
-applicationsRouter.delete("/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const result = await databasePrisma.application.delete({
-      where: {
-        id: id,
-      },
-    });
-    res
-      .status(200)
-      .json({
-        message: "Succefully deleted application with id: " + id,
-        code: "200",
-      });
-  } catch (err) {
-    res.status(400).json({ message: `${err}`, code: "400" });
-  }
-});
-
-    const errorObject = await JSON.parse(err.message);
-    if (errorObject.status) {
-      res.status(errorObject.status).json(errorObject.message);
-    } else {
-      res.status(500).json("Internal server error.");
-    }
-  });
-
