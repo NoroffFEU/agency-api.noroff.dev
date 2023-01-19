@@ -37,7 +37,7 @@ describe("POST /users", () => {
     })
 })
 
-describe("POST /users(login", () => {
+describe("POST /users/login", () => {
     it("should return an object with user details and a 200 response when successfully logged in", async () => {
         const response = await request(baseURL).post("/users/login").send({ "email": testUser.email, "password": testUser.password });
         loggedInUser = response.body;
