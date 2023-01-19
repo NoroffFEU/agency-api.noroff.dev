@@ -257,7 +257,7 @@
  *                       example: example.com/example.jpeg
  *                     about:
  *                       type: string
- *                       description: Details about te user.
+ *                       description: Details about the user.
  *                       example: "I'm a student of front-end....."
  *                     skills:
  *                       type: [string]
@@ -339,7 +339,7 @@
  *                       example: example.com/example.jpeg
  *                     about:
  *                       type: string
- *                       description: Details about te user.
+ *                       description: Details about the user.
  *                       example: "I'm a student of front-end....."
  *                     skills:
  *                       type: [string]
@@ -389,6 +389,7 @@
  *     parameters:
  *       - in: path
  *         name: id
+ *         requestBody:
  *         required: true
  *         description: String ID of the user to retrieve.
  *         schema:
@@ -428,7 +429,7 @@
  *                       example: example.com/example.jpeg
  *                     about:
  *                       type: string
- *                       description: Details about te user.
+ *                       description: Details about the user.
  *                       example: "I'm a student of front-end....."
  *                     skills:
  *                       type: [string]
@@ -456,6 +457,14 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       400:
+ *         description: Bad image URL / An argument or input value does not exist or cannot be edited in the database
+ *       401:
+ *         description: No current password provided/ Incorrect password
+ *       403:
+ *         description: E-mail does not meet E-mail format requirements
+ *       404:
+ *         description: You dont have permission to edit roles
  *       500:
  *         description: Internal server error
  *     security:
@@ -492,6 +501,8 @@
  *                       type: string
  *                       description: Success message.
  *                       example: Account deleted.
+ *       401:
+ *         description: User not found/ User has to be authenticated to make this request/ User does not match user to be deleted
  *       500:
  *         description: Internal server error
  *     security:
