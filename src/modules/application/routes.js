@@ -9,7 +9,7 @@ applicationsRouter
     .get("/", checkAuth, async (req, res) => {
         try {
             const applications = await databasePrisma.application.findMany({
-                include: { Offers: true },
+                include: { offers: true },
             });
             res.status(200).json(applications);
         } catch (err) {
