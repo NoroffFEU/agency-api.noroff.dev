@@ -139,6 +139,12 @@
  *                       type: string
  *                       description: The user's access token.
  *                       example: "string"
+ *       400:
+ *         description: Bad image url
+ *       409:
+ *         description: User already exists
+ *       500:
+ *         description: Internal Server Error
  *
  */
 
@@ -203,6 +209,11 @@
  *                       type: string
  *                       description: The user's access token.
  *                       example: "string"
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ *
  */
 
 //------------------ GET /users/ --------------------
@@ -274,6 +285,8 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       500:
+ *         description: Internal server error
  */
 
 //------------------ GET /users/{id} --------------------
@@ -354,6 +367,10 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       400:
+ *         description: Bad request, user id is undefined / Could not find user
+ *       500:
+ *         description: Internal server error
  */
 
 //------------------ PUT /users/{id} --------------------
@@ -439,6 +456,8 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       500:
+ *         description: Internal server error
  *     security:
  *       - bearerAuth: []
  */
@@ -473,6 +492,8 @@
  *                       type: string
  *                       description: Success message.
  *                       example: Account deleted.
+ *       500:
+ *         description: Internal server error
  *     security:
  *       - bearerAuth: []
  */
