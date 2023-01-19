@@ -39,7 +39,6 @@ model Application {
   listing     Listing @relation(fields: [listingId], references: [id])
   listingId   String
   coverLetter String
-
   @@unique([applicantId, listingId])
 }
 
