@@ -21,6 +21,7 @@ export const handleUpdate = async function (req) {
   //Make sure user has token and removes Bearer if need be
   const token = req.headers.authorization;
   let readyToken = token;
+
   if (!token) {
     return Promise.resolve({
       status: 401,
@@ -32,7 +33,7 @@ export const handleUpdate = async function (req) {
 
   if (readyToken != undefined) {
     try {
-      var verified = verifyToken(readyToken);
+      var verified = await verifyToken(readyToken);
     } catch (error) {
       return Promise.resolve({
         status: 401,
@@ -43,7 +44,7 @@ export const handleUpdate = async function (req) {
 
   //Throw 401 error if user isn't the correct user
   if (user.role != "Admin") {
-    if (!verified || verified != id) {
+    if (!verified || verified.id != id) {
       return Promise.resolve({
         status: 401,
         data: { message: "User does not match user to be edited" },
@@ -57,11 +58,13 @@ export const handleUpdate = async function (req) {
     firstName,
     lastName,
     password,
+    about,
     avatar,
     skills,
     currentpassword,
     role,
   } = req.body;
+
   let details = {};
   //if user is a applicant or client don't allow an update of role
   if (user.role === "Admin") {
@@ -73,31 +76,20 @@ export const handleUpdate = async function (req) {
     });
   }
 
-  if (title !== undefined && typeof title === "string") {
+  if (title !== undefined) {
     details.title = title;
-  } else if (title) {
-    return Promise.resolve({
-      status: 400,
-      data: { message: "Title must be a string." },
-    });
   }
 
-  if (firstName !== undefined && typeof firstName === "string") {
+  if (firstName !== undefined) {
     details.firstName = firstName;
-  } else if (firstName) {
-    return Promise.resolve({
-      status: 400,
-      data: { message: "First name must be a string." },
-    });
   }
 
-  if (lastName !== undefined && typeof lastName === "string") {
+  if (lastName !== undefined) {
     details.lastName = lastName;
-  } else if (lastName) {
-    return Promise.resolve({
-      status: 400,
-      data: { message: "Last name must be a string." },
-    });
+  }
+
+  if (about !== undefined) {
+    details.about = about;
   }
 
   // Handles password changes
@@ -154,15 +146,9 @@ export const handleUpdate = async function (req) {
   }
 
   if (skills !== undefined) {
-    if (Array.isArray(skills)) {
-      details.skill = skills;
-    } else {
-      return Promise.resolve({
-        status: 400,
-        data: { message: "Skills must be an array." },
-      });
-    }
+    details.skills = skills;
   }
+
   // Updates the user
   try {
     const result = await databasePrisma.user.update({
