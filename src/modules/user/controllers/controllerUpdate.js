@@ -1,9 +1,8 @@
 import { generateHash, verifyPassword } from "../../../utilities/password.js";
 import { findUserById } from "../../../utilities/findUser.js";
-import { decodeToken, verifyToken } from "../../../utilities/jsonWebToken.js";
+import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
-import { objectEnumValues } from "@prisma/client/runtime/index.js";
 
 /**
  * validates request body, signs jwt token and returns response object
@@ -94,7 +93,6 @@ export const handleUpdate = async function (req) {
 
   // Handles password changes
   if (password !== undefined && currentpassword !== undefined) {
-    console.log(password === undefined, currentpassword !== undefined);
     if (password.length >= 5 && password.length <= 20) {
       if (await verifyPassword(user, currentpassword)) {
         const hash = await generateHash(password);
