@@ -167,8 +167,7 @@ export const handleUpdate = async function (req) {
         return Promise.resolve({
           status: 409,
           data: {
-            message:
-              "The unique input ${error.meta.target[0]} already exists for another user",
+            message: `The unique input ${error.meta.target[0]} already exists for another user`,
           },
         });
       } else {
