@@ -2,11 +2,6 @@ import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 
 export const listingsRouter = express.Router();
-import swagger from "swagger-ui-express";
-import swaggerDocs from "../../config/swagger.js";
-
-// Creating swagger docs
-listingsRouter.use("/api-docs", swagger.serve, swagger.setup(swaggerDocs));
 
 // Handling request using router
 listingsRouter
@@ -34,7 +29,7 @@ listingsRouter
 
       // Check to see if array is empty
       if (uniqueListing === null) {
-        res.status(404).json({ message: `There are no listings with an id of '${urlID}'` });
+        res.status(404).json({ message: `Listing with id ${urlID} doesn't exist.` });
       }
 
       res.status(200).json(uniqueListing);
