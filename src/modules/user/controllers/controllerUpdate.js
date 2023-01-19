@@ -146,7 +146,7 @@ export const handleUpdate = async function (req) {
   }
 
   if (skills !== undefined) {
-    details.skills = skills;
+    details.skills = skills.split(",");
   }
 
   // Updates the user
