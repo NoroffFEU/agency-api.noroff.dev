@@ -14,7 +14,9 @@ listingsRouter
       // Show the listings in browser
       res.status(200).json(listings);
     } catch (error) {
-      res.status(500).json({ message: `Internal server error`, statusCode: "500" });
+      res
+        .status(500)
+        .json({ message: `Internal server error`, statusCode: "500" });
     }
   })
   .get("/:id", async (req, res, next) => {
@@ -30,26 +32,40 @@ listingsRouter
 
       // Check to see if array is empty
       if (uniqueListing === null) {
-        res.status(404).json({ message: `Listing with id ${urlID} doesn't exist.` });
+        res
+          .status(404)
+          .json({ message: `Listing with id ${urlID} doesn't exist.` });
       }
 
       res.status(200).json(uniqueListing);
     } catch (error) {
-      res.status(500).json({ message: `Internal server error`, statusCode: "500" });
+      res
+        .status(500)
+        .json({ message: `Internal server error`, statusCode: "500" });
     }
   });
 
 // POST /listings
 listingsRouter.post("/", async (req, res) => {
   try {
-    const { title, tags, description, requirements, deadline, authorId } = req.body;
+    const { title, tags, description, requirements, deadline, authorId } =
+      req.body;
 
     const now = new Date().getTime();
     const valid = now < new Date(deadline).getTime();
 
     if (!valid) {
-      res.status(400).json({ message: "Deadline must be greater than todays date" });
-    } else if (title && tags && description && requirements && deadline && authorId) {
+      res
+        .status(400)
+        .json({ message: "Deadline must be greater than todays date" });
+    } else if (
+      title &&
+      tags &&
+      description &&
+      requirements &&
+      deadline &&
+      authorId
+    ) {
       const result = await databasePrisma.listing.create({
         data: {
           title: title,
@@ -119,7 +135,9 @@ listingsRouter.delete("/:id", checkIfIdExist, async (req, res) => {
         id: req.params.id,
       },
     });
-    res.status(200).json({ message: `Listing with id: ${req.params.id} was deleted.` });
+    res
+      .status(200)
+      .json({ message: `Listing with id: ${req.params.id} was deleted.` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
