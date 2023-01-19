@@ -41,19 +41,16 @@ applicationsRouter
             }
         }
     })
-    .post("/", async (req, res) => {
+    .post("/", checkAuth, async (req, res) => {
         try {
-            // NEEDS MORE TESTING
-            const result = await handleCreate(req);
-
+            //NEEDS MORE TESTING
+            const result = await handleCreate(req, res);
             res.status(200).json(result);
         } catch (err) {
-            console.log(err);
-
             res.status(400).json({ message: `${err}`, code: "400" });
         }
     })
-    .delete("/:id", async (req, res) => {
+    .delete("/:id", checkAuth, async (req, res) => {
         try {
             const id = req.params.id;
             const result = await databasePrisma.application.delete({
