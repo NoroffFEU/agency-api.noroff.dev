@@ -1,40 +1,35 @@
-import express from "express";
-import { databasePrisma } from "../../prismaClient.js";
-
-export const offersRouter = express.Router();
-
-export const offers = offersRouter.get("/", async (req, res) => {
-    try {
-        const offer = await databasePrisma.offer.findMany();
-        if (!offer) {
-            res.status(404).json({ message: "Offer not found" });
-            return;
-        } else if (offer.length === 0) {
-            res.status(404).json({ message: "No offer found" });
-            return;
-        }
-        res.send(offer);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: `${error}` });
+export async function offerGetId(prismaClient, request, response) {
+  try {
+    const { id } = request.params;
+    const offer = await prismaClient.offer.findUnique({
+      where: {
+        id: String(id),
+      },
+    });
+    if (!offer) {
+      response.status(404).json({ message: "Offer not found :(" });
+      return;
     }
-});
+    response.send(offer);
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ message: `${error}` });
+  }
+}
 
-export const offer = offersRouter.get("/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const offer = await databasePrisma.offer.findUnique({
-            where: {
-                id: String(id),
-            },
-        });
-        if (!offer) {
-            res.status(404).json({ message: "Offer not found" });
-            return;
-        }
-        res.send(offer);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: `${error}` });
+export async function offersGet(prismaClient, request, response) {
+  try {
+    const offers = await prismaClient.offer.findMany();
+    if (!offers) {
+      response.status(404).json({ message: "Offers not found :(" });
+      return;
+    } else if (offers.length === 0) {
+      response.status(404).json({ message: "Offers not found :(" });
+      return;
     }
-});
+    response.send(offers);
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ message: `${error}` });
+  }
+}
