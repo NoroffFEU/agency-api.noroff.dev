@@ -28,6 +28,7 @@ model User {
   updated      DateTime      @updatedAt
 }
 
+
 enum UserRole {
   Applicant
   Client
