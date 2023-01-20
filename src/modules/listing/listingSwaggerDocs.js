@@ -36,11 +36,11 @@
  *           type: string
  *           description: When the listing was last updated.
  *           example: 2023-02-16T12:19:48.625Z
- *         Applications:
+ *         applications:
  *           type: [object]
  *           description:  An array of application objects.
  *           example: [object, object, object]
- *         Offer:
+ *         offer:
  *           type: [object]
  *           description: An array of offers objects.
  *           example: [object, object, object]
