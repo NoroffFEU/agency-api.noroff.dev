@@ -15,7 +15,6 @@ export async function mediaGuard(imageURL) {
     if (!(await validateImageURL(imageURL))) {
       throw new BadRequest(`Image URL is bad: ${imageURL}`)
     }
-    console.log(imageURL);
     return imageURL;
   }
 }
