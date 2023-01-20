@@ -28,7 +28,7 @@ export const offerPut = putOffers.put("/:id", async (req, res) => {
         ...req.body,
       },
     });
-    res.status(200).json(offerPut);
+    res.status(200).json(updateOffer);
   } catch (error) {
     console.log(error);
     res.status(400);
