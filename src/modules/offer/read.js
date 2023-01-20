@@ -1,4 +1,4 @@
-export async function offer(prismaClient, request, response) {
+export async function offerGetId(prismaClient, request, response) {
   try {
     const { id } = request.params;
     const offer = await prismaClient.offer.findUnique({
@@ -17,7 +17,7 @@ export async function offer(prismaClient, request, response) {
   }
 }
 
-export async function offers(prismaClient, request, response) {
+export async function offersGet(prismaClient, request, response) {
   try {
     const offers = await prismaClient.offer.findMany();
     if (!offers) {
