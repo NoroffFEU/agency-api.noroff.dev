@@ -20,12 +20,7 @@ const options = {
     info: {
       title: "Noroff Agency API",
       version: "0.0.1",
-<<<<<<< HEAD
       description: "An Express and Prisma rest API to server a Noroff students and industry partners in finding jobs and placements.",
-=======
-      description:
-        "An Express and Prisma rest API to server a Noroff students and industry partners in finding jobs and placements.",
->>>>>>> main
       license: {
         name: "Licensed Under MIT",
         url: "https://spdx.org/licenses/MIT.html",
@@ -44,31 +39,19 @@ const options = {
   },
   apis: ["./src/modules/**/*.js"],
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(
-	bodyParser.json({
-		extended: false,
-	})
+  bodyParser.json({
+    extended: false,
+  })
 );
 
 //stops html response on unexpected json token
 const jsonErrorHandler = function (error, req, res, next) {
   res.setHeader("Content-Type", "application/json");
-<<<<<<< HEAD
   res.status(error.status).send(JSON.stringify({ ...error, message: "Bad request, json parse failed." }));
-=======
-  res
-    .status(error.status)
-    .send(
-      JSON.stringify({ ...error, message: "Bad request, json parse failed." })
-    );
->>>>>>> main
 };
 app.use(jsonErrorHandler);
 
