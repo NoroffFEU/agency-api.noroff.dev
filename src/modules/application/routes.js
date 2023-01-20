@@ -15,7 +15,7 @@ applicationsRouter
       res.status(200).json(applications);
     } catch (err) {
       console.log(err);
-      res.status(500).json({ message: `internal server error`, code: "500" });
+      res.status(500).json({ message: `Internal server error`, code: "500" });
     }
   })
   .get("/:id", checkAuth, async (req, res) => {
@@ -31,15 +31,15 @@ applicationsRouter
       if (applicationById === null) {
         res
           .status(404)
-          .json({ message: `no application found with id "${URLid}"` });
+          .json({ message: `No application found with id "${URLid}"` });
         return;
       }
       res.json(applicationById);
     } catch (err) {
       if (err instanceof Prisma.PrismaClientValidationError) {
-        res.status(400).send("misspelled url param");
+        res.status(400).send("Misspelled url param");
       } else {
-        res.status(500).send(`internal server error `);
+        res.status(500).send(`Internal server error `);
       }
     }
   })
@@ -61,7 +61,7 @@ applicationsRouter
         },
       });
       res.status(200).json({
-        message: "Successfully deleted application with id: " + id,
+        message: `Successfully deleted application with id: ${id}`,
         code: "200",
       });
     } catch (err) {
