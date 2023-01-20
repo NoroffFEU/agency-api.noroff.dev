@@ -116,6 +116,10 @@
  *                   type: [object]
  *                   description: The application attached to the applicant.
  *                   example: {id: string, coverLetter: string, Offers: [object], applicant: user, role: applicant}
+ *                state: 
+ *                  type: string
+ *                  description: The state of the offer 
+ *                  example: "Accepted"
  *     security:
  *       - bearerAuth: []
  */
