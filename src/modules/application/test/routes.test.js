@@ -1,90 +1,96 @@
-import express from "express";
 import jwt from "jsonwebtoken";
-// import request from "supertest";
-import { applicationsRouter } from "../routes.js";
-// import { databasePrisma } from "../../../prismaClient.js";
+import request from "supertest";
 import * as dotenv from "dotenv";
-import fetch from "node-fetch";
-import { databasePrisma } from "../../../prismaClient.js";
-
-// Manually inserting a user to my postgreSQL database
-// app.post("/users", async (req, res) => {
-//   try {
-//     const data = await databasePrisma.data.create({
-//       data: {
-//         firstName: "Tony",
-//         lastName: "Skogmann",
-//         email: "some@some.com",
-//         password: "password",
-//       },
-//     });
-//     // Send a success message
-//     res.json({ message: "Data inserted successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.json({ message: "Error inserting data" });
-//   }
-//   await databasePrisma.disconnect();
-// });
-
-// app.post("users/login", async (req, res) => {
-//   try{
-//     const data = await databasePrisma.data.create()
-//   }
-// })
 
 dotenv.config();
-
-const app = express();
-
-app.use(express.json());
-app.use("/applications", applicationsRouter);
 
 const PORT = process.env.PORT;
 const base_URL = `http://localhost:${PORT}`;
 
 const secret = "MySecretKey";
+
+// Create a testUser in your local database to create a listing and place the following here.
+// Replace this with the response from f.eks postman
 const testUser = {
-  id: "756efc6e-2d12-4c9d-9be4-3a1a39e78e98",
-  email: "some@some.com",
-  firstName: "Tony",
-  lastName: "Testing",
-  password: "password",
-  salt: "salty",
-  role: "Applicant",
+  id: "be559b29-1616-412f-ad06-1351936de656",
+  email: "tes@tes.com",
+  firstName: "tes",
+  lastName: "testost",
 };
 
 const token = jwt.sign(testUser, secret);
 
-console.log(token);
-
-// Endpoint testing with JWT token
-
-const options = {
-  body: JSON.stringify({
-    coverLetter: "CoverLetter test",
-  }),
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-};
-
-fetch(`${base_URL}/applications`, {
-  method: "post",
-  options,
-})
-  .then((response) => response.json())
-  .then((json) => console.log(json))
-  .catch((error) => console.log(error));
-
-// const testData = {
-//   coverLetter: "CoverLetter test",
+// Create a listing f.eks like this to test the application endpoint
+// -----------------------------------------------------------------
+// const testListing = {
+//   title: "Test listing",
+//   tags: ["test", "listing", "jest"],
+//   description: "listing test with jest",
+//   deadline: "2025-11-30T20:55:00.000Z",
+//   authorId: `${testUser.id}`,
 // };
 
-// console.log(testData.coverLetter);
+const letter = "testing letter";
 
-// it("should create an application on a listing and return a 200 response", async () => {
-//   const response = await request(base_URL).post("/applications").send(testData).set("Authorization", `Bearer ${token}`);
-//   expect(response.status).toBe(200);
-//   expect(response.body.coverLetter).toEqual(testData.coverLetter);
-// });
+let applicationTest;
+
+describe("POST /applications", () => {
+  it("should return application and return a 200 response", async () => {
+    const res = await request(base_URL)
+      .post("/applications")
+      .send({
+        applicant: { connect: { id: testUser.id } },
+        // Replace the listing id here with the targeted one.
+        listing: { connect: { id: "9122ffa3-21e9-4115-8938-83825c65c5ca" } },
+        coverLetter: letter,
+      })
+      .set("Authorization", `Bearer ${token}`);
+
+    applicationTest = res.body;
+    console.log(applicationTest);
+
+    expect(res.status).toBe(200);
+    expect(res.body.applicantId).toEqual(testUser.id);
+    expect(res.body.listingId).toEqual(applicationTest.listingId);
+    expect(res.body.coverLetter).toEqual(applicationTest.coverLetter);
+  });
+});
+
+describe("POST /applications Error", () => {
+  it("should return a status code of 409 with application already exist on listing message", async () => {
+    const res = await request(base_URL)
+      .post(`/applications`)
+      .send({
+        applicant: { connect: { id: testUser.id } },
+        listing: { connect: { id: applicationTest.listingId } },
+        coverLetter: letter,
+      })
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.body.status).toBe(409);
+    expect(res.body.message).toBe(
+      "You've already created an application on this listing"
+    );
+  });
+});
+
+describe("GET /applications", () => {
+  it("should return array of applications and 200 response code", async () => {
+    const response = await request(base_URL)
+      .get(`/applications`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+  });
+});
+
+describe("GET /applications/id", () => {
+  it("should return a single application and 200 response code", async () => {
+    const response = await request(base_URL)
+      .get(`/applications/${applicationTest.id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.coverLetter).toEqual(applicationTest.coverLetter);
+  });
+});

@@ -3,3 +3,7 @@ node_modules
 .env
 /prisma/migrations
 notes.md
+findUser.js
+password.js
+user
+user/router.js
