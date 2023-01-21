@@ -13,11 +13,17 @@ datasource db {
 model User {
   id           String        @id @default(uuid())
   email        String        @unique
+  title        String?
   firstName    String
   lastName     String
   password     String
-  salt         String
+  salt         String?
+  about        String?
+  avatar       String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   role         UserRole      @default(Applicant)
+  skills       String[]      @default([])
   applications Application[]
   offers       Offer[]
   listings     Listing[]
@@ -30,15 +36,16 @@ enum UserRole {
 }
 
 model Application {
-  id          String  @id @default(uuid())
-  created     DateTime      @default(now())
-  updated     DateTime      @updatedAt
-  applicant   User    @relation(fields: [applicantId], references: [id])
+  id          String   @id @default(uuid())
+  created     DateTime @default(now())
+  updated     DateTime @updatedAt
+  applicant   User     @relation(fields: [applicantId], references: [id])
   applicantId String
   offers      Offer[]
-  listing     Listing @relation(fields: [listingId], references: [id])
+  listing     Listing  @relation(fields: [listingId], references: [id])
   listingId   String
   coverLetter String
+
   @@unique([applicantId, listingId])
 }
 
@@ -62,18 +69,19 @@ enum OfferState {
 }
 
 model Listing {
-  id           String        @id @default(uuid())
-  title        String
-  tags         String[]
-  description  String
-  requirements String[]
-  deadline     DateTime
-  created      DateTime      @default(now())
-  updated      DateTime
-  Applications Application[]
-  Offer        Offer[]
-  author       User          @relation(fields: [authorId], references: [id])
-  authorId     String
+  id            String        @id @default(uuid())
+  title         String
+  tags          String[]
+  description   String
+  requirements  String[]
+  deadline      DateTime
+  created       DateTime      @default(now())
+  updated       DateTime      @updatedAt
+  applications  Application[]
+  offer         Offer[]
+  author        User          @relation(fields: [authorId], references: [id])
+  authorId      String
+  listingsState ListingState  @default(Active)
 }
 
 enum ListingState {
