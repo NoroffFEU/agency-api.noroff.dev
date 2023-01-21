@@ -94,3 +94,28 @@ describe("GET /applications/id", () => {
     expect(response.body.coverLetter).toEqual(applicationTest.coverLetter);
   });
 });
+
+// DELETE unit-test
+
+describe("DELETE /applications/id", () => {
+  it("should delete application and return a 200 response", async () => {
+    const response = await request(base_URL)
+      .delete(`/applications/${applicationTest.id}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    console.log(response.body);
+
+    expect(response.status).toBe(200);
+    expect(response.body.message).toEqual(
+      `Successfully deleted application with id: ${applicationTest.id}`
+    );
+  });
+
+  it("should return a 400 response and application already deleted", async () => {
+    const response = await request(base_URL)
+      .delete(`/applications/${applicationTest.id}`)
+      .set("Authorization", `Bearer ${token}`);
+    console.log(response.body);
+    expect(response.status).toBe(400);
+  });
+});
