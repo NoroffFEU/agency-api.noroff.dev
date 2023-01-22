@@ -38,7 +38,7 @@
  * @swagger
  * /application:
  *   post:
- *     summary: Creates a new application
+ *     summary: Create a new application
  *     tags: [Application]
  *     description: Creates a new application on a listing
  *     components:
@@ -52,6 +52,14 @@
  *           schema:
  *             type: object
  *             properties:
+ *               applicantId:
+ *                 type: string
+ *                 description: users ID
+ *                 example string
+ *               listingId:
+ *                 type: string
+ *                 description: listing ID
+ *                 example string
  *               coverLetter:
  *                 type: string
  *                 description: coverLetter on the application
@@ -137,7 +145,7 @@
  *           type: boolean
  *     responses:
  *       200:
- *         description: application response. you can use listing=true, applicant=true, offers=true.
+ *         description: application response with queryParams ?applicant=true&listing=true&offers=true.
  *         content:
  *           application/json:
  *             schema:
