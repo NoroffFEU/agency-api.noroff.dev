@@ -9,8 +9,7 @@ const base_URL = `http://localhost:${PORT}`;
 
 const secret = "MySecretKey";
 
-// Create a testUser in your local database to create a listing and place the following here.
-// Replace this with the response from f.eks postman
+// Create a testUser in your local database and place the following here.
 const testUser = {
   id: "be559b29-1616-412f-ad06-1351936de656",
   email: "tes@tes.com",
@@ -20,8 +19,7 @@ const testUser = {
 
 const token = jwt.sign(testUser, secret);
 
-// Create a listing f.eks like this to test the application endpoint
-// -----------------------------------------------------------------
+// Create a listing f.eks like this to test the applications endpoints
 // const testListing = {
 //   title: "Test listing",
 //   tags: ["test", "listing", "jest"],
@@ -76,22 +74,22 @@ describe("POST /applications Error", () => {
 
 describe("GET /applications", () => {
   it("should return array of applications and 200 response code", async () => {
-    const response = await request(base_URL)
+    const res = await request(base_URL)
       .get(`/applications`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(200);
+    expect(res.status).toBe(200);
   });
 });
 
 describe("GET /applications/id", () => {
   it("should return a single application and 200 response code", async () => {
-    const response = await request(base_URL)
+    const res = await request(base_URL)
       .get(`/applications/${applicationTest.id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(200);
-    expect(response.body.coverLetter).toEqual(applicationTest.coverLetter);
+    expect(res.status).toBe(200);
+    expect(res.body.coverLetter).toEqual(applicationTest.coverLetter);
   });
 });
 
@@ -99,23 +97,21 @@ describe("GET /applications/id", () => {
 
 describe("DELETE /applications/id", () => {
   it("should delete application and return a 200 response", async () => {
-    const response = await request(base_URL)
+    const res = await request(base_URL)
       .delete(`/applications/${applicationTest.id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    console.log(response.body);
-
-    expect(response.status).toBe(200);
-    expect(response.body.message).toEqual(
+    expect(res.status).toBe(200);
+    expect(res.body.message).toEqual(
       `Successfully deleted application with id: ${applicationTest.id}`
     );
   });
 
   it("should return a 400 response and application already deleted", async () => {
-    const response = await request(base_URL)
+    const res = await request(base_URL)
       .delete(`/applications/${applicationTest.id}`)
       .set("Authorization", `Bearer ${token}`);
-    console.log(response.body);
-    expect(response.status).toBe(400);
+
+    expect(res.status).toBe(400);
   });
 });
