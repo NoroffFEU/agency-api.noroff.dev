@@ -43,7 +43,7 @@
  *         skills:
  *           type: [string]
  *           description: skills this user has.
- *           example: [HTML, CSS, JavaScript, Node, Git]
+ *           example: ["HTML", "CSS", "JavaScript", "Git", "GitHub"]
  *         role:
  *           type: string
  *           description:  A user can be an Applicant, Client, or Admin.
@@ -431,7 +431,7 @@
  *               skills:
  *                 type: string
  *                 description: String of users skills, separated by commas.
- *                 example: HTML, CSS, JavaScript, Git, GitHub
+ *                 example: ["HTML", "CSS", "JavaScript", "Git", "GitHub"]
  *     responses:
  *       200:
  *         description: A single user.
