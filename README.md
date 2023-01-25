@@ -1,6 +1,16 @@
 # agency.noroff.dev
 
-## Installation and setup guide
+## **Table of Contents**
+
+1. [Installation](#install)
+2. [Common Problems](#problems)
+3. [Repository Etiquette](#Etiquette)
+4. [QA Testing](#testing)
+5. [Backend Board & Task Overview](#overview)
+6. [Utility Functions](#utilities)
+7. [Useful Links & Resources](#resources)
+
+## Installation and setup guide <a id="install"></a>
 
 Clone the repo in your desired manner.
 
@@ -78,7 +88,7 @@ This should generate a response like so;
 
 You can further test on the `GET` `/users` endpoint to get the user you just registered back.
 
-## Common problems
+## Common Problems <a id="problems"></a>
 
 - Ensure Express is running and the database is running, in the pgAdmin 4 program if your database has a red x on it you should just need to click on it and enter a password to start it.
 - The Prisma schema are not set in stone, and will likely be updated regularly, make sure when changing branches or updating the schema, to do the following;
@@ -87,12 +97,12 @@ You can further test on the `GET` `/users` endpoint to get the user you just reg
   3. Some times migrations clear the whole database, so you will need to recreate your users/lists/applications/etc...
 - When updating .env file variables you should terminate the express server and if you have updated the database URL, regenerate the prisma client using `npx prisma generate`
 
-## Repository Etiquette
+## Repository Etiquette <a id="Etiquette"></a>
 
 - Name your branches in meaningful ways with the route at the start of the name. eg. `Users-POST-Login` or `Application-Swagger-Docs`.
 - Delete branches once they have been merged into the routes main branch, there are currently 4 main branches for the existing routes `Users/Listings/Application/Offers`.
 
-## QA Testing
+## QA Testing <a id="testing"></a>
 
 Most endpoint should have a selection of basic tests made using Jest and Supertest. Useful link from the Jest docs.
 
@@ -106,7 +116,30 @@ QA aims for upcoming sprints
 - Create additional tests for a variety of invalid requests and unauthorized requests.
 - Review all requests into your endpoint's branch and request review from other QA's/Scrum masters when merging into the main branch.
 
-## Current Utility Functions
+## Backend Board & Task Overview <a id="overview"></a>
+
+Main discussion board for backend, additional boards linked under teams.
+
+https://github.com/orgs/NoroffFEU/teams/backend
+
+Project board, add your task, iteration, status and assign yourself to them here;
+
+https://github.com/orgs/NoroffFEU/projects/12/views/1
+
+Current sprint;
+
+https://github.com/orgs/NoroffFEU/projects/12/views/2
+
+### Overview of objectives for coming sprints
+
+- Create a more detailed test suite for endpoints.
+- Implement company model and routes.
+- Validate tokens on authenticated endpoints.
+- Add email verification and password reset by email.
+- Implement a search strategy.
+- Deal with issues raised by front end.
+
+## Current Utility Functions <a id="utilities"></a>
 
 In the `src/utilities` folder you will find a selection of reusable functions. Currently these include;
 
@@ -115,11 +148,7 @@ In the `src/utilities` folder you will find a selection of reusable functions. C
 3. mediaGuard.js - Verify a provided url is accessible.
 4. password.js - Generate password hash, and compare plain text password to hash.
 
-## Future plans
-
-Implement company model:
-
-## Useful Links
+## Useful Links & Resources <a id="resources"></a>
 
 PostgreSQL:
 
@@ -128,6 +157,14 @@ https://www.postgresql.org/
 Prisma docs:
 
 https://www.prisma.io/
+
+Prisma JS setup examples:
+
+https://github.com/prisma/prisma-examples/tree/latest/javascript
+
+Prisma model guide:
+
+https://www.youtube.com/watch?v=RebA5J-rlwg
 
 Express docs:
 
@@ -139,11 +176,13 @@ https://www.linkedin.com/learning/express-essential-training-14539342/
 
 https://www.linkedin.com/learning/building-restful-apis-with-node-js-and-express-16069959/
 
+How to create multiple routes in the same express.js server.
+
+https://www.geeksforgeeks.org/how-to-create-multiple-routes-in-the-same-express-js-server/
+
 Jest and Supertest:
 
 https://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
-
-https://medium.com/@prashantramnyc/authenticate-rest-apis-in-node-js-using-jwt-json-web-tokens-f0e97669aad3
 
 Swagger Documentation links;
 
@@ -152,3 +191,33 @@ https://swagger.io/docs/specification/basic-structure/
 https://editor.swagger.io/
 
 https://dev.to/kabartolo/how-to-document-an-express-api-with-swagger-ui-and-jsdoc-50do
+
+Json Web Tokens
+
+https://medium.com/@prashantramnyc/authenticate-rest-apis-in-node-js-using-jwt-json-web-tokens-f0e97669aad3
+
+### Dependency links
+
+Prettier:
+
+https://www.npmjs.com/package/prettier
+
+EsLint:
+
+https://www.npmjs.com/package/eslint
+
+Nodemon refreshes server as changes are made locally:
+
+https://www.npmjs.com/package/nodemon
+
+body parser weed out incorrect body requests before checking with server:
+
+http://expressjs.com/en/resources/middleware/body-parser.html
+
+bcrypt password hashing and salting:
+
+https://www.npmjs.com/package/bcrypt
+
+jsonwebtoken, token handling for logged in users:
+
+https://www.npmjs.com/package/jsonwebtoken
