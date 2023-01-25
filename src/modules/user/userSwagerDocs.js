@@ -389,11 +389,49 @@
  *     parameters:
  *       - in: path
  *         name: id
- *         requestBody:
  *         required: true
  *         description: String ID of the user to retrieve.
  *         schema:
  *           type: String
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 description: The user's first name.
+ *                 example: John
+ *               lastName:
+ *                 type: string
+ *                 description: The user's last name.
+ *                 example: Smith
+ *               email:
+ *                 type: string (email)
+ *                 description: The user's email.
+ *                 example: example@example.com
+ *               password:
+ *                 type: string
+ *                 description: The user's desired password.
+ *                 example: Password123
+ *               currentpassword:
+ *                 type: string
+ *                 description: The user's current password, required to change password.
+ *                 example: Password123
+ *               avatar:
+ *                 type: string (url)
+ *                 description: url to user avatar
+ *                 example: www.example.com/example.jpeg
+ *               about:
+ *                 type: string
+ *                 description: Details about the user.
+ *                 example: "I'm a student of front-end....."
+ *               skills:
+ *                 type: string
+ *                 description: String of users skills, separated by commas.
+ *                 example: HTML, CSS, JavaScript, Git, GitHub
  *     responses:
  *       200:
  *         description: A single user.
