@@ -62,6 +62,11 @@
  *   post:
  *     summary: Create a new listing.
  *     tags: [Listings]
+ *     components:
+ *       BearerAuth:
+ *         type: jsonToken
+ *         in: header
+ *         scheme: bearer
  *     required:
  *       - authorId
  *       - title
@@ -141,7 +146,8 @@
  *                       type: string
  *                       description: The id of the author.
  *                       example: a120a09d-5td2-4eb1-8724-407fb13a8694
- *
+ *     security:
+ *       - bearerAuth: []
  */
 
 //------------------ GET /listings --------------------
@@ -278,6 +284,32 @@
  *         description: String ID of the listing to retrieve.
  *         schema:
  *           type: String
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The listing's title.
+ *                 example: Looking for Front-end developer
+ *               tags:
+ *                 type: [string]
+ *                 description: Tags on listing.
+ *                 example: front-end, hiring
+ *               description:
+ *                 type: string
+ *                 description: The listing description.
+ *               requirements:
+ *                 type: [string]
+ *                 description: List of requirements for the position
+ *                 example: html, css, javascript
+ *               deadline:
+ *                 type: string
+ *                 description: The listing's deadline
+ *                 example: 2023-04-16T12:19:48.625Z
  *     responses:
  *       200:
  *         description: Update a listing.
