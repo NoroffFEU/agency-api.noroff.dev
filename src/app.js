@@ -44,9 +44,9 @@ const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 app.use(
-  bodyParser.json({
-    extended: false,
-  })
+	bodyParser.json({
+		extended: false,
+	})
 );
 
 //stops html response on unexpected json token
@@ -65,6 +65,6 @@ app.use("/applications", applicationsRouter);
 app.use("/listings", listingsRouter);
 app.use("/offers", offersRouter);
 
-const server = app.listen(PORT, () =>
-  console.log(`🚀 Server ready at: http://localhost:${PORT}`)
-);
+const server = app.listen(PORT, () => console.log(`🚀 Server ready at: http://localhost:${PORT}`));
+
+export default server;

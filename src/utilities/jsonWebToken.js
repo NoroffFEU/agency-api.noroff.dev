@@ -4,17 +4,23 @@ const { sign, decode, verify } = jsonwebtoken;
 import { findUserById } from "./findUser.js";
 
 /**
- * Takes a token and verifies it, as well as verify user still exists
+ * Takes a token and verifies it, as well as verify user still exists returns false or user data
  * @param {String} token
- * @returns {Boolean}
+ * @returns {promise<Boolean||Object>}
  */
-export function verifyToken(token) {
-  const data = decode(token);
-  const user = findUserById(data.userId);
-  if (user) {
-    return verify(token, process.env.SECRETSAUCE);
+export async function verifyToken(token) {
+  try {
+    const data = verify(token, process.env.SECRETSAUCE);
+    if (data) {
+      const user = await findUserById(data.userId);
+      if (user) {
+        return Promise.resolve(user);
+      }
+    }
+    return false;
+  } catch (error) {
+    return false;
   }
-  return false;
 }
 
 /**
