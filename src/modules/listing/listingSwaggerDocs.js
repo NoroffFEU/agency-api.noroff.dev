@@ -129,7 +129,7 @@
  *                     requirements:
  *                       type: [string]
  *                       description: List of requirements for the position
- *                       example: html, css, javascript
+ *                       example: ["HTML", "CSS", "JavaScript"]
  *                     deadline:
  *                       type: string
  *                       description: The listing's deadline

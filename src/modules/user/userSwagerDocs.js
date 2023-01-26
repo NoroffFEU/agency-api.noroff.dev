@@ -43,7 +43,7 @@
  *         skills:
  *           type: [string]
  *           description: skills this user has.
- *           example: [HTML, CSS, JavaScript, Node, Git]
+ *           example: ["HTML", "CSS", "JavaScript", "Git", "GitHub"]
  *         role:
  *           type: string
  *           description:  A user can be an Applicant, Client, or Admin.
@@ -139,6 +139,12 @@
  *                       type: string
  *                       description: The user's access token.
  *                       example: "string"
+ *       400:
+ *         description: Bad image url
+ *       409:
+ *         description: User already exists
+ *       500:
+ *         description: Internal Server Error
  *
  */
 
@@ -203,6 +209,11 @@
  *                       type: string
  *                       description: The user's access token.
  *                       example: "string"
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ *
  */
 
 //------------------ GET /users/ --------------------
@@ -246,7 +257,7 @@
  *                       example: example.com/example.jpeg
  *                     about:
  *                       type: string
- *                       description: Details about te user.
+ *                       description: Details about the user.
  *                       example: "I'm a student of front-end....."
  *                     skills:
  *                       type: [string]
@@ -274,6 +285,8 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       500:
+ *         description: Internal server error
  */
 
 //------------------ GET /users/{id} --------------------
@@ -326,7 +339,7 @@
  *                       example: example.com/example.jpeg
  *                     about:
  *                       type: string
- *                       description: Details about te user.
+ *                       description: Details about the user.
  *                       example: "I'm a student of front-end....."
  *                     skills:
  *                       type: [string]
@@ -354,6 +367,10 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       400:
+ *         description: Bad request, user id is undefined / Could not find user
+ *       500:
+ *         description: Internal server error
  */
 
 //------------------ PUT /users/{id} --------------------
@@ -376,6 +393,45 @@
  *         description: String ID of the user to retrieve.
  *         schema:
  *           type: String
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 description: The user's first name.
+ *                 example: John
+ *               lastName:
+ *                 type: string
+ *                 description: The user's last name.
+ *                 example: Smith
+ *               email:
+ *                 type: string (email)
+ *                 description: The user's email.
+ *                 example: example@example.com
+ *               password:
+ *                 type: string
+ *                 description: The user's desired password.
+ *                 example: Password123
+ *               currentpassword:
+ *                 type: string
+ *                 description: The user's current password, required to change password.
+ *                 example: Password123
+ *               avatar:
+ *                 type: string (url)
+ *                 description: url to user avatar
+ *                 example: www.example.com/example.jpeg
+ *               about:
+ *                 type: string
+ *                 description: Details about the user.
+ *                 example: "I'm a student of front-end....."
+ *               skills:
+ *                 type: string
+ *                 description: String of users skills, separated by commas.
+ *                 example: ["HTML", "CSS", "JavaScript", "Git", "GitHub"]
  *     responses:
  *       200:
  *         description: A single user.
@@ -411,7 +467,7 @@
  *                       example: example.com/example.jpeg
  *                     about:
  *                       type: string
- *                       description: Details about te user.
+ *                       description: Details about the user.
  *                       example: "I'm a student of front-end....."
  *                     skills:
  *                       type: [string]
@@ -439,6 +495,16 @@
  *                       format: date
  *                       description: Most recent update.
  *                       example: 2023-01-16T19:55:13.609Z
+ *       400:
+ *         description: Bad image URL / An argument or input value does not exist or cannot be edited in the database
+ *       401:
+ *         description: No current password provided/ Incorrect password
+ *       403:
+ *         description: E-mail does not meet E-mail format requirements
+ *       404:
+ *         description: You dont have permission to edit roles
+ *       500:
+ *         description: Internal server error
  *     security:
  *       - bearerAuth: []
  */
@@ -473,6 +539,10 @@
  *                       type: string
  *                       description: Success message.
  *                       example: Account deleted.
+ *       401:
+ *         description: User not found/ User has to be authenticated to make this request/ User does not match user to be deleted
+ *       500:
+ *         description: Internal server error
  *     security:
  *       - bearerAuth: []
  */
