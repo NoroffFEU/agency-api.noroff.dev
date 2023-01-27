@@ -48,6 +48,17 @@ app.use(
   })
 );
 
+//stops html response on unexpected json token
+const jsonErrorHandler = function (error, req, res, next) {
+  res.setHeader("Content-Type", "application/json");
+  res
+    .status(error.status)
+    .send(
+      JSON.stringify({ ...error, message: "Bad request, json parse failed." })
+    );
+};
+app.use(jsonErrorHandler);
+
 app.use("/users", usersRouter);
 app.use("/applications", applicationsRouter);
 app.use("/listings", listingsRouter);
@@ -56,3 +67,5 @@ app.use("/offers", offersRouter);
 const server = app.listen(PORT, () =>
   console.log(`🚀 Server ready at: http://localhost:${PORT}`)
 );
+
+export default server;
