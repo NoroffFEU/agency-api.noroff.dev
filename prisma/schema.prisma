@@ -55,7 +55,7 @@ model Company {
 
 model Application {
   id          String  @id @default(uuid())
-  applicant   User     @relation(fields: [applicantId], references: [id])
+  applicant   User    @relation(fields: [applicantId], references: [id])
   applicantId String
   company     Company  @relation(fields: [companyId], references: [id])
   companyId   String
