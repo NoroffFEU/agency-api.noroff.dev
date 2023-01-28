@@ -68,3 +68,21 @@ applicationsRouter
       res.status(400).json({ message: `${err}`, code: "400" });
     }
   });
+
+applicationsRouter.put("/:id", (req, res) => {
+  const { applicantId, listingId } = req.body;
+
+  if (!listingId || !applicantId) {
+    res.sendStatus(400);
+    return;
+  }
+
+  res.send({
+    applicationId: "2904fd0c-92dc-4bea-b78f-0948cdc95416",
+    applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
+    listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
+    coverLetter: "This is my updated cover letter",
+    created: "",
+    updated: "",
+  });
+});

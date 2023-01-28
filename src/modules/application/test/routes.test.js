@@ -93,6 +93,73 @@ describe("GET /applications/id", () => {
   });
 });
 
+// PUT unit-test
+describe("PUT /applications/id", () => {
+  describe("given an applicantId and a listingId", () => {
+    //should check there's a valid token
+    //should update cover letter in database
+
+    test("should respond with a status code of 200", async () => {
+      const response = await request(base_URL).put("/applications/id").send({
+        applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
+        listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
+        coverLetter: "This is my updated cover letter",
+      });
+
+      expect(response.statusCode).toBe(200);
+    });
+
+    test("should specify json in the content-type header", async () => {
+      const response = await request(base_URL).put("/applications/id").send({
+        applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
+        listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
+        coverLetter: "This is my updated cover letter",
+      });
+
+      expect(response.headers["content-type"]).toEqual(
+        expect.stringContaining("json")
+      );
+    });
+
+    test("should respond with a json object containing applicationId, applicantId, listingId, coverLetter, created, updated", async () => {
+      const response = await request(base_URL).put("/applications/id").send({
+        applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
+        listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
+        coverLetter: "This is my updated cover letter",
+      });
+
+      expect(response.body.applicationId).toBeDefined();
+      expect(response.body.applicantId).toBeDefined();
+      expect(response.body.listingId).toBeDefined();
+      expect(response.body.coverLetter).toBeDefined();
+      expect(response.body.created).toBeDefined();
+      expect(response.body.updated).toBeDefined();
+    });
+  });
+
+  describe("missing applicantId or listingId", () => {
+    test("should respond with 400 status code", async () => {
+      const data = [
+        { applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96" },
+        { listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c" },
+        {},
+      ];
+
+      for (const body of data) {
+        const response = await request(base_URL)
+          .put("/applications/id")
+          .send(body);
+
+        expect(response.statusCode).toBe(400);
+      }
+    });
+  });
+
+  describe("invalid or missing token", () => {
+    //should respond with 401 status code
+  });
+});
+
 // DELETE unit-test
 
 describe("DELETE /applications/id", () => {
