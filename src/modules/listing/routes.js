@@ -9,7 +9,9 @@ listingsRouter
   .get("/", async (req, res) => {
     try {
       // Get listings from database
-      const listings = await databasePrisma.listing.findMany();
+      const listings = await databasePrisma.listing.findMany({
+        include: { company: true },
+      });
 
       // Show the listings in browser
       res.status(200).json(listings);
@@ -28,6 +30,7 @@ listingsRouter
         where: {
           id: urlID,
         },
+        include: { company: true },
       });
 
       // Check to see if array is empty
@@ -48,7 +51,7 @@ listingsRouter
 // POST /listings
 listingsRouter.post("/", async (req, res) => {
   try {
-    const { title, tags, description, requirements, deadline, authorId } =
+    const { title, tags, description, requirements, deadline, company } =
       req.body;
 
     const now = new Date().getTime();
@@ -64,7 +67,7 @@ listingsRouter.post("/", async (req, res) => {
       description &&
       requirements &&
       deadline &&
-      authorId
+      company
     ) {
       const result = await databasePrisma.listing.create({
         data: {
@@ -73,7 +76,7 @@ listingsRouter.post("/", async (req, res) => {
           description: description,
           requirements: requirements,
           deadline: deadline,
-          authorId: authorId,
+          company: { connect: { id: company } },
         },
       });
 
@@ -111,6 +114,7 @@ listingsRouter.put("/:id", async (req, res) => {
         id: id,
         ...req.body,
       },
+      include: { company: true },
     });
 
     res.status(200).json({
