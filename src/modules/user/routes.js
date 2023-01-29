@@ -75,7 +75,11 @@ usersRouter.post(
 // GET /users
 usersRouter.get("/", async (req, res) => {
   try {
-    const users = await databasePrisma.user.findMany();
+    const users = await databasePrisma.user.findMany({
+      include: {
+        company: true,
+      },
+    });
 
     users.forEach((user) => {
       delete user.password;
@@ -102,6 +106,9 @@ usersRouter.get("/:id", async (req, res) => {
     const user = await databasePrisma.user.findUnique({
       where: {
         id,
+      },
+      include: {
+        company: true,
       },
     });
 
