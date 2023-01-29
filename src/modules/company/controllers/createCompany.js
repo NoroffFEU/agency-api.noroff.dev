@@ -1,4 +1,4 @@
-import { verifyToken, signToken } from "../../../utilities/jsonWebToken.js";
+import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 export const createCompany = async (databasePrisma, req, res) => {
