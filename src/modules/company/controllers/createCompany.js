@@ -14,12 +14,9 @@ export const createCompany = async (databasePrisma, req, res) => {
   }
   // Validate to see if inputs are provided correctly
   if (!name || !sector || !logo || !phone || !admin) {
-    return res
-      .status(400)
-      .send({
-        error:
-          "You are required to provide a company name, sector, logo link, phone number, and an admin",
-      });
+    return res.status(400).send({
+      error: "You are required to provide a company name, sector, logo link, phone number, and an admin",
+    });
   }
   try {
     const company = await databasePrisma.company.create({
