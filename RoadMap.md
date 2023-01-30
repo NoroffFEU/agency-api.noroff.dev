@@ -24,6 +24,10 @@
 - Search Implementation.
 - Blog feed, with posts, reactions, and comments.
 
+### Additional ideas and requirements?
+
+????
+
 ## Code Standardisation
 
 ### Middleware
