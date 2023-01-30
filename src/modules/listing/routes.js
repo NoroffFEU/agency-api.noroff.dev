@@ -1,6 +1,8 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
-import { checkIfIdExist } from "./middleware/index.js";
+import { createListing } from "./controllers/controllerCreate.js";
+import { checkIfIdExist } from "./middleware/listingExists.js";
+import { validateUser } from "./middleware/validateUser.js";
 
 export const listingsRouter = express.Router();
 
@@ -49,41 +51,9 @@ listingsRouter
   });
 
 // POST /listings
-listingsRouter.post("/", async (req, res) => {
+listingsRouter.post("/", validateUser, async (req, res) => {
   try {
-    const { title, tags, description, requirements, deadline, company } =
-      req.body;
-
-    const now = new Date().getTime();
-    const valid = now < new Date(deadline).getTime();
-
-    if (!valid) {
-      res
-        .status(400)
-        .json({ message: "Deadline must be greater than todays date" });
-    } else if (
-      title &&
-      tags &&
-      description &&
-      requirements &&
-      deadline &&
-      company
-    ) {
-      const result = await databasePrisma.listing.create({
-        data: {
-          title: title,
-          tags: tags,
-          description: description,
-          requirements: requirements,
-          deadline: deadline,
-          company: { connect: { id: company } },
-        },
-      });
-
-      res.status(201).json(result);
-    } else {
-      res.status(400).json({ message: "Please fill in all required fields" });
-    }
+    createListing(req, res);
   } catch (e) {
     res.status(500).json({ message: `${e}` });
   }
