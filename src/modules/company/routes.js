@@ -25,7 +25,11 @@ companyRouter.post("/", async (req, res) => {
   createCompany(databasePrisma, req, res);
 });
 
+// Endpoint to update a company
+
 companyRouter.put("/", async (req, res) => {});
+
+// Endpoint to delete a company
 
 companyRouter.delete("/", async (req, res) => {
   deleteCompany(databasePrisma, req, res);
