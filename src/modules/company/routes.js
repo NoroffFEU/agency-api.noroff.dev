@@ -2,6 +2,7 @@ import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
 import { createCompany } from "./controllers/createCompany.js";
 import { findCompanyById } from "./controllers/findCompanyById.js";
+import { deleteCompany } from "./controllers/deleteCompany.js";
 
 export const companyRouter = express.Router();
 
@@ -36,8 +37,6 @@ companyRouter.post("/", async (req, res) => {
 
 companyRouter.put("/", async (req, res) => {});
 
-companyRouter.get("/", async (req, res) => {});
-
-companyRouter.get("/:id", async (req, res) => {});
-
-companyRouter.delete("/", async (req, res) => {});
+companyRouter.delete("/", async (req, res) => {
+  deleteCompany(databasePrisma, req, res);
+});
