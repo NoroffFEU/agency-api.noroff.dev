@@ -93,70 +93,115 @@ describe("GET /applications/id", () => {
   });
 });
 
+let applicationTestObject = {
+  applicant: "0aa86aff-d3d8-4bb5-86d1-d3d1436d93b2",
+  listing: "e0c7470b-3074-4742-8754-65477465bd73",
+  coverLetter: "I want the frontend developer job",
+  company: "0870de8a-07ac-47b8-aa6e-9032363df987",
+};
+
+let newCoverLetter = "This is a formal cover letter";
+
 // PUT unit-test
 describe("PUT /applications/id", () => {
-  describe("given an applicantId and a listingId", () => {
+  describe("given an applicant, a listing, and a company", () => {
     //should check there's a valid token
     //should update cover letter in database
 
     test("should respond with a status code of 200", async () => {
-      const response = await request(base_URL).put("/applications/id").send({
-        applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
-        listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
-        coverLetter: "This is my updated cover letter",
-      });
+      const response = await request(base_URL)
+        .put("/applications/id")
+        .send(applicationTestObject)
+        .set("Authorization", `Bearer ${token}`);
 
       expect(response.statusCode).toBe(200);
     });
 
     test("should specify json in the content-type header", async () => {
-      const response = await request(base_URL).put("/applications/id").send({
-        applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
-        listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
-        coverLetter: "This is my updated cover letter",
-      });
+      const response = await request(base_URL)
+        .put("/applications/id")
+        .send(applicationTestObject);
 
       expect(response.headers["content-type"]).toEqual(
         expect.stringContaining("json")
       );
     });
 
-    test("should respond with a json object containing applicationId, applicantId, listingId, coverLetter, created, updated", async () => {
-      const response = await request(base_URL).put("/applications/id").send({
-        applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96",
-        listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c",
-        coverLetter: "This is my updated cover letter",
-      });
+    test("should respond with a 401 status if user isn't authenticated", async () => {
+      const response = await request(base_URL)
+        .put("/applications/id")
+        .send(applicationTestObject);
 
-      expect(response.body.applicationId).toBeDefined();
-      expect(response.body.applicantId).toBeDefined();
-      expect(response.body.listingId).toBeDefined();
-      expect(response.body.coverLetter).toBeDefined();
-      expect(response.body.created).toBeDefined();
-      expect(response.body.updated).toBeDefined();
+      expect(response.body.status).toBe(401);
+      expect(response.body.message).toBe(
+        "User has to be authenticated to make this request"
+      );
+    });
+
+    test("should respond with a json object containing id, applicantId, companyId, listingId, coverLetter, created, updated, response", async () => {
+      const response = await request(base_URL)
+        .put("/applications/e8f18f38-c39b-4f59-a44e-d15367e7025e")
+        .send({
+          applicant: "0aa86aff-d3d8-4bb5-86d1-d3d1436d93b2",
+          listing: "e0c7470b-3074-4742-8754-65477465bd73",
+          coverLetter: newCoverLetter,
+          company: "0870de8a-07ac-47b8-aa6e-9032363df987",
+        })
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.body.data.id).toBe(
+        "e8f18f38-c39b-4f59-a44e-d15367e7025e"
+      );
+      expect(response.body.data.applicantId).toBe(
+        "0aa86aff-d3d8-4bb5-86d1-d3d1436d93b2"
+      );
+      expect(response.body.data.companyId).toBe(
+        "0870de8a-07ac-47b8-aa6e-9032363df987"
+      );
+      expect(response.body.data.listingId).toBe(
+        "e0c7470b-3074-4742-8754-65477465bd73"
+      );
+      expect(response.body.data.coverLetter).toBe(
+        "This is a formal cover letter"
+      );
+      expect(response.body.data.created).toBeDefined();
+      expect(response.body.data.updated).toBeDefined();
+      expect(response.body.data.response).toBe(
+        "Your Application is updated successfully"
+      );
     });
   });
 
-  describe("missing applicantId or listingId", () => {
-    test("should respond with 400 status code", async () => {
+  describe("when not provided with either applicant, listing, or company", () => {
+    test("should respond with 409 status code", async () => {
       const data = [
-        { applicantId: "0c3fd305-e8bb-43d5-8f3f-bdb405dfed96" },
-        { listingId: "91f5004b-df7e-4cc8-aaee-8703f14c031c" },
+        { applicant: "0aa86aff-d3d8-4bb5-86d1-d3d1436d93b2" },
+        { listing: "e0c7470b-3074-4742-8754-65477465bd73" },
+        { company: "0870de8a-07ac-47b8-aa6e-9032363df987" },
+        {
+          applicant: "0aa86aff-d3d8-4bb5-86d1-d3d1436d93b2",
+          listing: "e0c7470b-3074-4742-8754-65477465bd73",
+        },
+        {
+          applicant: "0aa86aff-d3d8-4bb5-86d1-d3d1436d93b2",
+          company: "0870de8a-07ac-47b8-aa6e-9032363df987",
+        },
+        {
+          listing: "e0c7470b-3074-4742-8754-65477465bd73",
+          company: "0870de8a-07ac-47b8-aa6e-9032363df987",
+        },
         {},
       ];
 
       for (const body of data) {
         const response = await request(base_URL)
           .put("/applications/id")
-          .send(body);
+          .send(body)
+          .set("Authorization", `Bearer ${token}`);
 
-        expect(response.statusCode).toBe(400);
+        expect(response._body.status).toBe(409);
       }
     });
-  });
-
-  describe("invalid or missing token", () => {
-    //should respond with 401 status code
   });
 });
 
