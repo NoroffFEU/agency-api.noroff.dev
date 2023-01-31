@@ -20,11 +20,9 @@ export const validateUser = async function (req, res, next) {
     verified = await verifyToken(readyToken);
 
     if (!verified) {
-      return res
-        .status(401)
-        .json({
-          message: "Invalid authorization token provided, please re-log.",
-        });
+      return res.status(401).json({
+        message: "Invalid authorization token provided, please re-log.",
+      });
     }
   }
 
@@ -35,7 +33,12 @@ export const validateUser = async function (req, res, next) {
       .json({ message: "Only clients can create listings." });
   }
 
-  if (verified.companyId === null && verified.role !== "Admin") {
+  // check users company exists
+  const company = databasePrisma.company.findUnique({
+    where: { id: verified.companyId },
+  });
+
+  if (!company && verified.role !== "Admin") {
     return res
       .status(401)
       .json({ message: "You must create a company first." });
