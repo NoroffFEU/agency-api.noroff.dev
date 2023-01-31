@@ -18,10 +18,22 @@
 
 ### Future tasks
 
+- Pagination of results, return max 100, with response headers for current and max pages.
+
+      http://localhost:12345/listings/?page=2&limit=10
+      let page = req.query.page;
+      let limit = req.query.limit;
+      https://nodejs.org/api/querystring.html
+      https://stackabuse.com/get-query-strings-and-parameters-in-express-js/
+
+- Sort/filter results, perhaps goes with search.
+
+      http://localhost:1234/listings/?sortBy=name&orderBy=asc&includes=requirements&includesValue=javascript
+
+- Search Implementation.
 - User verification through email, to verify email and reset password.
 - Email notifications for users and clients for applications and offers.
 - Storage for images, pdf and other documentation for applications?.
-- Search Implementation.
 - Blog feed, with posts, reactions, and comments.
 
 ### Additional ideas and requirements?
@@ -146,6 +158,8 @@ if (!errors.isEmpty()) {
 ## Possible Schema Updates
 
 ### User model expansion
+
+If we choose to add things like language, education and work experience we may want additional end points for create/update and delete for these.
 
 ```js
 model User {
