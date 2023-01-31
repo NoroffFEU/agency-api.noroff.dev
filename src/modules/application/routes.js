@@ -3,7 +3,6 @@ import { databasePrisma } from "../../prismaClient.js";
 import { Prisma } from "@prisma/client";
 import { checkAuth } from "./controllers/checkAuth.js";
 import { handleCreate } from "./controllers/controllerCreate.js";
-import { handleEdit } from "./controllers/controllerEdit.js";
 
 export const applicationsRouter = express.Router();
 
@@ -67,21 +66,5 @@ applicationsRouter
       });
     } catch (err) {
       res.status(400).json({ message: `${err}`, code: "400" });
-    }
-  })
-  .put("/:id", async (req, res) => {
-    try {
-      const result = await handleEdit(req);
-
-      res.status(200).json(result);
-    } catch (err) {
-      console.log(err);
-
-      const errorObject = await JSON.parse(err.message);
-      if (errorObject.status) {
-        res.status(errorObject.status).json(errorObject.message);
-      } else {
-        res.status(500).json("Internal server error.");
-      }
     }
   });
