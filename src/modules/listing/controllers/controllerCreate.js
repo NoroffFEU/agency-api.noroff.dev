@@ -1,42 +1,64 @@
-import { signToken } from "../../../utilities/jsonWebToken.js";
-import { generateHash } from "../../../utilities/password.js";
 import { databasePrisma } from "../../../prismaClient.js";
-import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 export const createListing = async function (req, res) {
-  const { title, tags, description, requirements, deadline, company } =
-    req.body;
+  try {
+    const { title, tags, description, requirements, deadline, company } =
+      req.body;
+    //check all required fields have been added
+    const data = { title, tags, description, requirements, deadline, company };
+    let errors = [];
+    [
+      "title",
+      "tags",
+      "description",
+      "requirements",
+      "deadline",
+      "company",
+    ].forEach((key) => {
+      if (data[key] === undefined) {
+        errors.push(key);
+      }
+    });
 
-  const now = new Date().getTime();
-  const valid = now < new Date(deadline).getTime();
+    if (errors.length > 0) {
+      return res.status(400).send({
+        message: `The request body is missing the following keys; ${errors.join(
+          ", "
+        )}`,
+      });
+    }
 
-  if (!valid) {
-    return res
-      .status(400)
-      .json({ message: "Deadline must be greater than todays date" });
-  } else if (
-    title &&
-    tags &&
-    description &&
-    requirements &&
-    deadline &&
-    company
-  ) {
+    // check for valid date
+    const now = new Date().getTime();
+    const date = new Date(deadline).getTime();
+    if (isNaN(date)) {
+      return res
+        .status(400)
+        .json({ message: "Deadline must be in a valid ISO date format." });
+    }
+    // check for future date
+    const valid = now < date;
+    if (!valid) {
+      return res
+        .status(400)
+        .json({ message: "Deadline must be greater than todays date" });
+    }
+
+    // create the listing
     const result = await databasePrisma.listing.create({
       data: {
-        title: title,
-        tags: tags,
-        description: description,
-        requirements: requirements,
-        deadline: deadline,
+        ...data,
+        deadline: new Date(deadline).toISOString(),
         company: { connect: { id: company } },
       },
     });
 
+    //return the created listing
     return res.status(201).json(result);
-  } else {
-    return res
-      .status(400)
-      .json({ message: "Please fill in all required fields" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Unexpected internal server error.", ...error });
   }
 };
