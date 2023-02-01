@@ -33,12 +33,17 @@ export const validateUser = async function (req, res, next) {
       .json({ message: "Only clients can create listings." });
   }
 
+  // allow admin to create listings with companyId in request body
+  if (verified.role === "Admin") {
+    verified.companyId = req.body.companyId;
+  }
+
   // check users company exists
   const company = databasePrisma.company.findUnique({
     where: { id: verified.companyId },
   });
 
-  if (!company && verified.role !== "Admin") {
+  if (!company) {
     return res
       .status(401)
       .json({ message: "You must create a company first." });
