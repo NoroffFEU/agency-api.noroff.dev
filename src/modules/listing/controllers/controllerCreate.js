@@ -41,7 +41,7 @@ export const createListing = async function (req, res) {
     if (!valid) {
       return res
         .status(400)
-        .json({ message: "Deadline must be greater than todays date" });
+        .json({ message: "Deadline must be a future date" });
     }
 
     // create the listing

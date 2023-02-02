@@ -18,7 +18,6 @@ export const validateUser = async function (req, res, next) {
   let verified;
   if (readyToken != undefined) {
     verified = await verifyToken(readyToken);
-
     if (!verified) {
       return res.status(401).json({
         message: "Invalid authorization token provided, please re-log.",
@@ -38,8 +37,13 @@ export const validateUser = async function (req, res, next) {
     verified.companyId = req.body.companyId;
   }
 
+  if (!verified.companyId) {
+    return res
+      .status(401)
+      .json({ message: "You must create a company first." });
+  }
   // check users company exists
-  const company = databasePrisma.company.findUnique({
+  const company = await databasePrisma.company.findUnique({
     where: { id: verified.companyId },
   });
 
