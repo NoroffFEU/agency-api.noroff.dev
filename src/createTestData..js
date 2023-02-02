@@ -43,6 +43,14 @@ export const createTestDatabase = async function () {
     role: "Client",
   };
 
+  let testUserClient3 = {
+    email: "testClient3@test.com",
+    firstName: "Client3",
+    lastName: "Doe",
+    password: await generateHash("password"),
+    role: "Client",
+  };
+
   const getUser = async function (user) {
     const exists = await databasePrisma.user.findUnique({
       where: {
@@ -63,6 +71,7 @@ export const createTestDatabase = async function () {
   testUserApplicant2 = await getUser(testUserApplicant2);
   testUserClient1 = await getUser(testUserClient1);
   testUserClient2 = await getUser(testUserClient2);
+  testUserClient3 = await getUser(testUserClient3);
 
   // await databasePrisma.user.delete({
   //   where: {
@@ -104,9 +113,22 @@ export const createTestDatabase = async function () {
     });
   }
 
+  const testCompany3 = {
+    name: "CompanyClient1",
+    sector: "tester",
+    phone: "tester",
+    logo: "tester",
+  };
+  let testCompanyClient3 = testUserClient3.companyId;
+  if (!testCompanyClient3) {
+    testCompanyClient1 = await databasePrisma.company.create({
+      data: { ...testCompany3, admin: { connect: { id: testUserClient3.id } } },
+    });
+  }
+
   //return { testUserAdmin, testUserApplicant1, testUserApplicant2, testUserClient1, testUserClient2 };
 };
 
-//await createTestDatabase();
+await createTestDatabase();
 
 //export const { testUserAdmin, testUserApplicant1, testUserApplicant2, testUserClient1, testUserClient2, testCompanyClient1 } = await createTestDatabase();

@@ -22,12 +22,12 @@ export const validatePermissions = async function (req, res, next) {
   //verify token
   const verified = await verifyToken(readyToken);
 
-  const listing = databasePrisma.listing.findUnique({
+  const listing = await databasePrisma.listing.findUnique({
     where: { id: listingId },
   });
 
   // check the user is an admin for the company
-  if (verified.companyId == !listing.companyId) {
+  if (verified.companyId !== listing.companyId) {
     return res
       .status(401)
       .json({ message: "You can only edit your own company listings." });

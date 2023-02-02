@@ -32,6 +32,17 @@ const client2Token =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNDRhZjZjNi1kZDZjLTQyN2MtOTdkMS0wMTQzMTNlNjJjNmYiLCJlbWFpbCI6InRlc3RDbGllbnQyQHRlc3QuY29tIiwiaWF0IjoxNjc1MzQ3NzM3LCJleHAiOjE2NzU0MzQxMzd9.Xc824SLe4gYwxBkBrCQcmjuVrA8BhfeqLpAfqVCTC04";
 //const client2Token = `Bearer ${signToken(testClient2.id, testClient2.email)};
 
+const testClient3 = {
+  id: "c44af6c6-dd6c-427c-97d1-014313e62c6f",
+  email: "testClient2@test.com",
+  role: "Client",
+  companyId: null,
+};
+
+const client3Token =
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGE5NDQ4NS05Njk0LTRmZDMtYTg4My1hNjU4YmI0MzQyYjgiLCJlbWFpbCI6InRlc3RDbGllbnQzQHRlc3QuY29tIiwiaWF0IjoxNjc1MzUwMzM0LCJleHAiOjE2NzU0MzY3MzR9.LbEnpiGs7SrtlodplCkL5VHXH7NMky9h96MC49C3ba4";
+//const client3Token = `Bearer ${signToken(testClient3.id, testClient3.email)};
+
 const testApplicant = {
   id: "e52df418-b7e8-46e7-b56d-01ecac9bfc38",
   email: "testApplicant1@test.com",
@@ -186,30 +197,59 @@ describe("PUT /listings/:id", () => {
       description: "This is a test listing 2",
       deadline: "2024-11-30T20:57:00.000Z",
     };
-    const response = await request(baseURL).put(`/listings/${id}`).send(data);
+    const response = await request(baseURL)
+      .put(`/listings/${id}`)
+      .set("Authorization", `${client1Token}`)
+      .send(data);
     expect(response.status).toBe(200);
     expect(response.body.message).toEqual("Listing updated successfully");
   });
+
+  it("should return 401 and a message when attempting to edit another companies listing", async () => {
+    const id = listingTest.id;
+    const data = {
+      title: "Test Listing 2",
+      description: "This is a test listing 2",
+      deadline: "2024-11-30T20:57:00.000Z",
+    };
+    const response = await request(baseURL)
+      .put(`/listings/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send(data);
+    expect(response.status).toBe(401);
+    expect(response.body.message).toEqual(
+      "You can only edit your own company listings."
+    );
+  });
+
+  it("should return 400 and an error message on deadline", async () => {
+    const id = listingTest.id;
+    const data = {
+      deadline: "2020-11-30T20:57:00.000Z",
+    };
+    const response = await request(baseURL)
+      .put(`/listings/${id}`)
+      .set("Authorization", `${client1Token}`)
+      .send(data);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual("Deadline must be a future date.");
+  });
 });
 
-// describe("DELETE /listings/:id", () => {
-//   it("should return 200 and a successful delete message", async () => {
-//     const id = listingTest.id;
-//     console.log(id);
-//     const response = await request(server).delete(`${baseURL}/${id}`);
-//     console.log(response.body);
-//     expect(response.status).toBe(200);
-//   });
-// });
+describe("DELETE /listings/:id", () => {
+  it("should return 401 when attempting to edit other company listings", async () => {
+    const id = listingTest.id;
+    const response = await request(baseURL)
+      .delete(`/listings/${id}`)
+      .set("Authorization", `${client3Token}`);
+    expect(response.status).toBe(401);
+  });
 
-// describe("PUT /listings/:id deadline", () => {
-//   it("should return 400 and an error message on deadline", async () => {
-//     const id = listingTest.id;
-//     const data = {
-//       deadline: "2020-11-30T20:57:00.000Z",
-//     };
-//     const response = await request(server).put(`${baseURL}/${id}`).send(data);
-//     expect(response.status).toBe(400);
-//     expect(response.body.message).toEqual("deadline must be a future date");
-//   });
-// });
+  it("should return 200 and a successful delete message", async () => {
+    const id = listingTest.id;
+    const response = await request(baseURL)
+      .delete(`/listings/${id}`)
+      .set("Authorization", `${client1Token}`);
+    expect(response.status).toBe(200);
+  });
+});
