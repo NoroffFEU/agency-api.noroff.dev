@@ -1,6 +1,8 @@
 import request from "supertest";
 import { signToken } from "../../utilities/jsonWebToken";
-import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import * as dotenv from "dotenv";
+import jsonwebtoken from "jsonwebtoken";
+const { sign } = jsonwebtoken;
 dotenv.config();
 
 const PORT = process.env.PORT;
@@ -9,48 +11,66 @@ const baseURL = `http://localhost:${PORT}`;
 const testClient1 = {
   id: "aef24a05-ed31-418a-af24-34a854ca6f06",
   email: "testClient1@test.com",
-  firstName: "Client1",
-  lastName: "Doe",
-  role: "Client",
   companyId: "5037fdfd-5839-4856-b240-e96f262ef639",
 };
 
-const client1Token = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZWYyNGEwNS1lZDMxLTQxOGEtYWYyNC0zNGE4NTRjYTZmMDYiLCJlbWFpbCI6InRlc3RDbGllbnQxQHRlc3QuY29tIiwiaWF0IjoxNjc1MzQ1MDc4LCJleHAiOjE2NzU0MzE0Nzh9._mM3PubFOO0B_6wXkqX1mFoM2pHzVQO7ep3NBDQsWjc`;
-// This doesn't seem to want to work
-//const client1Token = `Bearer ${signToken(testClient1.id, testClient1.email)}`;
+const client1Token =
+  "Bearer " +
+  sign(
+    { userId: testClient1.id, email: testClient1.email },
+    process.env.SECRETSAUCE,
+    {
+      expiresIn: "24h",
+    }
+  );
 
 const testClient2 = {
   id: "c44af6c6-dd6c-427c-97d1-014313e62c6f",
   email: "testClient2@test.com",
-  role: "Client",
   companyId: null,
 };
 
 const client2Token =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNDRhZjZjNi1kZDZjLTQyN2MtOTdkMS0wMTQzMTNlNjJjNmYiLCJlbWFpbCI6InRlc3RDbGllbnQyQHRlc3QuY29tIiwiaWF0IjoxNjc1MzQ3NzM3LCJleHAiOjE2NzU0MzQxMzd9.Xc824SLe4gYwxBkBrCQcmjuVrA8BhfeqLpAfqVCTC04";
-//const client2Token = `Bearer ${signToken(testClient2.id, testClient2.email)};
+  "Bearer " +
+  sign(
+    { userId: testClient2.id, email: testClient2.email },
+    process.env.SECRETSAUCE,
+    {
+      expiresIn: "24h",
+    }
+  );
 
 const testClient3 = {
-  id: "c44af6c6-dd6c-427c-97d1-014313e62c6f",
+  id: "60a94485-9694-4fd3-a883-a658bb4342b8",
   email: "testClient2@test.com",
-  role: "Client",
-  companyId: null,
+  companyId: "15ca1361-65c9-44c3-922b-622d2f0426ea",
 };
 
 const client3Token =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGE5NDQ4NS05Njk0LTRmZDMtYTg4My1hNjU4YmI0MzQyYjgiLCJlbWFpbCI6InRlc3RDbGllbnQzQHRlc3QuY29tIiwiaWF0IjoxNjc1MzUwMzM0LCJleHAiOjE2NzU0MzY3MzR9.LbEnpiGs7SrtlodplCkL5VHXH7NMky9h96MC49C3ba4";
-//const client3Token = `Bearer ${signToken(testClient3.id, testClient3.email)};
+  "Bearer " +
+  sign(
+    { userId: testClient3.id, email: testClient3.email },
+    process.env.SECRETSAUCE,
+    {
+      expiresIn: "24h",
+    }
+  );
 
 const testApplicant = {
   id: "e52df418-b7e8-46e7-b56d-01ecac9bfc38",
   email: "testApplicant1@test.com",
-  role: "Applicant",
   companyId: null,
 };
 
 const applicantToken =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlNTJkZjQxOC1iN2U4LTQ2ZTctYjU2ZC0wMWVjYWM5YmZjMzgiLCJlbWFpbCI6InRlc3RBcHBsaWNhbnQxQHRlc3QuY29tIiwiaWF0IjoxNjc1MzQ2NTA1LCJleHAiOjE2NzU0MzI5MDV9.-bXJgWTl2P_EXkDPvBS6LbrP3LwYJlWcxfOOXuL80NM";
-//const applicantToken = `Bearer ${signToken(testApplicant.id, testApplicant.email)};
+  "Bearer " +
+  sign(
+    { userId: testApplicant.id, email: testApplicant.email },
+    process.env.SECRETSAUCE,
+    {
+      expiresIn: "24h",
+    }
+  );
 
 const testListings = {
   title: "Test Listing",
