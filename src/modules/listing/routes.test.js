@@ -1,76 +1,33 @@
 import request from "supertest";
-import { signToken } from "../../utilities/jsonWebToken";
 import * as dotenv from "dotenv";
 import jsonwebtoken from "jsonwebtoken";
+import { createTestDatabase } from "./createTestData.js";
 const { sign } = jsonwebtoken;
 dotenv.config();
 
 const PORT = process.env.PORT;
 const baseURL = `http://localhost:${PORT}`;
 
-const testClient1 = {
-  id: "aef24a05-ed31-418a-af24-34a854ca6f06",
-  email: "testClient1@test.com",
-  companyId: "5037fdfd-5839-4856-b240-e96f262ef639",
+const signToken = function (id, email) {
+  const token =
+    "Bearer " +
+    sign({ userId: id, email: email }, process.env.SECRETSAUCE, {
+      expiresIn: "24h",
+    });
+
+  return token;
 };
 
-const client1Token =
-  "Bearer " +
-  sign(
-    { userId: testClient1.id, email: testClient1.email },
-    process.env.SECRETSAUCE,
-    {
-      expiresIn: "24h",
-    }
-  );
-
-const testClient2 = {
-  id: "c44af6c6-dd6c-427c-97d1-014313e62c6f",
-  email: "testClient2@test.com",
-  companyId: null,
-};
-
-const client2Token =
-  "Bearer " +
-  sign(
-    { userId: testClient2.id, email: testClient2.email },
-    process.env.SECRETSAUCE,
-    {
-      expiresIn: "24h",
-    }
-  );
-
-const testClient3 = {
-  id: "60a94485-9694-4fd3-a883-a658bb4342b8",
-  email: "testClient2@test.com",
-  companyId: "15ca1361-65c9-44c3-922b-622d2f0426ea",
-};
-
-const client3Token =
-  "Bearer " +
-  sign(
-    { userId: testClient3.id, email: testClient3.email },
-    process.env.SECRETSAUCE,
-    {
-      expiresIn: "24h",
-    }
-  );
-
-const testApplicant = {
-  id: "e52df418-b7e8-46e7-b56d-01ecac9bfc38",
-  email: "testApplicant1@test.com",
-  companyId: null,
-};
-
-const applicantToken =
-  "Bearer " +
-  sign(
-    { userId: testApplicant.id, email: testApplicant.email },
-    process.env.SECRETSAUCE,
-    {
-      expiresIn: "24h",
-    }
-  );
+let listingTest;
+let testAdmin,
+  testApplicant1,
+  testClient1,
+  testClient2,
+  testClient3,
+  client1Token,
+  client2Token,
+  client3Token,
+  applicantToken;
 
 const testListings = {
   title: "Test Listing",
@@ -78,23 +35,33 @@ const testListings = {
   description: "This is a test listing 1",
   requirements: ["test", "listing"],
   deadline: "2024-11-30T20:57:00.000Z",
-  company: testClient1.companyId,
 };
 
 const testListings2 = {
   title: "Test Listing",
   tags: ["test", "listing"],
   deadline: "2024-11-30T20:57:00.000Z",
-  company: testClient1.companyId,
 };
 
 const testListings3 = { ...testListings, deadline: "dzfgdfg" };
 const testListings4 = { ...testListings, deadline: "2021-11-30T20:57:00.000Z" };
 
-let listingTest;
-
 // Create listing tests
 describe("POST /listings", () => {
+  beforeAll(async () => {
+    ({ testAdmin, testApplicant1, testClient1, testClient2, testClient3 } =
+      await createTestDatabase());
+    client1Token = signToken(testClient1.id, testClient1.email);
+    client2Token = signToken(testClient2.id, testClient2.email);
+    client3Token = signToken(testClient3.id, testClient3.email);
+    applicantToken = signToken(testApplicant1.id, testApplicant1.email);
+    testListings4.company =
+      testListings3.company =
+      testListings2.company =
+      testListings.company =
+        testClient1.companyId;
+  });
+
   it("should return 201 and the listing, when creating", async () => {
     const response = await request(baseURL)
       .post("/listings")

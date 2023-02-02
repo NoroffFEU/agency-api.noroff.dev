@@ -1,9 +1,9 @@
-import { generateHash } from "./utilities/password.js";
-import { databasePrisma } from "./prismaClient.js";
+import { generateHash } from "../../utilities/password.js";
+import { databasePrisma } from "../../prismaClient.js";
 
 // Just filling test data
 export const createTestDatabase = async function () {
-  let testUserAdmin = {
+  let testAdmin = {
     email: "testAdmin@test.com",
     firstName: "Admin",
     lastName: "Doe",
@@ -11,7 +11,7 @@ export const createTestDatabase = async function () {
     role: "Admin",
   };
 
-  let testUserApplicant1 = {
+  let testApplicant1 = {
     email: "testApplicant1@test.com",
     firstName: "Applicant1",
     lastName: "Doe",
@@ -19,7 +19,7 @@ export const createTestDatabase = async function () {
     role: "Applicant",
   };
 
-  let testUserApplicant2 = {
+  let testApplicant2 = {
     email: "testApplicant2@test.com",
     firstName: "Applicant2",
     lastName: "Doe",
@@ -27,7 +27,7 @@ export const createTestDatabase = async function () {
     role: "Applicant",
   };
 
-  let testUserClient1 = {
+  let testClient1 = {
     email: "testClient1@test.com",
     firstName: "Client1",
     lastName: "Doe",
@@ -35,7 +35,7 @@ export const createTestDatabase = async function () {
     role: "Client",
   };
 
-  let testUserClient2 = {
+  let testClient2 = {
     email: "testClient2@test.com",
     firstName: "Client2",
     lastName: "Doe",
@@ -43,7 +43,7 @@ export const createTestDatabase = async function () {
     role: "Client",
   };
 
-  let testUserClient3 = {
+  let testClient3 = {
     email: "testClient3@test.com",
     firstName: "Client3",
     lastName: "Doe",
@@ -66,36 +66,36 @@ export const createTestDatabase = async function () {
     return user;
   };
 
-  testUserAdmin = await getUser(testUserAdmin);
-  testUserApplicant1 = await getUser(testUserApplicant1);
-  testUserApplicant2 = await getUser(testUserApplicant2);
-  testUserClient1 = await getUser(testUserClient1);
-  testUserClient2 = await getUser(testUserClient2);
-  testUserClient3 = await getUser(testUserClient3);
+  testAdmin = await getUser(testAdmin);
+  testApplicant1 = await getUser(testApplicant1);
+  testApplicant2 = await getUser(testApplicant2);
+  testClient1 = await getUser(testClient1);
+  testClient2 = await getUser(testClient2);
+  testClient3 = await getUser(testClient3);
 
   // await databasePrisma.user.delete({
   //   where: {
-  //     id: testUserAdmin.id,
+  //     id: testAdmin.id,
   //   },
   // });
   // await databasePrisma.user.delete({
   //   where: {
-  //     id: testUserApplicant1.id,
+  //     id: testApplicant1.id,
   //   },
   // });
   // await databasePrisma.user.delete({
   //   where: {
-  //     id: testUserApplicant2.id,
+  //     id: testApplicant2.id,
   //   },
   // });
   // await databasePrisma.user.delete({
   //   where: {
-  //     id: testUserClient1.id,
+  //     id: testClient1.id,
   //   },
   // });
   // await databasePrisma.user.delete({
   //   where: {
-  //     id: testUserClient2.id,
+  //     id: testClient2.id,
   //   },
   // });
 
@@ -106,10 +106,10 @@ export const createTestDatabase = async function () {
     logo: "tester",
   };
 
-  let testCompanyClient1 = testUserClient1.companyId;
+  let testCompanyClient1 = testClient1.companyId;
   if (!testCompanyClient1) {
     testCompanyClient1 = await databasePrisma.company.create({
-      data: { ...testCompany, admin: { connect: { id: testUserClient1.id } } },
+      data: { ...testCompany, admin: { connect: { id: testClient1.id } } },
     });
   }
 
@@ -119,16 +119,30 @@ export const createTestDatabase = async function () {
     phone: "tester",
     logo: "tester",
   };
-  let testCompanyClient3 = testUserClient3.companyId;
+  let testCompanyClient3 = testClient3.companyId;
   if (!testCompanyClient3) {
     testCompanyClient1 = await databasePrisma.company.create({
-      data: { ...testCompany3, admin: { connect: { id: testUserClient3.id } } },
+      data: { ...testCompany3, admin: { connect: { id: testClient3.id } } },
     });
   }
 
-  //return { testUserAdmin, testUserApplicant1, testUserApplicant2, testUserClient1, testUserClient2 };
+  testClient1 = await getUser(testClient1);
+  testClient3 = await getUser(testClient3);
+  console.log(
+    testAdmin,
+    testApplicant1,
+    testApplicant2,
+    testClient1,
+    testClient2,
+    testClient3
+  );
+
+  return {
+    testAdmin,
+    testApplicant1,
+    testApplicant2,
+    testClient1,
+    testClient2,
+    testClient3,
+  };
 };
-
-await createTestDatabase();
-
-//export const { testUserAdmin, testUserApplicant1, testUserApplicant2, testUserClient1, testUserClient2, testCompanyClient1 } = await createTestDatabase();
