@@ -1,8 +1,6 @@
 import request from "supertest";
-//import server from "../../app.js";
 import { signToken } from "../../utilities/jsonWebToken";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-
 dotenv.config();
 
 const PORT = process.env.PORT;
