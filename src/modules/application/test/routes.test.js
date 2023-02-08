@@ -43,6 +43,10 @@ let newCoverLetter = "This is a formal cover letter";
 
 let applicationId = "cfab505e-e7f4-40ce-8acd-64ff5bf29925";
 
+let offersCountTest = {
+  offers: 0,
+};
+
 describe("POST /applications", () => {
   it("should return application and return a 200 response", async () => {
     const res = await request(base_URL)
@@ -94,16 +98,37 @@ describe("GET /applications", () => {
 });
 
 describe("GET /applications/id", () => {
-  //should return a 200 response
-  //should return a single application
-  //should return a 400 when not providing authentication
-  it("should return a single application and 200 response code", async () => {
-    const res = await request(base_URL)
-      .get(`/applications/${applicationId}`)
-      .set("Authorization", `Bearer ${token}`);
+  describe("given an application id, and an authorisation token", () => {
+    test("should return a 200 response code", async () => {
+      const res = await request(base_URL)
+        .get(`/applications/${applicationId}`)
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(200);
-    expect(res.body.coverLetter).toBe(applicationTestObject.coverLetter);
+      expect(res.status).toBe(200);
+    });
+
+    it("should return a single application", async () => {
+      const res = await request(base_URL)
+        .get(`/applications/${applicationId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.body.id).toBe(applicationId);
+      expect(res.body.applicantId).toBe(applicationTestObject.applicant);
+      expect(res.body.companyId).toBe(applicationTestObject.company);
+      expect(res.body.listingId).toBe(applicationTestObject.listing);
+      expect(res.body.coverLetter).toBeDefined();
+      expect(res.body.created).toBeDefined();
+      expect(res.body.updated).toBeDefined();
+      expect(res.body._count).toMatchObject(offersCountTest);
+    });
+  });
+
+  describe("when not provided with authorisation token", () => {
+    test("should return a 401 when not providing authentication", async () => {
+      const res = await request(base_URL).get(`/applications/${applicationId}`);
+
+      expect(res.status).toBe(401);
+    });
   });
 });
 
