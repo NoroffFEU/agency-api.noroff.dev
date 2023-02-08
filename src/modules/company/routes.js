@@ -5,12 +5,14 @@ import { findCompanyById } from "./controllers/findCompanyById.js";
 import { deleteCompany } from "./controllers/deleteCompany.js";
 import { findAllCompanies } from "./controllers/findAllCompanies.js";
 import { changeCompany } from "./controllers/changeCompany.js";
+import { addAdminToCompany } from "./controllers/addAdmin.js";
+import { deleteAdminFromCompany } from "./controllers/deleteAdmin.js";
 
 export const companyRouter = express.Router();
 
 // Endpoint to get all companies in a list
 
-companyRouter.get("/list", async (req, res) => {
+companyRouter.get("/", async (req, res) => {
   findAllCompanies(databasePrisma, req, res);
 });
 
@@ -36,4 +38,16 @@ companyRouter.put("/:id", async (req, res) => {
 
 companyRouter.delete("/", async (req, res) => {
   deleteCompany(databasePrisma, req, res);
+});
+
+// Endpoint to add an admin to a company
+
+companyRouter.post("/admin/:id", async (req, res) => {
+  addAdminToCompany(databasePrisma, req, res);
+});
+
+// Endpoint to remove an admin from a company
+
+companyRouter.delete("/admin/:id", async (req, res) => {
+  deleteAdminFromCompany(databasePrisma, req, res);
 });
