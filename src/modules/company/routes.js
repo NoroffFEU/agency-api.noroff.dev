@@ -4,6 +4,7 @@ import { createCompany } from "./controllers/createCompany.js";
 import { findCompanyById } from "./controllers/findCompanyById.js";
 import { deleteCompany } from "./controllers/deleteCompany.js";
 import { findAllCompanies } from "./controllers/findAllCompanies.js";
+import { changeCompany } from "./controllers/changeCompany.js";
 
 export const companyRouter = express.Router();
 
@@ -27,7 +28,9 @@ companyRouter.post("/", async (req, res) => {
 
 // Endpoint to update a company
 
-companyRouter.put("/", async (req, res) => {});
+companyRouter.put("/:id", async (req, res) => {
+  changeCompany(databasePrisma, req, res);
+});
 
 // Endpoint to delete a company
 
