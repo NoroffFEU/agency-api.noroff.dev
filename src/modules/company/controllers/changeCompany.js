@@ -39,7 +39,6 @@ export const changeCompany = async (databasePrisma, req, res) => {
           sector,
           logo,
           phone,
-          //   admin: { connect: { id: admin } },
         },
         include: {
           admin: {
