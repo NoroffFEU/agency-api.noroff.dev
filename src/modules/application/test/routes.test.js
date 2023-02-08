@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import request from "supertest";
 import * as dotenv from "dotenv";
+import { response } from "express";
 
 dotenv.config();
 
@@ -32,58 +33,145 @@ const letter = "testing letter";
 
 let applicationTest;
 
-let applicationTestObject = {
-  applicant: "1145f0f6-58d2-4972-bf1b-93287b9504bc",
-  listing: "a2fa9876-9185-46a5-a8d2-f24518fcbf06",
-  coverLetter: "I want the frontend developer job",
-  company: "e57462d6-8e21-421c-a30a-095f8f97f265",
-};
-
 let newCoverLetter = "This is a formal cover letter";
-
-let applicationId = "cfab505e-e7f4-40ce-8acd-64ff5bf29925";
 
 let offersCountTest = {
   offers: 0,
 };
 
 describe("POST /applications", () => {
-  it("should return application and return a 200 response", async () => {
-    const res = await request(base_URL)
-      .post("/applications")
-      .send({
-        applicant: { connect: { id: testUser.id } },
-        // Replace the listing id here with the targeted one.
-        listing: { connect: { id: "a2fa9876-9185-46a5-a8d2-f24518fcbf06" } },
-        coverLetter: letter,
-      })
-      .set("Authorization", `Bearer ${token}`);
+  describe("given an applicant, a listing, a company, and a cover letter", () => {
+    test("should return a 200 response code", async () => {
+      const res = await request(base_URL)
+        .post("/applications")
+        .send({
+          applicant: { connect: { id: testUser.id } },
+          // Replace the listing id here with the targeted one.
+          listing: { connect: { id: "a2fa9876-9185-46a5-a8d2-f24518fcbf06" } },
+          //Replace the company id here with the company's that published the listing
+          company: { connect: { id: "e57462d6-8e21-421c-a30a-095f8f97f265" } },
+          coverLetter: letter,
+        })
+        .set("Authorization", `Bearer ${token}`);
 
-    applicationTest = res.body;
-    console.log(applicationTest);
+      expect(res.status).toBe(200);
+    });
 
-    expect(res.status).toBe(200);
-    expect(res.body.applicantId).toEqual(testUser.id);
-    expect(res.body.listingId).toEqual(applicationTest.listingId);
-    expect(res.body.coverLetter).toEqual(applicationTest.coverLetter);
+    it("should return the application", async () => {
+      const res = await request(base_URL)
+        .post("/applications")
+        .send({
+          applicant: { connect: { id: testUser.id } },
+          // Replace the listing id here with the targeted one.
+          listing: { connect: { id: "a2fa9876-9185-46a5-a8d2-f24518fcbf06" } },
+          //Replace the company id here with the company's that published the listing
+          company: { connect: { id: "e57462d6-8e21-421c-a30a-095f8f97f265" } },
+          coverLetter: letter,
+        })
+        .set("Authorization", `Bearer ${token}`);
+
+      applicationTest = res.body;
+
+      expect(res.body.id).toEqual(applicationTest.id);
+      expect(res.body.applicantId).toEqual(testUser.id);
+      expect(res.body.companyId).toEqual(applicationTest.companyId);
+      expect(res.body.listingId).toEqual(applicationTest.listingId);
+      expect(res.body.coverLetter).toEqual(applicationTest.coverLetter);
+      expect(res.body.created).toBeDefined();
+      expect(res.body.updated).toBeDefined();
+    });
   });
-});
 
-describe("POST /applications Error", () => {
-  it("should return a status code of 409 with application already exist on listing message", async () => {
-    const res = await request(base_URL)
-      .post(`/applications`)
-      .send({
-        applicant: { connect: { id: testUser.id } },
-        listing: { connect: { id: applicationTest.listingId } },
-        coverLetter: letter,
-      })
-      .set("Authorization", `Bearer ${token}`);
+  describe("given the same data", () => {
+    it("should return a status code of 409 with application already exist on listing message", async () => {
+      const res = await request(base_URL)
+        .post("/applications")
+        .send({
+          applicant: { connect: { id: testUser.id } },
+          listing: { connect: { id: applicationTest.listingId } },
+          company: { connect: { id: applicationTest.companyId } },
+          coverLetter: letter,
+        })
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.body.status).toBe(409);
-    expect(res.body.message).toBe(
-      "You've already created an application on this listing"
-    );
+      expect(res.body.status).toBe(409);
+      expect(res.body.message).toBe(
+        "You've already created an application on this listing"
+      );
+    });
+
+    describe("when not provided with authorisation token", () => {
+      test("should return a 401 status code", async () => {
+        const res = await request(base_URL).post("/applications");
+
+        expect(res.status).toBe(401);
+      });
+    });
+  });
+
+  describe("when not provided with either applicant, listing, company, or cover letter", () => {
+    test("should respond with 409 status code", async () => {
+      const data = [
+        { applicant: testUser.id },
+        { listing: applicationTest.listingId },
+        { company: applicationTest.companyId },
+        { coverLetter: letter },
+        {
+          applicant: testUser.id,
+          listing: applicationTest.listingId,
+        },
+        {
+          applicant: testUser.id,
+          company: applicationTest.companyId,
+        },
+        {
+          applicant: testUser.id,
+          coverLetter: letter,
+        },
+        {
+          listing: applicationTest.listingId,
+          company: applicationTest.companyId,
+        },
+        {
+          listing: applicationTest.listingId,
+          coverLetter: letter,
+        },
+        {
+          company: applicationTest.companyId,
+          coverLetter: letter,
+        },
+        {
+          applicant: testUser.id,
+          listing: applicationTest.listingId,
+          company: applicationTest.companyId,
+        },
+        {
+          applicant: testUser.id,
+          listing: applicationTest.listingId,
+          coverLetter: letter,
+        },
+        {
+          applicant: testUser.id,
+          company: applicationTest.companyId,
+          coverLetter: letter,
+        },
+        {
+          listing: applicationTest.listingId,
+          company: applicationTest.companyId,
+          coverLetter: letter,
+        },
+        {},
+      ];
+
+      for (const body of data) {
+        const response = await request(base_URL)
+          .put(`/applications/${applicationTest.id}`)
+          .send(body)
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(response._body.status).toBe(409);
+      }
+    });
   });
 });
 
@@ -101,7 +189,7 @@ describe("GET /applications/id", () => {
   describe("given an application id, and an authorisation token", () => {
     test("should return a 200 response code", async () => {
       const res = await request(base_URL)
-        .get(`/applications/${applicationId}`)
+        .get(`/applications/${applicationTest.id}`)
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(200);
@@ -109,13 +197,13 @@ describe("GET /applications/id", () => {
 
     it("should return a single application", async () => {
       const res = await request(base_URL)
-        .get(`/applications/${applicationId}`)
+        .get(`/applications/${applicationTest.id}`)
         .set("Authorization", `Bearer ${token}`);
 
-      expect(res.body.id).toBe(applicationId);
-      expect(res.body.applicantId).toBe(applicationTestObject.applicant);
-      expect(res.body.companyId).toBe(applicationTestObject.company);
-      expect(res.body.listingId).toBe(applicationTestObject.listing);
+      expect(res.body.id).toBe(applicationTest.id);
+      expect(res.body.applicantId).toBe(applicationTest.applicantId);
+      expect(res.body.companyId).toBe(applicationTest.companyId);
+      expect(res.body.listingId).toBe(applicationTest.listingId);
       expect(res.body.coverLetter).toBeDefined();
       expect(res.body.created).toBeDefined();
       expect(res.body.updated).toBeDefined();
@@ -125,7 +213,9 @@ describe("GET /applications/id", () => {
 
   describe("when not provided with authorisation token", () => {
     test("should return a 401 when not providing authentication", async () => {
-      const res = await request(base_URL).get(`/applications/${applicationId}`);
+      const res = await request(base_URL).get(
+        `/applications/${applicationTest.id}`
+      );
 
       expect(res.status).toBe(401);
     });
@@ -137,8 +227,8 @@ describe("PUT /applications/id", () => {
   describe("given an applicant, a listing, and a company", () => {
     test("should respond with a status code of 200", async () => {
       const response = await request(base_URL)
-        .put(`/applications/${applicationId}`)
-        .send(applicationTestObject)
+        .put(`/applications/${applicationTest.id}`)
+        .send(applicationTest)
         .set("Authorization", `Bearer ${token}`);
 
       expect(response.statusCode).toBe(200);
@@ -146,8 +236,8 @@ describe("PUT /applications/id", () => {
 
     test("should specify json in the content-type header", async () => {
       const response = await request(base_URL)
-        .put(`/applications/${applicationId}`)
-        .send(applicationTestObject);
+        .put(`/applications/${applicationTest.id}`)
+        .send(applicationTest);
 
       expect(response.headers["content-type"]).toEqual(
         expect.stringContaining("json")
@@ -156,8 +246,8 @@ describe("PUT /applications/id", () => {
 
     test("should respond with a 401 status if user isn't authenticated", async () => {
       const response = await request(base_URL)
-        .put(`/applications/${applicationId}`)
-        .send(applicationTestObject);
+        .put(`/applications/${applicationTest.id}`)
+        .send(applicationTest);
 
       expect(response.body.status).toBe(401);
       expect(response.body.message).toBe(
@@ -167,12 +257,12 @@ describe("PUT /applications/id", () => {
 
     test("should respond with a json object containing id, applicantId, companyId, listingId, coverLetter, created, updated, response", async () => {
       const response = await request(base_URL)
-        .put(`/applications/${applicationId}`)
+        .put(`/applications/${applicationTest.id}`)
         .send({
-          applicant: applicationTestObject.applicant,
-          listing: applicationTestObject.listing,
+          applicant: applicationTest.applicantId,
+          listing: applicationTest.listingId,
           coverLetter: newCoverLetter,
-          company: applicationTestObject.company,
+          company: applicationTest.companyId,
         })
         .set("Authorization", `Bearer ${token}`);
 
@@ -192,27 +282,27 @@ describe("PUT /applications/id", () => {
   describe("when not provided with either applicant, listing, or company", () => {
     test("should respond with 409 status code", async () => {
       const data = [
-        { applicant: applicationTestObject.applicant },
-        { listing: applicationTestObject.listing },
-        { company: applicationTestObject.company },
+        { applicant: applicationTest.applicantId },
+        { listing: applicationTest.listingId },
+        { company: applicationTest.companyId },
         {
-          applicant: applicationTestObject.applicant,
-          listing: applicationTestObject.listing,
+          applicant: applicationTest.applicantId,
+          listing: applicationTest.listingId,
         },
         {
-          applicant: applicationTestObject.applicant,
-          company: applicationTestObject.company,
+          applicant: applicationTest.applicantId,
+          company: applicationTest.companyId,
         },
         {
-          listing: applicationTestObject.listing,
-          company: applicationTestObject.company,
+          listing: applicationTest.listingId,
+          company: applicationTest.companyId,
         },
         {},
       ];
 
       for (const body of data) {
         const response = await request(base_URL)
-          .put(`/applications/${applicationId}`)
+          .put(`/applications/${applicationTest.id}`)
           .send(body)
           .set("Authorization", `Bearer ${token}`);
 
@@ -224,23 +314,23 @@ describe("PUT /applications/id", () => {
 
 // DELETE unit-test
 
-/* describe("DELETE /applications/id", () => {
+describe("DELETE /applications/id", () => {
   it("should delete application and return a 200 response", async () => {
     const res = await request(base_URL)
-      .delete(`/applications/${applicationId}`)
+      .delete(`/applications/${applicationTest.id}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.message).toEqual(
-      `Successfully deleted application with id: ${applicationId}`
+      `Successfully deleted application with id: ${applicationTest.id}`
     );
   });
 
   it("should return a 400 response and application already deleted", async () => {
     const res = await request(base_URL)
-      .delete(`/applications/${applicationId}`)
+      .delete(`/applications/${applicationTest.id}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(400);
   });
-}); */
+});
