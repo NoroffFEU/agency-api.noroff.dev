@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import request from "supertest";
 import * as dotenv from "dotenv";
-import { response } from "express";
 
 dotenv.config();
 
@@ -12,11 +11,13 @@ const secret = "MySecretKey";
 
 // Create a testUser in your local database and place the following here.
 const testUser = {
-  id: "e4c0d3d6-c107-4d84-bd0c-8d36f6fd5741",
-  email: "applicantTestUser@email.com",
-  firstName: "applicantTestUser",
+  id: "2a951181-0fb7-4835-aa93-1a5647cbb947",
+  email: "anotherTestUser@email.com",
+  firstName: "anotherTestUser",
   lastName: "test",
 };
+
+const secondTestUser = "30951bc3-0de9-414a-8338-300a3a9cc249";
 
 const token = jwt.sign(testUser, secret);
 
@@ -29,6 +30,8 @@ const token = jwt.sign(testUser, secret);
 //   authorId: `${testUser.id}`,
 // };
 
+const listing = "e7f7851d-1ad1-4b9a-9885-fb467293bcba";
+const company = "e44f1c33-13ed-4432-81ae-156ac0170287";
 const letter = "testing letter";
 
 let applicationTest;
@@ -40,16 +43,80 @@ let offersCountTest = {
 };
 
 describe("POST /applications", () => {
+  describe("when not provided with either applicant, listing, company, or cover letter", () => {
+    test("should respond with 409 status code", async () => {
+      const data = [
+        { applicant: secondTestUser },
+        { listing: listing },
+        { company: company },
+        { coverLetter: letter },
+        {
+          applicant: secondTestUser,
+          listing: listing,
+        },
+        {
+          applicant: secondTestUser,
+          company: company,
+        },
+        {
+          applicant: secondTestUser,
+          coverLetter: letter,
+        },
+        {
+          listing: listing,
+          company: company,
+        },
+        {
+          listing: listing,
+          coverLetter: letter,
+        },
+        {
+          company: company,
+          coverLetter: letter,
+        },
+        {
+          applicant: secondTestUser,
+          listing: listing,
+          company: company,
+        },
+        {
+          applicant: secondTestUser,
+          listing: listing,
+          coverLetter: letter,
+        },
+        {
+          applicant: secondTestUser,
+          company: company,
+          coverLetter: letter,
+        },
+        {
+          listing: listing,
+          company: company,
+          coverLetter: letter,
+        },
+        {},
+      ];
+
+      for (const body of data) {
+        const response = await request(base_URL)
+          .post("/applications")
+          .send(body)
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(response._body.status).toBe(400);
+      }
+    });
+  });
   describe("given an applicant, a listing, a company, and a cover letter", () => {
     it("should return a 200 status code and the application", async () => {
       const res = await request(base_URL)
         .post("/applications")
         .send({
-          applicant: { connect: { id: testUser.id } },
+          applicantId: testUser.id,
           // Replace the listing id here with the targeted one.
-          listing: { connect: { id: "e7f7851d-1ad1-4b9a-9885-fb467293bcba" } },
+          listingId: "e7f7851d-1ad1-4b9a-9885-fb467293bcba",
           //Replace the company id here with the company's that published the listing
-          company: { connect: { id: "e44f1c33-13ed-4432-81ae-156ac0170287" } },
+          companyId: "e44f1c33-13ed-4432-81ae-156ac0170287",
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
@@ -91,71 +158,6 @@ describe("POST /applications", () => {
 
         expect(res.status).toBe(401);
       });
-    });
-  });
-
-  describe("when not provided with either applicant, listing, company, or cover letter", () => {
-    test("should respond with 409 status code", async () => {
-      const data = [
-        { applicant: testUser.id },
-        { listing: applicationTest.listingId },
-        { company: applicationTest.companyId },
-        { coverLetter: letter },
-        {
-          applicant: testUser.id,
-          listing: applicationTest.listingId,
-        },
-        {
-          applicant: testUser.id,
-          company: applicationTest.companyId,
-        },
-        {
-          applicant: testUser.id,
-          coverLetter: letter,
-        },
-        {
-          listing: applicationTest.listingId,
-          company: applicationTest.companyId,
-        },
-        {
-          listing: applicationTest.listingId,
-          coverLetter: letter,
-        },
-        {
-          company: applicationTest.companyId,
-          coverLetter: letter,
-        },
-        {
-          applicant: testUser.id,
-          listing: applicationTest.listingId,
-          company: applicationTest.companyId,
-        },
-        {
-          applicant: testUser.id,
-          listing: applicationTest.listingId,
-          coverLetter: letter,
-        },
-        {
-          applicant: testUser.id,
-          company: applicationTest.companyId,
-          coverLetter: letter,
-        },
-        {
-          listing: applicationTest.listingId,
-          company: applicationTest.companyId,
-          coverLetter: letter,
-        },
-        {},
-      ];
-
-      for (const body of data) {
-        const response = await request(base_URL)
-          .put(`/applications/${applicationTest.id}`)
-          .send(body)
-          .set("Authorization", `Bearer ${token}`);
-
-        expect(response._body.status).toBe(409);
-      }
     });
   });
 });
