@@ -300,6 +300,17 @@ describe("PUT /applications/id", () => {
 // DELETE unit-test
 
 describe("DELETE /applications/id", () => {
+  describe("when not provided with authorisation token", () => {
+    test("should respond with a 401 status code and the message 'Unauthorized'", async () => {
+      const response = await request(base_URL).delete(
+        `/applications/${applicationTest.id}`
+      );
+
+      expect(response.error.status).toBe(401);
+      expect(response.error.text).toBe("Unauthorized");
+    });
+  });
+
   it("should delete application and return a 200 response", async () => {
     const res = await request(base_URL)
       .delete(`/applications/${applicationTest.id}`)
