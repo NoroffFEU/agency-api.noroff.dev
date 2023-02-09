@@ -41,22 +41,6 @@ let offersCountTest = {
 
 describe("POST /applications", () => {
   describe("given an applicant, a listing, a company, and a cover letter", () => {
-    test("should return a 200 response code", async () => {
-      const res = await request(base_URL)
-        .post("/applications")
-        .send({
-          applicant: { connect: { id: testUser.id } },
-          // Replace the listing id here with the targeted one.
-          listing: { connect: { id: "a2fa9876-9185-46a5-a8d2-f24518fcbf06" } },
-          //Replace the company id here with the company's that published the listing
-          company: { connect: { id: "e57462d6-8e21-421c-a30a-095f8f97f265" } },
-          coverLetter: letter,
-        })
-        .set("Authorization", `Bearer ${token}`);
-
-      expect(res.status).toBe(200);
-    });
-
     it("should return the application", async () => {
       const res = await request(base_URL)
         .post("/applications")
@@ -72,6 +56,7 @@ describe("POST /applications", () => {
 
       applicationTest = res.body;
 
+      expect(res.status).toBe(200);
       expect(res.body.id).toEqual(applicationTest.id);
       expect(res.body.applicantId).toEqual(testUser.id);
       expect(res.body.companyId).toEqual(applicationTest.companyId);
