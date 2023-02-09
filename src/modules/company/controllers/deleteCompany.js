@@ -1,7 +1,7 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 
 export const deleteCompany = async (databasePrisma, req, res) => {
-  const { id } = req.body;
+  const id = req.params.id;
   // Validate to see if inputs are provided correctly
   if (!id) {
     return res.status(400).send({ error: "Company id is required" });

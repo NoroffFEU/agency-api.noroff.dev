@@ -36,13 +36,13 @@ companyRouter.put("/:id", async (req, res) => {
 
 // Endpoint to delete a company
 
-companyRouter.delete("/", async (req, res) => {
+companyRouter.delete("/:id", async (req, res) => {
   deleteCompany(databasePrisma, req, res);
 });
 
 // Endpoint to add an admin to a company
 
-companyRouter.post("/admin/:id", async (req, res) => {
+companyRouter.put("/admin/:id", async (req, res) => {
   addAdminToCompany(databasePrisma, req, res);
 });
 
