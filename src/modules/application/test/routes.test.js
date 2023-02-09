@@ -12,10 +12,10 @@ const secret = "MySecretKey";
 
 // Create a testUser in your local database and place the following here.
 const testUser = {
-  id: "1145f0f6-58d2-4972-bf1b-93287b9504bc",
-  email: "melisa@email.com",
-  firstName: "Melisa",
-  lastName: "Doe",
+  id: "e4c0d3d6-c107-4d84-bd0c-8d36f6fd5741",
+  email: "applicantTestUser@email.com",
+  firstName: "applicantTestUser",
+  lastName: "test",
 };
 
 const token = jwt.sign(testUser, secret);
@@ -41,15 +41,15 @@ let offersCountTest = {
 
 describe("POST /applications", () => {
   describe("given an applicant, a listing, a company, and a cover letter", () => {
-    it("should return the application", async () => {
+    it("should return a 200 status code and the application", async () => {
       const res = await request(base_URL)
         .post("/applications")
         .send({
           applicant: { connect: { id: testUser.id } },
           // Replace the listing id here with the targeted one.
-          listing: { connect: { id: "a2fa9876-9185-46a5-a8d2-f24518fcbf06" } },
+          listing: { connect: { id: "e7f7851d-1ad1-4b9a-9885-fb467293bcba" } },
           //Replace the company id here with the company's that published the listing
-          company: { connect: { id: "e57462d6-8e21-421c-a30a-095f8f97f265" } },
+          company: { connect: { id: "e44f1c33-13ed-4432-81ae-156ac0170287" } },
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
@@ -161,12 +161,22 @@ describe("POST /applications", () => {
 });
 
 describe("GET /applications", () => {
-  it("should return array of applications and 200 response code", async () => {
-    const res = await request(base_URL)
-      .get(`/applications`)
-      .set("Authorization", `Bearer ${token}`);
+  describe("given an authorisation token", () => {
+    it("should return array of applications and 200 response code", async () => {
+      const res = await request(base_URL)
+        .get(`/applications`)
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(200);
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe("when authorisation token is missing", () => {
+    it("a 401 response code", async () => {
+      const res = await request(base_URL).get(`/applications`);
+
+      expect(res.status).toBe(401);
+    });
   });
 });
 
