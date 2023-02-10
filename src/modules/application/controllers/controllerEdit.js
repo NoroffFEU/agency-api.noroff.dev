@@ -39,7 +39,6 @@ export const handleEdit = async function (req) {
         },
       });
 
-      console.log(result.response);
       result.response = "Your Application is updated successfully";
 
       return { status: 200, data: result };
