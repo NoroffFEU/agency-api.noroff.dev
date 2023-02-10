@@ -17,21 +17,33 @@ const testUser = {
   lastName: "test",
 };
 
-const secondTestUser = "30951bc3-0de9-414a-8338-300a3a9cc249";
+//Create a second test user with the role of 'Client' in your database
+/* {
+  firstName: "clientTestUser",
+  lastName: "test",
+  email: "clientTestUser@email.com",
+  password: "password",
+  role: "Client"
+} */
+
+//Use this second user to create a company and replace the id here
+const testCompany = "e44f1c33-13ed-4432-81ae-156ac0170287";
+
+// Create a listing f.eks like this using the company's id you've just created
+// const testListing = {
+//   title: "Test listing",
+//   tags: "test, listing, jest",
+//   description: "listing test with jest",
+//   requirements: "t, e, s, t",
+//   deadline: "2025-11-30T20:55:00.000Z",
+//   company: "e44f1c33-13ed-4432-81ae-156ac0170287"
+// };
+
+//Replace listing's id here
+const testListing = "e7f7851d-1ad1-4b9a-9885-fb467293bcba";
 
 const token = jwt.sign(testUser, secret);
 
-// Create a listing f.eks like this to test the applications endpoints
-// const testListing = {
-//   title: "Test listing",
-//   tags: ["test", "listing", "jest"],
-//   description: "listing test with jest",
-//   deadline: "2025-11-30T20:55:00.000Z",
-//   authorId: `${testUser.id}`,
-// };
-
-const listing = "e7f7851d-1ad1-4b9a-9885-fb467293bcba";
-const company = "e44f1c33-13ed-4432-81ae-156ac0170287";
 const letter = "testing letter";
 
 let applicationTest;
@@ -46,52 +58,52 @@ describe("POST /applications", () => {
   describe("when not provided with either applicant, listing, company, or cover letter", () => {
     test("should respond with 409 status code", async () => {
       const data = [
-        { applicant: secondTestUser },
-        { listing: listing },
-        { company: company },
+        { applicant: testUser.id },
+        { listing: testListing },
+        { company: testCompany },
         { coverLetter: letter },
         {
-          applicant: secondTestUser,
-          listing: listing,
+          applicant: testUser.id,
+          listing: testListing,
         },
         {
-          applicant: secondTestUser,
-          company: company,
+          applicant: testUser.id,
+          company: testCompany,
         },
         {
-          applicant: secondTestUser,
+          applicant: testUser.id,
           coverLetter: letter,
         },
         {
-          listing: listing,
-          company: company,
+          listing: testListing,
+          company: testCompany,
         },
         {
-          listing: listing,
+          listing: testListing,
           coverLetter: letter,
         },
         {
-          company: company,
+          company: testCompany,
           coverLetter: letter,
         },
         {
-          applicant: secondTestUser,
-          listing: listing,
-          company: company,
+          applicant: testUser.id,
+          listing: testListing,
+          company: testCompany,
         },
         {
-          applicant: secondTestUser,
-          listing: listing,
+          applicant: testUser.id,
+          listing: testListing,
           coverLetter: letter,
         },
         {
-          applicant: secondTestUser,
-          company: company,
+          applicant: testUser.id,
+          company: testCompany,
           coverLetter: letter,
         },
         {
-          listing: listing,
-          company: company,
+          listing: testListing,
+          company: testCompany,
           coverLetter: letter,
         },
         {},
@@ -113,10 +125,8 @@ describe("POST /applications", () => {
         .post("/applications")
         .send({
           applicantId: testUser.id,
-          // Replace the listing id here with the targeted one.
-          listingId: "e7f7851d-1ad1-4b9a-9885-fb467293bcba",
-          //Replace the company id here with the company's that published the listing
-          companyId: "e44f1c33-13ed-4432-81ae-156ac0170287",
+          listingId: testListing,
+          companyId: testCompany,
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
