@@ -333,22 +333,26 @@ describe("DELETE /applications/id", () => {
     });
   });
 
-  it("should delete application and return a 200 response", async () => {
-    const res = await request(base_URL)
-      .delete(`/applications/${applicationTest.id}`)
-      .set("Authorization", `Bearer ${token}`);
+  describe("when provided with authorisation token", () => {
+    it("should delete application and return a 200 response", async () => {
+      const res = await request(base_URL)
+        .delete(`/applications/${applicationTest.id}`)
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(200);
-    expect(res.body.message).toEqual(
-      `Successfully deleted application with id: ${applicationTest.id}`
-    );
+      expect(res.status).toBe(200);
+      expect(res.body.message).toEqual(
+        `Successfully deleted application with id: ${applicationTest.id}`
+      );
+    });
   });
 
-  it("should return a 400 response and application already deleted", async () => {
-    const res = await request(base_URL)
-      .delete(`/applications/${applicationTest.id}`)
-      .set("Authorization", `Bearer ${token}`);
+  describe("when application isn't found in the database", () => {
+    it("should return a 400 response", async () => {
+      const res = await request(base_URL)
+        .delete(`/applications/${applicationTest.id}`)
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(400);
+      expect(res.status).toBe(400);
+    });
   });
 });
