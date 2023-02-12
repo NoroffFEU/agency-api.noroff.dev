@@ -15,7 +15,7 @@ export const getAllUsers = async function (req, res) {
     "created",
     "updated",
   ].filter((sortValue) => sortValue === sort);
-  console.log(validValue);
+
   if (validValue.length === 0) {
     sort = undefined;
   }
@@ -24,8 +24,6 @@ export const getAllUsers = async function (req, res) {
     sort = "firstName";
     order = "asc";
   }
-
-  console.log(sort, order);
 
   try {
     const users = await databasePrisma.user.findMany({
