@@ -8,6 +8,7 @@ const { body } = validator;
 import { handleRegister } from "./controllers/controllerRegister.js";
 import { checkIfUserIdExist } from "./middleware/userExists.js";
 import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
+import { getAllUsers, getAUser } from "./controllers/controllerGet.js";
 
 export const usersRouter = express.Router();
 
@@ -28,44 +29,10 @@ usersRouter.post(
 );
 
 // GET /users
-usersRouter.get("/", async (req, res) => {
-  try {
-    const users = await databasePrisma.user.findMany({
-      include: {
-        company: true,
-      },
-    });
-
-    users.forEach((user) => {
-      delete user.password;
-      delete user.salt;
-    });
-
-    res.status(200).json(users);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ ...error, message: "Internal server error" });
-  }
-});
+usersRouter.get("/", getAllUsers);
 
 // GET /users/:id
-usersRouter.get("/:id", checkIfUserIdExist, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const user = await databasePrisma.user.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        company: true,
-      },
-    });
-    res.status(200).json(user);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ ...error, message: "Internal server error" });
-  }
-});
+usersRouter.get("/:id", checkIfUserIdExist, getAUser);
 
 // PUT /users/:id
 usersRouter.put(
