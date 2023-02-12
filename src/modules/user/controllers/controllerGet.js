@@ -2,11 +2,37 @@ import { databasePrisma } from "../../../prismaClient.js";
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 
 export const getAllUsers = async function (req, res) {
+  let sort = req.query.sort;
+  let order = req.query.order;
+  if (order !== "asc" && order !== "desc") {
+    order = undefined;
+  }
+
+  const validValue = [
+    "firstName",
+    "lastName",
+    "companyId",
+    "created",
+    "updated",
+  ].filter((sortValue) => sortValue === sort);
+  console.log(validValue);
+  if (validValue.length === 0) {
+    sort = undefined;
+  }
+
+  if (sort === undefined || order === undefined) {
+    sort = "firstName";
+    order = "asc";
+  }
+
+  console.log(sort, order);
+
   try {
     const users = await databasePrisma.user.findMany({
       include: {
         company: true,
       },
+      orderBy: [{ [sort]: order }],
     });
 
     users.forEach((user) => {
@@ -16,7 +42,6 @@ export const getAllUsers = async function (req, res) {
 
     res.status(200).json(users);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ ...error, message: "Internal server error" });
   }
 };
