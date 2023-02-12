@@ -3,7 +3,14 @@ import { databasePrisma } from "../../../prismaClient.js";
 
 export const handleEdit = async function (req) {
   const { id: applicationId } = req.params;
-  const { applicant, listing, coverLetter, company } = req.body;
+  const { coverLetter } = req.body;
+
+  if (!coverLetter) {
+    return Promise.resolve({
+      status: 409,
+      message: "Cover letter is mandatory",
+    });
+  }
 
   const token = req.headers.authorization;
 
@@ -32,9 +39,6 @@ export const handleEdit = async function (req) {
       const result = await databasePrisma.application.update({
         where: { id: applicationId },
         data: {
-          applicant: { connect: { id: applicant } },
-          listing: { connect: { id: listing } },
-          company: { connect: { id: company } },
           coverLetter,
         },
       });
