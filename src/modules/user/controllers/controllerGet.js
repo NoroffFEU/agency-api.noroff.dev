@@ -1,4 +1,5 @@
 import { databasePrisma } from "../../../prismaClient.js";
+import { verifyToken } from "../../../utilities/jsonWebToken.js";
 
 export const getAllUsers = async function (req, res) {
   try {
@@ -23,12 +24,30 @@ export const getAllUsers = async function (req, res) {
 export const getAUser = async function (req, res) {
   try {
     const id = req.params.id;
+    //check if it is users profile, returns offers and application data if true
+    let verified = false;
+    const token = req.headers.authorization;
+    let readyToken = token;
+    if (token !== undefined) {
+      if (token.includes("Bearer")) {
+        readyToken = token.slice(7);
+      }
+
+      //verify token
+      const verification = await verifyToken(readyToken);
+      if (verification.id === id) {
+        verified = true;
+      }
+    }
+
     const user = await databasePrisma.user.findUnique({
       where: {
         id,
       },
       include: {
         company: true,
+        offers: verified,
+        applications: verified,
       },
     });
     res.status(200).json(user);
