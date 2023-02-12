@@ -1,5 +1,4 @@
 import express from "express";
-import { databasePrisma } from "../../prismaClient.js";
 import { handleLogin } from "./controllers/controllerLogin.js";
 import { handleUpdate } from "./controllers/controllerUpdate.js";
 import { handleDelete } from "./controllers/controllerDelete.js";
