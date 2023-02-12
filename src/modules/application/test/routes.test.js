@@ -286,35 +286,17 @@ describe("PUT /applications/id", () => {
     });
   });
 
-  describe("when not provided with either applicant, listing, or company", () => {
-    test("should respond with 409 status code", async () => {
-      const data = [
-        { applicant: applicationTest.applicantId },
-        { listing: applicationTest.listingId },
-        { company: applicationTest.companyId },
-        {
-          applicant: applicationTest.applicantId,
-          listing: applicationTest.listingId,
-        },
-        {
-          applicant: applicationTest.applicantId,
-          company: applicationTest.companyId,
-        },
-        {
-          listing: applicationTest.listingId,
-          company: applicationTest.companyId,
-        },
-        {},
-      ];
+  describe("when not provided with cover letter", () => {
+    test("should respond with 409 status code and the message 'Cover letter is mandatory'", async () => {
+      const data = [{}];
 
-      for (const body of data) {
-        const response = await request(base_URL)
-          .put(`/applications/${applicationTest.id}`)
-          .send(body)
-          .set("Authorization", `Bearer ${token}`);
+      const response = await request(base_URL)
+        .put(`/applications/${applicationTest.id}`)
+        .send(data)
+        .set("Authorization", `Bearer ${token}`);
 
-        expect(response._body.status).toBe(409);
-      }
+      expect(response._body.status).toBe(409);
+      expect(response._body.message).toBe("Cover letter is mandatory");
     });
   });
 });
