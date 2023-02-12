@@ -6,6 +6,8 @@ import { handleDelete } from "./controllers/controllerDelete.js";
 import validator from "express-validator";
 const { body } = validator;
 import { handleRegister } from "./controllers/controllerRegister.js";
+import { checkIfUserIdExist } from "./middleware/userExists.js";
+import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
 
 export const usersRouter = express.Router();
 
@@ -47,15 +49,9 @@ usersRouter.get("/", async (req, res) => {
 });
 
 // GET /users/:id
-usersRouter.get("/:id", async (req, res) => {
+usersRouter.get("/:id", checkIfUserIdExist, async (req, res) => {
   try {
     const id = req.params.id;
-    if (id === undefined) {
-      return res
-        .status(400)
-        .json({ message: "Bad request, user id is undefined" });
-    }
-
     const user = await databasePrisma.user.findUnique({
       where: {
         id,
@@ -64,11 +60,6 @@ usersRouter.get("/:id", async (req, res) => {
         company: true,
       },
     });
-
-    if (!user) {
-      return res.status(400).json({ message: "Could not find user!" });
-    }
-
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
@@ -77,23 +68,17 @@ usersRouter.get("/:id", async (req, res) => {
 });
 
 // PUT /users/:id
-usersRouter.put("/:id", async (req, res) => {
-  try {
-    const { status, data } = await handleUpdate(req);
-    res.status(status).json(data);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ ...error, message: "Internal server error" });
-  }
-});
+usersRouter.put(
+  "/:id",
+  checkIfUserIdExist,
+  validateUserPermissions,
+  handleUpdate
+);
 
 // DELETE /users/:id
-usersRouter.delete("/:id", async (req, res) => {
-  try {
-    const { status, data } = await handleDelete(req);
-    res.status(status).json(data);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ ...error, message: "Internal server error" });
-  }
-});
+usersRouter.delete(
+  "/:id",
+  checkIfUserIdExist,
+  validateUserPermissions,
+  handleDelete
+);
