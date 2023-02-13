@@ -5,7 +5,7 @@ export const handleEdit = async function (req) {
   const { id: applicationId } = req.params;
   const { coverLetter } = req.body;
 
-  if (!coverLetter) {
+  if (coverLetter === undefined) {
     return Promise.resolve({
       status: 409,
       message: "Cover letter is mandatory",
