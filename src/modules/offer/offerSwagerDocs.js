@@ -2,43 +2,43 @@
  * @swagger
  *  components:
  *   schemas:
- *    offer:
- *     type: object
- *     properties:
- *       id:
- *         type: string
- *         description: The ID of the offer
- *         example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
- *       listingId:
- *         type: string
- *         description: the id of the listing the application is attached to
- *         example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
- *       applicationId:
- *         type: string
- *         description: The id of the Application
- *         example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
- *       userId:
- *         type: string
- *         description: The user ID
- *         example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
- *       applicantId:
- *         type: string
- *         description: The id of the applicant of the application
- *         example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
- *       state:
- *         type: string
- *         description: The state of the offer
- *         example: "Accepted"
- *       created:
- *         type: string
- *         format: date-time
- *         description: Creation date and time of the offer
- *         example: "2021-11-24T12:34:56.789Z"
- *       updated:
- *         type: string
- *         format: date-time
- *         description: Updated date and time for the offer
- *         example: "2021-12-24T12:34:56.789Z"
+ *     Offers:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The ID of the offer
+ *           example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
+ *         listingId:
+ *           type: string
+ *           description: the id of the listing the application is attached to
+ *           example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
+ *         applicationId:
+ *           type: string
+ *           description: The id of the Application
+ *           example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
+ *         userId:
+ *           type: string
+ *           description: The user ID
+ *           example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
+ *         applicantId:
+ *           type: string
+ *           description: The id of the applicant of the application
+ *           example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
+ *         state:
+ *           type: string
+ *           description: The state of the offer
+ *           example: "Accepted"
+ *         created:
+ *           type: string
+ *           format: date-time
+ *           description: Creation date and time of the offer
+ *           example: "2021-11-24T12:34:56.789Z"
+ *         updated:
+ *           type: string
+ *           format: date-time
+ *           description: Updated date and time for the offer
+ *           example: "2021-12-24T12:34:56.789Z"
  *
  */
 
@@ -100,10 +100,10 @@
  *                   type: object
  *                   description: The user special offer
  *                   example: {id: string, email: string, firstName: string, lastName: string, Offers: [object], listings: [object], role: string}
- *                  userId:
- *                     type: string
- *                     description: The user ID
- *                     example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
+ *                 userId:
+ *                   type: string
+ *                   description: The user ID
+ *                   example: "5s3d4aw5q-a2f6-4a6c-5c4d-8a5e5e5b6d2d"
  *                 listing:
  *                   type: [object]
  *                   description: The listing the application is attached to.
@@ -116,10 +116,10 @@
  *                   type: [object]
  *                   description: The application attached to the applicant.
  *                   example: {id: string, coverLetter: string, Offers: [object], applicant: user, role: applicant}
- *                state:
- *                  type: string
- *                  description: The state of the offer
- *                  example: "Accepted"
+ *                 state:
+ *                   type: string
+ *                   description: The state of the offer
+ *                   example: "Accepted"
  *     security:
  *       - bearerAuth: []
  */

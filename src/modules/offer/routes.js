@@ -1,9 +1,9 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
-import { offersGet, offerGetId } from "./read.js";
-import { createOffer } from "./create.js";
-import { removeOffer } from "./delete.js";
-import { updateOffer } from "./update.js";
+import { offersGet, offerGetId } from "./controllers/read.js";
+import { createOffer } from "./controllers/create.js";
+import { removeOffer } from "./controllers/delete.js";
+import { updateOffer } from "./controllers/update.js";
 
 export const offersRouter = express.Router();
 
