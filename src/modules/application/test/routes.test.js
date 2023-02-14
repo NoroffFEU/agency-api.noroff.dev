@@ -11,7 +11,7 @@ const secret = "MySecretKey";
 
 // Create a testUser in your local database and place the following here.
 const testUser = {
-  id: "e4c0d3d6-c107-4d84-bd0c-8d36f6fd5741",
+  id: "ed078fb0-7af1-44e3-9af3-5d6d0ebd3530",
   email: "applicantTestUser@email.com",
   firstName: "applicantTestUser",
   lastName: "test",
