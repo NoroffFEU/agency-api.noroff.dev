@@ -28,13 +28,30 @@ export const handleEdit = async function (req) {
 
   if (readyToken !== undefined) {
     try {
-      verified = verifyToken(readyToken);
+      verified = await verifyToken(readyToken);
     } catch (error) {
       return Promise.resolve({ status: 401, message: "Auth token not valid." });
     }
   }
 
   if (verified) {
+    //check that the user who wants to update is the same that put in the application
+    const { applicantId } = await databasePrisma.application.findUnique({
+      where: {
+        id: applicationId,
+      },
+    });
+
+    if (verified.id !== applicantId) {
+      return Promise.resolve({
+        status: 401,
+        data: {
+          message:
+            "Unauthorized access: The user attempting the update does not match the user who made the original request.",
+        },
+      });
+    }
+
     try {
       const result = await databasePrisma.application.update({
         where: { id: applicationId },
