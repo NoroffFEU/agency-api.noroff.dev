@@ -5,6 +5,19 @@ export const handleEdit = async function (req) {
   const { id: applicationId } = req.params;
   const { coverLetter } = req.body;
 
+  const applicationData = await databasePrisma.application.findUnique({
+    where: {
+      id: applicationId,
+    },
+  });
+
+  if (!applicationData) {
+    return Promise.resolve({
+      status: 404,
+      message: "Application not found",
+    });
+  }
+
   if (coverLetter === undefined) {
     return Promise.resolve({
       status: 409,
@@ -36,13 +49,7 @@ export const handleEdit = async function (req) {
 
   if (verified) {
     //check that the user who wants to update is the same that put in the application
-    const { applicantId } = await databasePrisma.application.findUnique({
-      where: {
-        id: applicationId,
-      },
-    });
-
-    if (verified.id !== applicantId) {
+    if (verified.id !== applicationData.applicantId) {
       return Promise.resolve({
         status: 401,
         data: {
@@ -64,26 +71,15 @@ export const handleEdit = async function (req) {
 
       return { status: 200, data: result };
     } catch (error) {
-      if (!error.status) {
-        if (error.meta !== undefined) {
-          return Promise.resolve({
-            status: 409,
-            message: `You've already updated your application`,
-          });
-        } else {
-          return Promise.resolve({
-            status: 409,
-            message: `${error.message}`,
-          });
-        }
-      } else {
-        if (error.status) {
-          return Promise.resolve({
-            status: error.status,
-            message: error.message,
-          });
-        }
-      }
+      return Promise.resolve({
+        status: error.status,
+        message: error.message,
+      });
     }
+  } else {
+    return Promise.resolve({
+      status: 403,
+      message: "Invalid token",
+    });
   }
 };
