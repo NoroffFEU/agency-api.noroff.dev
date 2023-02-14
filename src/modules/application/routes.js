@@ -15,7 +15,6 @@ applicationsRouter
       });
       res.status(200).json(applications);
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: `Internal server error`, code: "500" });
     }
   })
@@ -75,8 +74,6 @@ applicationsRouter
 
       res.status(200).json(result);
     } catch (err) {
-      console.log(err);
-
       const errorObject = await JSON.parse(err.message);
       if (errorObject.status) {
         res.status(errorObject.status).json(errorObject.message);
