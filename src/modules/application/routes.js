@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { checkAuth } from "./controllers/checkAuth.js";
 import { handleCreate } from "./controllers/controllerCreate.js";
 import { handleEdit } from "./controllers/controllerEdit.js";
+import { handleDelete } from "./controllers/controllerDelete.js";
 
 export const applicationsRouter = express.Router();
 
@@ -52,20 +53,18 @@ applicationsRouter
       res.status(400).json({ message: `${err}`, code: "400" });
     }
   })
-  .delete("/:id", checkAuth, async (req, res) => {
+  .delete("/:id", async (req, res) => {
     try {
-      const id = req.params.id;
-      await databasePrisma.application.delete({
-        where: {
-          id: id,
-        },
-      });
-      res.status(200).json({
-        message: `Successfully deleted application with id: ${id}`,
-        code: "200",
-      });
+      const result = await handleDelete(req);
+
+      res.status(200).json(result);
     } catch (err) {
-      res.status(400).json({ message: `${err}`, code: "400" });
+      const errorObject = await JSON.parse(err.message);
+      if (errorObject.status) {
+        res.status(errorObject.status).json(errorObject.message);
+      } else {
+        res.status(500).json("Internal server error.");
+      }
     }
   })
   .put("/:id", async (req, res) => {
