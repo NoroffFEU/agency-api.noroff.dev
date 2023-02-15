@@ -46,9 +46,8 @@ applicationsRouter
   })
   .post("/", checkAuth, async (req, res) => {
     try {
-      //NEEDS MORE TESTING
       const result = await handleCreate(req, res);
-      res.status(200).json(result);
+      res.json(result);
     } catch (err) {
       res.status(400).json({ message: `${err}`, code: "400" });
     }
