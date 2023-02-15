@@ -310,8 +310,12 @@ describe("DELETE /applications/id", () => {
         `/applications/${applicationTest.id}`
       );
 
-      expect(response.error.status).toBe(401);
-      expect(response.error.text).toBe("Unauthorized");
+      console.log(response);
+
+      expect(response._body.status).toBe(401);
+      expect(response._body.message).toBe(
+        "User has to be authenticated to make this request"
+      );
     });
   });
 
@@ -329,12 +333,11 @@ describe("DELETE /applications/id", () => {
   });
 
   describe("when application isn't found in the database", () => {
-    it("should return a 400 response", async () => {
-      const res = await request(base_URL)
-        .delete(`/applications/${applicationTest.id}`)
-        .set("Authorization", `Bearer ${token}`);
+    it("should return a 404 status code and the message 'Application not found'", async () => {
+      const res = await request(base_URL).delete("/applications/12345");
 
-      expect(res.status).toBe(400);
+      expect(res._body.status).toBe(404);
+      expect(res._body.message).toBe("Application not found");
     });
   });
 });
