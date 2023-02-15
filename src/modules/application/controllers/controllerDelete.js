@@ -1,7 +1,7 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 
-export const handleDelete = async function (req) {
+export const handleDelete = async function (req, res) {
   const { id: applicationId } = req.params;
 
   const applicationData = await databasePrisma.application.findUnique({
@@ -11,43 +11,28 @@ export const handleDelete = async function (req) {
   });
 
   if (!applicationData) {
-    return Promise.resolve({
-      status: 404,
-      message: "Application not found",
-    });
+    return res.status(404).json({ message: "Application not found" });
   }
 
   const token = req.headers.authorization;
 
   let readyToken = token;
   if (!token) {
-    return Promise.resolve({
-      status: 401,
-      message: "User has to be authenticated to make this request",
-    });
+    return res
+      .status(401)
+      .json({ message: "User has to be authenticated to make this request" });
   } else if (token.includes("Bearer")) {
     readyToken = token.slice(7);
   }
 
-  let verified;
-
-  if (readyToken !== undefined) {
-    try {
-      verified = await verifyToken(readyToken);
-    } catch (error) {
-      return Promise.resolve({ status: 401, message: "Auth token not valid." });
-    }
-  }
+  let verified = await verifyToken(readyToken);
 
   if (verified) {
     //check that the user who wants to delete is the same that put in the application
     if (verified.id !== applicationData.applicantId) {
-      return Promise.resolve({
-        status: 401,
-        data: {
-          message:
-            "Unauthorized access: The user attempting the delete does not match the user who made the original request.",
-        },
+      return res.status(401).json({
+        message:
+          "Unauthorized access: you cannot delete another user's application",
       });
     }
 
@@ -66,8 +51,7 @@ export const handleDelete = async function (req) {
       });
     }
   } else {
-    return Promise.resolve({
-      status: 403,
+    return res.status(403).json({
       message: "Invalid token",
     });
   }
