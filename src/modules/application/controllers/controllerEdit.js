@@ -1,7 +1,7 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 
-export const handleEdit = async function (req) {
+export const handleEdit = async function (req, res) {
   const { id: applicationId } = req.params;
   const { coverLetter } = req.body;
 
@@ -12,50 +12,32 @@ export const handleEdit = async function (req) {
   });
 
   if (!applicationData) {
-    return Promise.resolve({
-      status: 404,
-      message: "Application not found",
-    });
+    return res.status(404).json({ message: "Application not found" });
   }
 
   if (coverLetter === undefined) {
-    return Promise.resolve({
-      status: 409,
-      message: "Cover letter is mandatory",
-    });
+    return res.status(409).json({ message: "Cover letter is mandatory" });
   }
 
   const token = req.headers.authorization;
 
   let readyToken = token;
   if (!token) {
-    return Promise.resolve({
-      status: 401,
-      message: "User has to be authenticated to make this request",
-    });
+    return res
+      .status(401)
+      .json({ message: "User has to be authenticated to make this request" });
   } else if (token.includes("Bearer")) {
     readyToken = token.slice(7);
   }
 
-  let verified;
-
-  if (readyToken !== undefined) {
-    try {
-      verified = await verifyToken(readyToken);
-    } catch (error) {
-      return Promise.resolve({ status: 401, message: "Auth token not valid." });
-    }
-  }
+  let verified = await verifyToken(readyToken);
 
   if (verified) {
     //check that the user who wants to update is the same that put in the application
     if (verified.id !== applicationData.applicantId) {
-      return Promise.resolve({
-        status: 401,
-        data: {
-          message:
-            "Unauthorized access: The user attempting the update does not match the user who made the original request.",
-        },
+      return res.status(401).json({
+        message:
+          "Unauthorized access: you cannot update another user's application",
       });
     }
 
@@ -71,14 +53,13 @@ export const handleEdit = async function (req) {
 
       return { status: 200, data: result };
     } catch (error) {
-      return Promise.resolve({
+      return {
         status: error.status,
         message: error.message,
-      });
+      };
     }
   } else {
-    return Promise.resolve({
-      status: 403,
+    return res.status(403).json({
       message: "Invalid token",
     });
   }

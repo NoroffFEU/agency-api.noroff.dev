@@ -69,9 +69,9 @@ applicationsRouter
   })
   .put("/:id", async (req, res) => {
     try {
-      const result = await handleEdit(req);
+      const result = await handleEdit(req, res);
 
-      res.status(200).json(result);
+      res.json(result);
     } catch (err) {
       const errorObject = await JSON.parse(err.message);
       if (errorObject.status) {
