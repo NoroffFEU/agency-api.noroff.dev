@@ -60,7 +60,7 @@ export const handleCreate = async function (req, res) {
       },
     });
 
-    return result;
+    return res.status(201).json(result);
   } catch (error) {
     if (error.status) {
       return res.status(error.status).json({
