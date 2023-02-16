@@ -7,7 +7,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 const base_URL = `http://localhost:${PORT}`;
 
-const secret = "MySecretKey";
+// const secret = "MySecretKey";
 
 // Create a testUser in your local database and place the following here.
 const testUser = {
@@ -17,7 +17,7 @@ const testUser = {
   lastName: "test",
 };
 
-//Create a second test user with the role of 'Client' in your database
+//Create a test user with the role of 'Client' in your database
 /* {
   firstName: "clientTestUser",
   lastName: "test",
@@ -26,7 +26,7 @@ const testUser = {
   role: "Client"
 } */
 
-//Use this second user to create a company and replace the id here
+//Use this user to create a company and replace the id here
 const testCompany = "e44f1c33-13ed-4432-81ae-156ac0170287";
 
 // Create a listing f.eks like this using the company's id you've just created
@@ -42,7 +42,25 @@ const testCompany = "e44f1c33-13ed-4432-81ae-156ac0170287";
 //Replace listing's id here
 const testListing = "e7f7851d-1ad1-4b9a-9885-fb467293bcba";
 
-const token = jwt.sign(testUser, secret);
+// const token = jwt.sign(testUser, secret);
+
+//Create a second applicant and replace id and email here
+const secondUserTest = {
+  id: "cfa8e34c-7efc-4a34-a070-7887c6220811",
+  email: "secondUserTest@email.com",
+};
+
+const token = jwt.sign(
+  { userId: testUser.id, email: testUser.email },
+  process.env.SECRETSAUCE
+);
+
+const secondUsersToken = jwt.sign(
+  { userId: secondUserTest.id, email: secondUserTest.email },
+  process.env.SECRETSAUCE
+);
+
+const invalidToken = "test-token-1234";
 
 const letter = "testing letter";
 
@@ -56,7 +74,7 @@ let offersCountTest = {
 
 describe("POST /applications", () => {
   describe("when not provided with either applicant, listing, company, or cover letter", () => {
-    test("should respond with 409 status code", async () => {
+    test("should respond with 400 status code", async () => {
       const data = [
         { applicant: testUser.id },
         { listing: testListing },
@@ -115,10 +133,62 @@ describe("POST /applications", () => {
           .send(body)
           .set("Authorization", `Bearer ${token}`);
 
-        expect(response._body.status).toBe(400);
+        expect(response.status).toBe(400);
       }
     });
   });
+
+  describe("when given listing doesn't exist", () => {
+    test("should respond with a 400 status code and the message 'Listing doesn't exist'", async () => {
+      const response = await request(base_URL)
+        .post("/applications")
+        .send({
+          applicantId: testUser.id,
+          listingId: "fake-listing",
+          companyId: testCompany,
+          coverLetter: letter,
+        })
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Listing doesn't exist");
+    });
+  });
+
+  describe("when given company doesn't exist", () => {
+    test("should respond with a 400 status code and the message 'Company doesn't exist'", async () => {
+      const response = await request(base_URL)
+        .post("/applications")
+        .send({
+          applicantId: testUser.id,
+          listingId: testListing,
+          companyId: "fake-company",
+          coverLetter: letter,
+        })
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("Company doesn't exist");
+    });
+  });
+
+  describe("when given applicant doesn't exist", () => {
+    test("should respond with a 400 status code and the message 'User doesn't exist'", async () => {
+      const response = await request(base_URL)
+        .post("/applications")
+        .send({
+          applicantId: "fake-user",
+          listingId: testListing,
+          companyId: testCompany,
+          coverLetter: letter,
+        })
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe("User doesn't exist");
+    });
+  });
+
   describe("given an applicant, a listing, a company, and a cover letter", () => {
     it("should return a 200 status code and the application", async () => {
       const res = await request(base_URL)
@@ -149,14 +219,14 @@ describe("POST /applications", () => {
       const res = await request(base_URL)
         .post("/applications")
         .send({
-          applicant: { connect: { id: testUser.id } },
-          listing: { connect: { id: applicationTest.listingId } },
-          company: { connect: { id: applicationTest.companyId } },
+          applicantId: testUser.id,
+          listingId: testListing,
+          companyId: testCompany,
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
 
-      expect(res.body.status).toBe(409);
+      expect(res.status).toBe(409);
       expect(res.body.message).toBe(
         "You've already created an application on this listing"
       );
@@ -251,17 +321,6 @@ describe("PUT /applications/id", () => {
       );
     });
 
-    test("should respond with a 401 status if user isn't authenticated", async () => {
-      const response = await request(base_URL)
-        .put(`/applications/${applicationTest.id}`)
-        .send(applicationTest);
-
-      expect(response.body.status).toBe(401);
-      expect(response.body.message).toBe(
-        "User has to be authenticated to make this request"
-      );
-    });
-
     test("should respond with a json object containing id, applicantId, companyId, listingId, coverLetter, created, updated, response", async () => {
       const response = await request(base_URL)
         .put(`/applications/${applicationTest.id}`)
@@ -273,14 +332,14 @@ describe("PUT /applications/id", () => {
         })
         .set("Authorization", `Bearer ${token}`);
 
-      expect(response.body.data.id).toBeDefined();
-      expect(response.body.data.applicantId).toBeDefined();
-      expect(response.body.data.companyId).toBeDefined();
-      expect(response.body.data.listingId).toBeDefined();
-      expect(response.body.data.coverLetter).toBeDefined();
-      expect(response.body.data.created).toBeDefined();
-      expect(response.body.data.updated).toBeDefined();
-      expect(response.body.data.response).toBe(
+      expect(response.body.id).toBeDefined();
+      expect(response.body.applicantId).toBeDefined();
+      expect(response.body.companyId).toBeDefined();
+      expect(response.body.listingId).toBeDefined();
+      expect(response.body.coverLetter).toBeDefined();
+      expect(response.body.created).toBeDefined();
+      expect(response.body.updated).toBeDefined();
+      expect(response.body.response).toBe(
         "Your Application is updated successfully"
       );
     });
@@ -295,8 +354,54 @@ describe("PUT /applications/id", () => {
         .send(data)
         .set("Authorization", `Bearer ${token}`);
 
-      expect(response._body.status).toBe(409);
-      expect(response._body.message).toBe("Cover letter is mandatory");
+      expect(response.status).toBe(409);
+      expect(response.body.message).toBe("Cover letter is mandatory");
+    });
+  });
+
+  describe("when not provided with authorisation token", () => {
+    test("should respond with a 401 status code", async () => {
+      const response = await request(base_URL)
+        .put(`/applications/${applicationTest.id}`)
+        .send(applicationTest);
+
+      expect(response.status).toBe(401);
+      expect(response.body.message).toBe(
+        "User has to be authenticated to make this request"
+      );
+    });
+  });
+
+  describe("when application isn't found in the database", () => {
+    test("should respond with a 404 status code and the message 'Application not found'", async () => {
+      const response = await request(base_URL).put("/applications/12345");
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toBe("Application not found");
+    });
+  });
+
+  describe("when user attempting the update isn't the same user that sent the application", () => {
+    test("should respond with a 401 status code and the message 'Unauthorized access: you cannot update or delete another user's application'", async () => {
+      const response = await request(base_URL)
+        .put(`/applications/${applicationTest.id}`)
+        .set("Authorization", `Bearer ${secondUsersToken}`);
+
+      expect(response.status).toBe(401);
+      expect(response.body.message).toBe(
+        "Unauthorized access: you cannot update or delete another user's application"
+      );
+    });
+  });
+
+  describe("when the token is invalid", () => {
+    test("should respond with a 403 status code and the message 'Invalid token'", async () => {
+      const response = await request(base_URL)
+        .put(`/applications/${applicationTest.id}`)
+        .set("Authorization", `Bearer ${invalidToken}`);
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toBe("Invalid token");
     });
   });
 });
@@ -310,12 +415,34 @@ describe("DELETE /applications/id", () => {
         `/applications/${applicationTest.id}`
       );
 
-      console.log(response);
-
-      expect(response._body.status).toBe(401);
-      expect(response._body.message).toBe(
+      expect(response.status).toBe(401);
+      expect(response.body.message).toBe(
         "User has to be authenticated to make this request"
       );
+    });
+  });
+
+  describe("when user attempting the delete isn't the same user that sent the application", () => {
+    test("should respond with a 401 status code and the message 'Unauthorized access: you cannot update or delete another user's application'", async () => {
+      const response = await request(base_URL)
+        .delete(`/applications/${applicationTest.id}`)
+        .set("Authorization", `Bearer ${secondUsersToken}`);
+
+      expect(response.status).toBe(401);
+      expect(response.body.message).toBe(
+        "Unauthorized access: you cannot update or delete another user's application"
+      );
+    });
+  });
+
+  describe("when the token is invalid", () => {
+    test("should respond with a 403 status code and the message 'Invalid token'", async () => {
+      const response = await request(base_URL)
+        .delete(`/applications/${applicationTest.id}`)
+        .set("Authorization", `Bearer ${invalidToken}`);
+
+      expect(response.status).toBe(403);
+      expect(response.body.message).toBe("Invalid token");
     });
   });
 
@@ -326,9 +453,7 @@ describe("DELETE /applications/id", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(200);
-      expect(res.body.message).toEqual(
-        `Successfully deleted application with id: ${applicationTest.id}`
-      );
+      expect(res.body).toEqual("Your Application was successfully deleted");
     });
   });
 
@@ -336,8 +461,8 @@ describe("DELETE /applications/id", () => {
     it("should return a 404 status code and the message 'Application not found'", async () => {
       const res = await request(base_URL).delete("/applications/12345");
 
-      expect(res._body.status).toBe(404);
-      expect(res._body.message).toBe("Application not found");
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("Application not found");
     });
   });
 });
