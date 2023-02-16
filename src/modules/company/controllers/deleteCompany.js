@@ -4,7 +4,7 @@ export const deleteCompany = async (databasePrisma, req, res) => {
   const id = req.params.id;
   // Validate to see if inputs are provided correctly
   if (!id) {
-    return res.status(400).send({ error: "Company id is required" });
+    return res.status(400).send({ message: "Company id is required" });
   }
   //Validate to see if a user is logged in
   const token = req.headers.authorization;
@@ -12,7 +12,7 @@ export const deleteCompany = async (databasePrisma, req, res) => {
 
   if (!token) {
     return res.status(401).send({
-      error: "User has to be authenticated to make this request",
+      message: "User has to be authenticated to make this request",
     });
   } else if (token.includes("Bearer")) {
     JWT = token.slice(7);
@@ -40,12 +40,12 @@ export const deleteCompany = async (databasePrisma, req, res) => {
       return res.status(200).send(company);
     } catch (err) {
       if (err.code === "P2025") {
-        return res.status(409).send({ error: "Company doesn't exist" });
+        return res.status(409).send({ message: "Company doesn't exist" });
       }
     }
   } else {
     return res.status(401).send({
-      error: "User is not authorized to make this request",
+      message: "User is not authorized to make this request",
     });
   }
 };
