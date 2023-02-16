@@ -3,6 +3,7 @@ import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 export const createCompany = async (databasePrisma, req, res) => {
   const { name, sector, logo, phone, admin } = req.body;
+  const user = req.user;
 
   // Validate to see if inputs are provided correctly
   if (logo) {
@@ -23,6 +24,11 @@ export const createCompany = async (databasePrisma, req, res) => {
 
   if (admin === undefined) {
     return res.status(400).send({ message: "No admin id provided." });
+  }
+  if (admin !== user.id && user.role !== "Admin") {
+    return res
+      .status(400)
+      .send({ message: "User's Id doesn't match request admin Id." });
   }
 
   // Validate to see i f the company name is unique and the admin id is valid
