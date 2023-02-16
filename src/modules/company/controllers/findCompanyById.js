@@ -1,8 +1,27 @@
+import { verifyToken } from "../../../utilities/jsonWebToken.js";
+
 export const findCompanyById = async (databasePrisma, req, res) => {
   try {
     const id = req.params.id;
     if (id === undefined) {
-      return res.status(400).json({ message: "Bad request, company id is undefined" });
+      return res
+        .status(400)
+        .json({ message: "Bad request, company id is undefined" });
+    }
+
+    let verifiedAdmin = false;
+    const token = req.headers.authorization;
+    let readyToken = token;
+    if (token !== undefined) {
+      readyToken = token.slice(7);
+    }
+    //verify token
+    let verified;
+    if (readyToken !== undefined) {
+      verified = await verifyToken(readyToken);
+      if (verified.companyId === id) {
+        verifiedAdmin = true;
+      }
     }
 
     const company = await databasePrisma.company.findUnique({
@@ -10,8 +29,8 @@ export const findCompanyById = async (databasePrisma, req, res) => {
         id,
       },
       include: {
-        applications: true,
-        offers: true,
+        applications: verifiedAdmin,
+        offers: verifiedAdmin,
         listings: true,
         admin: true,
       },
