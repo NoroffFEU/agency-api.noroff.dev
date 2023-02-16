@@ -25,7 +25,6 @@ export const handleEdit = async function (req, res) {
     result.response = "Your Application is updated successfully";
 
     return res.status(200).json(result);
-    // return { status: 200, data: result };
   } catch (error) {
     return res.status(error.status).json({ message: error.message });
   }
