@@ -81,6 +81,14 @@ export const createTestDatabase = async function () {
     });
   }
 
+  //cleans up the created company
+  if (testCompanyClient1.companyId) {
+    await databasePrisma.company.delete({
+      where: { id: testCompanyClient1.companyId },
+    });
+    testCompanyClient1.companyId = null;
+  }
+
   testCompanyClient3 = await getUser(testCompanyClient3);
 
   return {

@@ -30,7 +30,7 @@ let companyTest,
   applicantToken;
 
 const testCompany = {
-  name: "TestCompanyClient1",
+  name: "TestingCompanyClient1",
   sector: "tester",
   phone: "tester",
   logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2ChocolateChipCookies.jpg/1280px-2ChocolateChipCookies.jpg",
@@ -44,7 +44,7 @@ const testCompany2 = {
 
 const testCompany3 = {
   ...testCompany,
-  name: "TestCompanyClient1",
+  name: "TestCompanyClient3",
 };
 
 const testCompany4 = {
@@ -85,18 +85,17 @@ describe("POST /company", () => {
 
   it("should return 401 and unauthorized with no token", async () => {
     const response = await request(baseURL).post("/company").send(testCompany2);
-    expect(response.statusCode).toBe(401);
     expect(response.body.message).toEqual("No authorization header provided.");
+    expect(response.statusCode).toBe(401);
   });
 
   it("should return 400 and bad request with same name", async () => {
     const response = await request(baseURL)
       .post("/company")
       .set("Authorization", `${client2Token}`)
-      .send(testCompany);
+      .send(testCompany3);
     expect(response.statusCode).toBe(409);
-    //not currently being checked for
-    expect(response.body.message).toEqual("Company already exists");
+    expect(response.body.message).toEqual("Company already exists.");
   });
 
   it("should return 400 and bad logo URL", async () => {
@@ -104,11 +103,11 @@ describe("POST /company", () => {
       .post("/company")
       .set("Authorization", `${client2Token}`)
       .send(testCompany2);
-    expect(response.statusCode).toBe(400);
     expect(response.body.message).toEqual("Image Url is not an approved image");
+    expect(response.statusCode).toBe(400);
   });
 
-  it("should return 400 and with no company id", async () => {
+  it("should return 400 and with no admin id", async () => {
     const response = await request(baseURL)
       .post("/company")
       .set("Authorization", `${client2Token}`)
@@ -121,7 +120,7 @@ describe("POST /company", () => {
 describe("PUT /company", () => {});
 
 describe("GET /company", () => {
-  it("should return 200 and a successful delete message", async () => {
+  it("should return 200 and array of companies", async () => {
     const response = await request(baseURL).get(`/company`);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(expect.any(Array));
@@ -132,44 +131,43 @@ describe("GET /company", () => {
 
 describe("GET /company/:id", () => {
   it("should return 200 and a company without applications and listings with no auth", async () => {
-    const id = companyTest.id;
+    const id = testCompanyClient3.companyId;
     const response = await request(baseURL).get(`/company/${id}`);
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual(id);
     expect(response.body.offers).toEqual(undefined);
-    expect(response.body.application).toEqual(undefined);
+    expect(response.body.applications).toEqual(undefined);
   });
 
   it("should return 200 and a company without applications and listings with auth", async () => {
-    const id = companyTest.id;
-    const response = await request(baseURL)
-      .get(`/company/${id}`)
-      .set("Authorization", `${client3Token}`);
-    expect(response.status).toBe(200);
-    expect(response.body.id).toEqual(id);
-    expect(response.body.offers).toEqual(undefined);
-    expect(response.body.application).toEqual(undefined);
-  });
-
-  it("should return 200 and a company with applications and listings", async () => {
-    const id = companyTest.id;
+    const id = testCompanyClient3.companyId;
     const response = await request(baseURL)
       .get(`/company/${id}`)
       .set("Authorization", `${client1Token}`);
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual(id);
+    expect(response.body.offers).toEqual(undefined);
+    expect(response.body.applications).toEqual(undefined);
+  });
+
+  it("should return 200 and a company with applications and listings", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .get(`/company/${id}`)
+      .set("Authorization", `${client3Token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.id).toEqual(id);
     expect(response.body.offers).toEqual(expect.any(Array));
-    expect(response.body.application).toEqual(expect.any(Array));
+    expect(response.body.applications).toEqual(expect.any(Array));
   });
 });
 
 describe("DELETE /company", () => {
   it("should return 401 when attempting to edit other company listings", async () => {
-    const id = companyTest.id;
+    const id = testCompanyClient3.companyId;
     const response = await request(baseURL)
-      .delete(`/company`)
-      .set("Authorization", `${client3Token}`)
-      .send({ id: id });
+      .delete(`/company/${id}`)
+      .set("Authorization", `${client1Token}`);
     expect(response.status).toBe(401);
     expect(response.body.message).toEqual(
       "User is not authorized to make this request"
@@ -177,11 +175,10 @@ describe("DELETE /company", () => {
   });
 
   it("should return 200 and a successful delete message", async () => {
-    const id = companyTest.id;
+    const id = testCompanyClient3.companyId;
     const response = await request(baseURL)
-      .delete(`/company`)
-      .set("Authorization", `${client1Token}`)
-      .send({ id: id });
+      .delete(`/company/${id}`)
+      .set("Authorization", `${client3Token}`);
     expect(response.status).toBe(200);
   });
 });
