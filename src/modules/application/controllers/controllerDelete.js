@@ -17,12 +17,7 @@ export const handleDelete = async function (req, res) {
     result.response = "Your Application was successfully deleted";
 
     return res.status(200).json(result.response);
-    // return { status: 200, data: result.response };
   } catch (error) {
     return res.status(error.status).json({ message: error.message });
-    /*     return Promise.resolve({
-      status: error.status,
-      message: error.message,
-    }); */
   }
 };
