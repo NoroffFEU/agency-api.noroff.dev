@@ -32,11 +32,6 @@ export const validateUser = async function (req, res, next) {
         .json({ message: "Only clients can create listings." });
     }
 
-    // allow admin to create and edit company with companyId in request body
-    if (verified.role === "Admin") {
-      verified.companyId = req.body.companyId;
-    }
-
     req.user = verified;
     next();
   } catch (error) {
@@ -49,17 +44,9 @@ export const validateUser = async function (req, res, next) {
 export const companyExists = async function (req, res, next) {
   try {
     const user = req.user;
+    const id = req.params.id;
 
-    if (user.role === "Admin" && user.companyId === undefined) {
-      return res
-        .status(401)
-        .json({
-          message:
-            "A companyId is required in the requests, to perform this action.",
-        });
-    }
-
-    if (!user.companyId || user.companyId === undefined) {
+    if (!user.companyId && user.role !== "Admin") {
       return res
         .status(401)
         .json({ message: "You must create or join a company first." });
@@ -67,13 +54,11 @@ export const companyExists = async function (req, res, next) {
 
     // check users company exists
     const company = await databasePrisma.company.findUnique({
-      where: { id: user.companyId },
+      where: { id },
     });
 
     if (!company) {
-      return res
-        .status(401)
-        .json({ message: "You must create or join a company first." });
+      return res.status(400).json({ message: "Invalid company Id provided." });
     }
 
     req.company = company;
@@ -90,12 +75,10 @@ export const verifyAccess = async function (req, res, next) {
     const user = req.user;
     const companyId = req.params.id;
 
-    if (user.companyId !== companyId) {
-      return res
-        .status(404)
-        .json({
-          message: "Unauthorized, you are not an admin for this company.",
-        });
+    if (user.companyId !== companyId && user.role !== "Admin") {
+      return res.status(401).json({
+        message: "Unauthorized, you are not an admin for this company.",
+      });
     }
 
     next();
