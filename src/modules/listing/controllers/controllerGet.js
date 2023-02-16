@@ -45,7 +45,6 @@ export const getListingId = async function (req, res) {
 
     res.status(200).json(listing);
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({ message: `Unexpected internal server error`, ...error });

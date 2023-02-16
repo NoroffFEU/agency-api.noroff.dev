@@ -56,7 +56,6 @@ export const createListing = async function (req, res) {
     //return the created listing
     return res.status(201).json(result);
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .send({ message: "Unexpected internal server error.", ...error });

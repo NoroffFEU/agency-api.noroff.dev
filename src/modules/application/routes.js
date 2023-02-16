@@ -4,6 +4,8 @@ import { Prisma } from "@prisma/client";
 import { checkAuth } from "./controllers/checkAuth.js";
 import { handleCreate } from "./controllers/controllerCreate.js";
 import { handleEdit } from "./controllers/controllerEdit.js";
+import { handleDelete } from "./controllers/controllerDelete.js";
+import { checkAccessRights } from "./middleware/index.js";
 
 export const applicationsRouter = express.Router();
 
@@ -15,7 +17,6 @@ applicationsRouter
       });
       res.status(200).json(applications);
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: `Internal server error`, code: "500" });
     }
   })
@@ -46,37 +47,27 @@ applicationsRouter
   })
   .post("/", checkAuth, async (req, res) => {
     try {
-      //NEEDS MORE TESTING
-      const result = await handleCreate(req, res);
-      res.status(200).json(result);
+      await handleCreate(req, res);
     } catch (err) {
       res.status(400).json({ message: `${err}`, code: "400" });
     }
   })
-  .delete("/:id", checkAuth, async (req, res) => {
+  .delete("/:id", checkAccessRights, async (req, res) => {
     try {
-      const id = req.params.id;
-      await databasePrisma.application.delete({
-        where: {
-          id: id,
-        },
-      });
-      res.status(200).json({
-        message: `Successfully deleted application with id: ${id}`,
-        code: "200",
-      });
+      await handleDelete(req, res);
     } catch (err) {
-      res.status(400).json({ message: `${err}`, code: "400" });
+      const errorObject = await JSON.parse(err.message);
+      if (errorObject.status) {
+        res.status(errorObject.status).json(errorObject.message);
+      } else {
+        res.status(500).json("Internal server error.");
+      }
     }
   })
-  .put("/:id", async (req, res) => {
+  .put("/:id", checkAccessRights, async (req, res) => {
     try {
-      const result = await handleEdit(req);
-
-      res.status(200).json(result);
+      await handleEdit(req, res);
     } catch (err) {
-      console.log(err);
-
       const errorObject = await JSON.parse(err.message);
       if (errorObject.status) {
         res.status(errorObject.status).json(errorObject.message);
