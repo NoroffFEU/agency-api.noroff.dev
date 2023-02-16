@@ -186,7 +186,7 @@ describe("POST /applications", () => {
   });
 
   describe("given an applicant, a listing, a company, and a cover letter", () => {
-    it("should return a 200 status code and the application", async () => {
+    it("should return a 201 status code and the application", async () => {
       const res = await request(base_URL)
         .post("/applications")
         .send({
@@ -199,7 +199,7 @@ describe("POST /applications", () => {
 
       applicationTest = res.body;
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       expect(res.body.id).toEqual(applicationTest.id);
       expect(res.body.applicantId).toEqual(testUser.id);
       expect(res.body.companyId).toEqual(applicationTest.companyId);
