@@ -1,11 +1,26 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
+import { createCompany } from "./controllers/createCompany.js";
 
 export const companyRouter = express.Router();
 
-// Handling request using router
+companyRouter.get("/list", async (req, res) => {
+  databasePrisma.company
+    .findMany({
+      include: {
+        applications: true,
+        offers: true,
+        listings: true,
+        admin: true,
+      },
+    })
+    .then((companies) => {
+      res.send(companies);
+    });
+});
+
 companyRouter.post("/", async (req, res) => {
-  res.send("This is the company request");
+  createCompany(databasePrisma, req, res);
 });
 
 companyRouter.put("/", async (req, res) => {});
