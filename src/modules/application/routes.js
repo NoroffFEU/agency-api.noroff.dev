@@ -47,17 +47,14 @@ applicationsRouter
   })
   .post("/", checkAuth, async (req, res) => {
     try {
-      const result = await handleCreate(req, res);
-      res.json(result);
+      await handleCreate(req, res);
     } catch (err) {
       res.status(400).json({ message: `${err}`, code: "400" });
     }
   })
   .delete("/:id", checkAccessRights, async (req, res) => {
     try {
-      const result = await handleDelete(req, res);
-
-      res.json(result);
+      await handleDelete(req, res);
     } catch (err) {
       const errorObject = await JSON.parse(err.message);
       if (errorObject.status) {
@@ -69,9 +66,7 @@ applicationsRouter
   })
   .put("/:id", checkAccessRights, async (req, res) => {
     try {
-      const result = await handleEdit(req, res);
-
-      res.json(result);
+      await handleEdit(req, res);
     } catch (err) {
       const errorObject = await JSON.parse(err.message);
       if (errorObject.status) {
