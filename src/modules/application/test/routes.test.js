@@ -7,8 +7,6 @@ dotenv.config();
 const PORT = process.env.PORT;
 const base_URL = `http://localhost:${PORT}`;
 
-// const secret = "MySecretKey";
-
 // Create a testUser in your local database and place the following here.
 const testUser = {
   id: "ed078fb0-7af1-44e3-9af3-5d6d0ebd3530",
@@ -41,8 +39,6 @@ const testCompany = "e44f1c33-13ed-4432-81ae-156ac0170287";
 
 //Replace listing's id here
 const testListing = "e7f7851d-1ad1-4b9a-9885-fb467293bcba";
-
-// const token = jwt.sign(testUser, secret);
 
 //Create a second applicant and replace id and email here
 const secondUserTest = {
