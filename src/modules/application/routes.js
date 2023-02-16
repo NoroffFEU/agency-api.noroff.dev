@@ -5,6 +5,7 @@ import { checkAuth } from "./controllers/checkAuth.js";
 import { handleCreate } from "./controllers/controllerCreate.js";
 import { handleEdit } from "./controllers/controllerEdit.js";
 import { handleDelete } from "./controllers/controllerDelete.js";
+import { checkAccessRights } from "./middleware/index.js";
 
 export const applicationsRouter = express.Router();
 
@@ -52,7 +53,7 @@ applicationsRouter
       res.status(400).json({ message: `${err}`, code: "400" });
     }
   })
-  .delete("/:id", async (req, res) => {
+  .delete("/:id", checkAccessRights, async (req, res) => {
     try {
       const result = await handleDelete(req, res);
 
@@ -66,7 +67,7 @@ applicationsRouter
       }
     }
   })
-  .put("/:id", async (req, res) => {
+  .put("/:id", checkAccessRights, async (req, res) => {
     try {
       const result = await handleEdit(req, res);
 
