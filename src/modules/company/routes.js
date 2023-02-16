@@ -7,6 +7,7 @@ import { findAllCompanies } from "./controllers/findAllCompanies.js";
 import { changeCompany } from "./controllers/changeCompany.js";
 import { addAdminToCompany } from "./controllers/addAdmin.js";
 import { deleteAdminFromCompany } from "./controllers/deleteAdmin.js";
+import { validateUser } from "./middleware/checkAuth.js";
 
 export const companyRouter = express.Router();
 
@@ -24,30 +25,30 @@ companyRouter.get("/:id", async (req, res) => {
 
 // Endpoint to create a company
 
-companyRouter.post("/", async (req, res) => {
+companyRouter.post("/", validateUser, async (req, res) => {
   createCompany(databasePrisma, req, res);
 });
 
 // Endpoint to update a company
 
-companyRouter.put("/:id", async (req, res) => {
+companyRouter.put("/:id", validateUser, async (req, res) => {
   changeCompany(databasePrisma, req, res);
 });
 
 // Endpoint to delete a company
 
-companyRouter.delete("/:id", async (req, res) => {
+companyRouter.delete("/:id", validateUser, async (req, res) => {
   deleteCompany(databasePrisma, req, res);
 });
 
 // Endpoint to add an admin to a company
 
-companyRouter.put("/admin/:id", async (req, res) => {
+companyRouter.put("/admin/:id", validateUser, async (req, res) => {
   addAdminToCompany(databasePrisma, req, res);
 });
 
 // Endpoint to remove an admin from a company
 
-companyRouter.delete("/admin/:id", async (req, res) => {
+companyRouter.delete("/admin/:id", validateUser, async (req, res) => {
   deleteAdminFromCompany(databasePrisma, req, res);
 });
