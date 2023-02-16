@@ -52,6 +52,13 @@ const testCompany4 = {
   name: "NoAdminCompany",
 };
 
+const updateCompany = {
+  name: "UpdatedCompanyName",
+  sector: "testerUpdate",
+  phone: "testUpdate",
+  logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2ChocolateChipCookies.jpg/1280px-2ChocolateChipCookies.jpg",
+};
+
 // Create listing tests
 describe("POST /company", () => {
   beforeAll(async () => {
@@ -117,7 +124,118 @@ describe("POST /company", () => {
   });
 });
 
-describe("PUT /company", () => {});
+describe("PUT /company", () => {
+  it("should return 400 with bad id", async () => {
+    const id = "123";
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ ...updateCompany, logo: "bad logo" });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual("Invalid company Id provided.");
+  });
+
+  it("should return 400 with bad image url", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ ...updateCompany, logo: "bad logo" });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual("Image Url is not an approved image");
+  });
+
+  it("should return 400 with existing company name", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ name: "CompanyClientTest3" });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual("This company name already exists.");
+  });
+
+  it("should return 200 and update only name", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ name: "Updating only name test" });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(200);
+    expect(response.body.name).toEqual("Updating only name test");
+    expect(response.body.logo).toEqual("tester");
+    expect(response.body.sector).toEqual("tester");
+    expect(response.body.phone).toEqual("tester");
+  });
+
+  it("should return 200 and update only logo", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({
+        logo: "https://upload.wikimedia.org/wikipedia/en/e/ea/Raving_Rabbids_logo.png",
+      });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(200);
+    expect(response.body.name).toEqual("Updating only name test");
+    expect(response.body.logo).toEqual(
+      "https://upload.wikimedia.org/wikipedia/en/e/ea/Raving_Rabbids_logo.png"
+    );
+    expect(response.body.sector).toEqual("tester");
+    expect(response.body.phone).toEqual("tester");
+  });
+
+  it("should return 200 and update only sector", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ sector: "PC Power Washing!" });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(200);
+    expect(response.body.name).toEqual("Updating only name test");
+    expect(response.body.logo).toEqual(
+      "https://upload.wikimedia.org/wikipedia/en/e/ea/Raving_Rabbids_logo.png"
+    );
+    expect(response.body.sector).toEqual("PC Power Washing!");
+    expect(response.body.phone).toEqual("tester");
+  });
+
+  it("should return 200 and update only phone", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ phone: "1234" });
+    companyTest = response.body;
+    expect(response.statusCode).toBe(200);
+    expect(response.body.name).toEqual("Updating only name test");
+    expect(response.body.logo).toEqual(
+      "https://upload.wikimedia.org/wikipedia/en/e/ea/Raving_Rabbids_logo.png"
+    );
+    expect(response.body.sector).toEqual("PC Power Washing!");
+    expect(response.body.phone).toEqual("1234");
+  });
+
+  it("should return 200 and updated the company", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send(updateCompany);
+    companyTest = response.body;
+    expect(response.statusCode).toBe(200);
+    expect(response.body.name).toEqual(updateCompany.name);
+    expect(response.body.logo).toEqual(updateCompany.logo);
+    expect(response.body.sector).toEqual(updateCompany.sector);
+    expect(response.body.phone).toEqual(updateCompany.phone);
+  });
+});
 
 describe("GET /company", () => {
   it("should return 200 and array of companies", async () => {
@@ -170,8 +288,16 @@ describe("DELETE /company", () => {
       .set("Authorization", `${client1Token}`);
     expect(response.status).toBe(401);
     expect(response.body.message).toEqual(
-      "User is not authorized to make this request"
+      "Unauthorized, you are not an admin for this company."
     );
+  });
+
+  it("should return 401 with an invalid ID", async () => {
+    const response = await request(baseURL)
+      .delete(`/company/1234`)
+      .set("Authorization", `${client1Token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.message).toEqual("Invalid company Id provided.");
   });
 
   it("should return 200 and a successful delete message", async () => {

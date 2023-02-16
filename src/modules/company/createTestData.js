@@ -90,6 +90,11 @@ export const createTestDatabase = async function () {
   }
 
   testCompanyClient3 = await getUser(testCompanyClient3);
+  //fix after update test
+  await databasePrisma.company.update({
+    where: { id: testCompanyClient3.companyId },
+    data: { name: testCompany3.name },
+  });
 
   return {
     testCompanyAdmin,
