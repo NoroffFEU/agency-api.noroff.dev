@@ -32,7 +32,18 @@ export const findCompanyById = async (databasePrisma, req, res) => {
         applications: verifiedAdmin,
         offers: verifiedAdmin,
         listings: true,
-        admin: true,
+        admin: {
+          select: {
+            id: true,
+            title: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+            avatar: true,
+            about: true,
+          },
+        },
       },
     });
 
