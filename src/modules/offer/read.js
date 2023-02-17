@@ -12,7 +12,6 @@ export async function offerGetId(prismaClient, request, response) {
     }
     response.send(offer);
   } catch (error) {
-    console.log(error);
     response.status(500).json({ message: `${error}` });
   }
 }
@@ -29,7 +28,6 @@ export async function offersGet(prismaClient, request, response) {
     }
     response.send(offers);
   } catch (error) {
-    console.log(error);
     response.status(500).json({ message: `${error}` });
   }
 }

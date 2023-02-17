@@ -53,7 +53,6 @@ export const findCompanyById = async (databasePrisma, req, res) => {
 
     res.status(200).json(company);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ ...error, message: "Internal server error" });
   }
 };

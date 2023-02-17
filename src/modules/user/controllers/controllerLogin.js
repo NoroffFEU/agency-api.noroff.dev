@@ -46,7 +46,6 @@ export const handleLogin = async function (req, res) {
       role: profile.role,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ ...error, message: "Internal server error." });
   }
 };
