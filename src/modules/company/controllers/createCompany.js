@@ -8,7 +8,7 @@ export const createCompany = async (databasePrisma, req, res) => {
   // Validate to see if inputs are provided correctly
   if (logo) {
     try {
-      let checkedLogo = await mediaGuard(logo);
+      await mediaGuard(logo);
     } catch (err) {
       return res
         .status(400)
