@@ -2,10 +2,19 @@ export const findAllCompanies = async (databasePrisma, req, res) => {
   databasePrisma.company
     .findMany({
       include: {
-        applications: true,
-        offers: true,
         listings: true,
-        admin: true,
+        admin: {
+          select: {
+            id: true,
+            title: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+            avatar: true,
+            about: true,
+          },
+        },
       },
     })
     .then((companies) => {
