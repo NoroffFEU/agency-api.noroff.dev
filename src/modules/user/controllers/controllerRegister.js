@@ -17,6 +17,17 @@ export const handleRegister = async function (req, res) {
     }
 
     const { firstName, lastName, email, password, role, avatar } = req.body;
+    if (firstName === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Missing required field, firstName." });
+    }
+    if (lastName === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Missing required field, lastName." });
+    }
+
     // Check if user exists
     const existingUser = await databasePrisma.user.count({ where: { email } });
     if (existingUser > 0) {

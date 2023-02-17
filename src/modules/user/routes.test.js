@@ -1,5 +1,6 @@
 import request from "supertest";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { databasePrisma } from "../../prismaClient.js";
 
 dotenv.config();
 
@@ -27,12 +28,81 @@ let loggedInUser;
 let secondLoggedInUser;
 
 describe("POST /users", () => {
+  beforeAll(async () => {
+    const createdUser = await databasePrisma.user.findUnique({
+      where: {
+        email: testUser.email,
+      },
+    });
+    if (createdUser) {
+      await databasePrisma.user.delete({
+        where: {
+          email: testUser.email,
+        },
+      });
+    }
+  });
+
+  it("should return 400 response with bad image", async () => {
+    const response = await request(baseURL)
+      .post("/users")
+      .send({ ...testUser, avatar: "not a url" });
+    expect(response.body.message).toEqual("Bad image URL");
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 response with bad email", async () => {
+    const response = await request(baseURL)
+      .post("/users")
+      .send({ ...testUser, email: "not an email" });
+    expect(response.body.message).toEqual("Invalid value in email field(s)");
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 response with short password", async () => {
+    const response = await request(baseURL)
+      .post("/users")
+      .send({ ...testUser, password: "sho" });
+    // expect(response.body.message).toEqual("Bad image URL");
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 response with no first name", async () => {
+    const response = await request(baseURL)
+      .post("/users")
+      .send({
+        email: testUser.email,
+        lastName: testUser.lastName,
+        password: testUser.password,
+      });
+    expect(response.body.message).toEqual("Missing required field, firstName.");
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("should return 400 response with no last name", async () => {
+    const response = await request(baseURL)
+      .post("/users")
+      .send({
+        email: testUser.email,
+        firstName: testUser.firstName,
+        password: testUser.password,
+      });
+    expect(response.body.message).toEqual("Missing required field, lastName.");
+    expect(response.statusCode).toBe(400);
+  });
+
   it("should create and return new user object and a 201 response", async () => {
     const response = await request(baseURL).post("/users").send(testUser);
     createdUser = response.body;
     expect(response.body.email).toEqual(testUser.email);
     expect(response.body.lastName).toEqual(testUser.lastName);
     expect(response.statusCode).toBe(201);
+  });
+
+  it("should create and return 409 response when using same email", async () => {
+    const response = await request(baseURL).post("/users").send(testUser);
+    expect(response.body.message).toEqual("User already exists");
+    expect(response.statusCode).toBe(409);
   });
 });
 
