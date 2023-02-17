@@ -24,6 +24,7 @@ let companyTest,
   testCompanyClient1,
   testCompanyClient2,
   testCompanyClient3,
+  testCompanyClient4,
   client1Token,
   client2Token,
   client3Token,
@@ -68,6 +69,7 @@ describe("POST /company", () => {
       testCompanyClient1,
       testCompanyClient2,
       testCompanyClient3,
+      testCompanyClient4,
     } = await createTestDatabase());
     client1Token = signToken(testCompanyClient1.id, testCompanyClient1.email);
     client2Token = signToken(testCompanyClient2.id, testCompanyClient2.email);
@@ -277,6 +279,90 @@ describe("GET /company/:id", () => {
     expect(response.body.id).toEqual(id);
     expect(response.body.offers).toEqual(expect.any(Array));
     expect(response.body.applications).toEqual(expect.any(Array));
+  });
+});
+
+describe("PUT /company/admin/:id", () => {
+  it("should return 401 with bad credentials", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/admin/${id}`)
+      .set("Authorization", `${client2Token}`)
+      .send({ admin: testCompanyClient4.id });
+    expect(response.statusCode).toBe(401);
+    expect(response.body.message).toEqual(
+      "Unauthorized, you are not an admin for this company."
+    );
+  });
+
+  it("should return 400 when adding existing admin", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/admin/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ admin: testCompanyClient3.id });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(
+      "User already belongs to this company"
+    );
+  });
+
+  it("should return 400 when adding an applicant", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/admin/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ admin: testCompanyApplicant1.id });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(
+      "User must be a client to become a company admin."
+    );
+  });
+
+  it("should return 200 with success message", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .put(`/company/admin/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ admin: testCompanyClient4.id });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.message).toEqual("Admin added successfully");
+  });
+});
+
+describe("DELETE /company/admin/:id", () => {
+  it("should return 401 with bad credentials", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .delete(`/company/admin/${id}`)
+      .set("Authorization", `${client2Token}`)
+      .send({ admin: testCompanyClient4.id });
+    expect(response.statusCode).toBe(401);
+    expect(response.body.message).toEqual(
+      "Unauthorized, you are not an admin for this company."
+    );
+  });
+
+  it("should return 200 with success message", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .delete(`/company/admin/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ admin: testCompanyClient4.id });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.message).toEqual("Admin deleted successfully");
+  });
+
+  it("should return 400 when trying to delete last admin", async () => {
+    const id = testCompanyClient3.companyId;
+    const response = await request(baseURL)
+      .delete(`/company/admin/${id}`)
+      .set("Authorization", `${client3Token}`)
+      .send({ admin: testCompanyClient3.id });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toEqual(
+      "A company requires at least 1 admin."
+    );
   });
 });
 
