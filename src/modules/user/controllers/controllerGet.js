@@ -73,6 +73,8 @@ export const getAUser = async function (req, res) {
         applications: verified,
       },
     });
+
+    ["password", "salt"].forEach((field) => delete user[field]);
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ ...error, message: "Internal server error" });
