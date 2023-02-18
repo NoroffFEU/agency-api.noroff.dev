@@ -14,9 +14,10 @@ export async function checkIfUserIdExist(req, res, next) {
         id: req.params.id,
       },
     });
-    if (user == null) {
+    if (!user) {
       return res.status(404).json({ message: `User with id doesn't exist.` });
     }
+
     req.user = user;
     next();
   } catch (err) {

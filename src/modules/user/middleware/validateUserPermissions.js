@@ -31,7 +31,7 @@ export const validateUserPermissions = async function (req, res, next) {
   }
 
   if (verified.id !== user.id && verified.role !== "Admin") {
-    res
+    return res
       .status(401)
       .json({ message: "You can not edit another users profile." });
   }
