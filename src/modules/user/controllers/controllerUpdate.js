@@ -60,37 +60,41 @@ export const handleUpdate = async function (req, res) {
           const hash = await generateHash(password);
           details.password = hash;
         } else {
-          return res.status(401).json({ message: "Incorrect Password" });
+          return res.status(401).json({ message: "Incorrect Password." });
         }
       } else {
-        return res.status(401).json({
+        return res.status(400).json({
           message:
-            "Password does not meet required parameters length: min 5, max 20",
+            "Password does not meet required parameters length: min 5, max 20.",
         });
       }
     } else if (password !== undefined && currentpassword === undefined) {
-      return res.status(401).json({ message: "No current password provided" });
+      return res.status(401).json({ message: "No current password provided." });
     }
 
-    // Is the email already registered to an account.
-    const isEmailInUse = await databasePrisma.users.findUnique({
-      where: {
-        email,
-      },
-    });
-    if (!isEmailInUse) {
-      return res.status(403).json({
-        message: "Email is already in use.",
+    if (email !== undefined) {
+      // Is the email already registered to an account.
+      const isEmailInUse = await databasePrisma.user.findUnique({
+        where: {
+          email,
+        },
       });
-    }
-    //Email update request meets email parameters
-    const emailReg = /^\S+@\S+\.\S+$/;
-    if (email !== undefined && !emailReg.test(email)) {
-      return res.status(403).json({
-        message: "Email provided does not meet email format requirements",
-      });
-    } else if (email !== undefined) {
-      details.email = email;
+
+      if (!isEmailInUse) {
+        return res.status(403).json({
+          message: "Email is already in use.",
+        });
+      }
+
+      //Email update request meets email parameters
+      const emailReg = /^\S+@\S+\.\S+$/;
+      if (!emailReg.test(email)) {
+        return res.status(403).json({
+          message: "Email provided does not meet email format requirements",
+        });
+      } else if (email !== undefined) {
+        details.email = email;
+      }
     }
 
     if (avatar !== undefined) {
