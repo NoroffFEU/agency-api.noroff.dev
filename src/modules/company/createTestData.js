@@ -43,6 +43,14 @@ export const createTestDatabase = async function () {
     role: "Client",
   };
 
+  let testCompanyClient4 = {
+    email: "testCompanyClient4@test.com",
+    firstName: "Client4",
+    lastName: "Doe",
+    password: await generateHash("password"),
+    role: "Client",
+  };
+
   const getUser = async function (user) {
     const exists = await databasePrisma.user.findUnique({
       where: {
@@ -63,6 +71,17 @@ export const createTestDatabase = async function () {
   testCompanyClient1 = await getUser(testCompanyClient1);
   testCompanyClient2 = await getUser(testCompanyClient2);
   testCompanyClient3 = await getUser(testCompanyClient3);
+  testCompanyClient4 = await getUser(testCompanyClient4);
+
+  if (testCompanyClient4.companyId) {
+    await databasePrisma.company.update({
+      where: { id: testCompanyClient4.companyId },
+      data: {
+        admin: { disconnect: { id: testCompanyClient4.id } },
+      },
+    });
+    testCompanyClient1.companyId = null;
+  }
 
   const testCompany3 = {
     name: "CompanyClientTest3",
@@ -81,7 +100,20 @@ export const createTestDatabase = async function () {
     });
   }
 
+  //cleans up the created company
+  if (testCompanyClient1.companyId) {
+    await databasePrisma.company.delete({
+      where: { id: testCompanyClient1.companyId },
+    });
+    testCompanyClient1.companyId = null;
+  }
+
   testCompanyClient3 = await getUser(testCompanyClient3);
+  //fix after update test
+  await databasePrisma.company.update({
+    where: { id: testCompanyClient3.companyId },
+    data: { name: testCompany3.name },
+  });
 
   return {
     testCompanyAdmin,
@@ -89,5 +121,6 @@ export const createTestDatabase = async function () {
     testCompanyClient1,
     testCompanyClient2,
     testCompanyClient3,
+    testCompanyClient4,
   };
 };

@@ -47,7 +47,13 @@ export const addAdminToCompany = async (databasePrisma, req, res) => {
   if (!userExists) {
     return res.status(400).send({ message: "Admin doesn't exist" });
   } else if (userExists.companyId === id) {
-    return res.status(400).send({ message: "User already belongs to this company" });
+    return res
+      .status(400)
+      .send({ message: "User already belongs to this company" });
+  } else if (userExists.role !== "Client") {
+    return res
+      .status(400)
+      .send({ message: "User must be a client to become a company admin." });
   }
 
   //   Check if the user that wants to delete is the owner of the company or is an admin
@@ -70,9 +76,13 @@ export const addAdminToCompany = async (databasePrisma, req, res) => {
           },
         },
       });
-      return res.status(200).send({ message: "Admin added successfully", company });
+      return res
+        .status(200)
+        .send({ message: "Admin added successfully", company });
     } catch (err) {
-      return res.status(500).send({ message: "Internal server error", error: err });
+      return res
+        .status(500)
+        .send({ message: "Internal server error", error: err });
     }
   } else {
     return res.status(401).send({

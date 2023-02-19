@@ -2,7 +2,7 @@ import { signToken } from "../../../utilities/jsonWebToken.js";
 import { verifyPassword } from "../../../utilities/password.js";
 import { findUserByEmail } from "../../../utilities/findUser.js";
 import validator from "express-validator";
-const { body, validationResult } = validator;
+const { validationResult } = validator;
 /**
  * validates request body, signs jwt token and returns response object
  * @param {Object} req API Request
@@ -46,7 +46,6 @@ export const handleLogin = async function (req, res) {
       role: profile.role,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ ...error, message: "Internal server error." });
   }
 };

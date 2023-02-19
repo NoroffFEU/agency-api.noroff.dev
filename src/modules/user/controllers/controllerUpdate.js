@@ -1,11 +1,9 @@
 import { generateHash, verifyPassword } from "../../../utilities/password.js";
-import { findUserById } from "../../../utilities/findUser.js";
-import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 /**
- * validates request body, signs jwt token and returns response object
+ * validates request body and returns response object
  * @param {Object} req API Request
  */
 export const handleUpdate = async function (req, res) {
@@ -60,28 +58,41 @@ export const handleUpdate = async function (req, res) {
           const hash = await generateHash(password);
           details.password = hash;
         } else {
-          return res.status(401).json({ message: "Incorrect Password" });
+          return res.status(401).json({ message: "Incorrect Password." });
         }
       } else {
-        return res
-          .status(401)
-          .json({
-            message:
-              "Password does not meet required parameters length: min 5, max 20",
-          });
+        return res.status(400).json({
+          message:
+            "Password does not meet required parameters length: min 5, max 20.",
+        });
       }
     } else if (password !== undefined && currentpassword === undefined) {
-      return res.status(401).json({ message: "No current password provided" });
+      return res.status(401).json({ message: "No current password provided." });
     }
 
-    //Email update request meets email parameters
-    const emailReg = /^\S+@\S+\.\S+$/;
-    if (email !== undefined && !emailReg.test(email)) {
-      return res.status(403).json({
-        message: "Email provided does not meet email format requirements",
+    if (email !== undefined) {
+      // Is the email already registered to an account.
+      const isEmailInUse = await databasePrisma.user.findUnique({
+        where: {
+          email,
+        },
       });
-    } else if (email !== undefined) {
-      details.email = email;
+
+      if (!isEmailInUse) {
+        return res.status(403).json({
+          message: "Email is already in use.",
+        });
+      }
+
+      //Email update request meets email parameters
+      const emailReg = /^\S+@\S+\.\S+$/;
+      if (!emailReg.test(email)) {
+        return res.status(403).json({
+          message: "Email provided does not meet email format requirements",
+        });
+      } else if (email !== undefined) {
+        details.email = email;
+      }
     }
 
     if (avatar !== undefined) {
@@ -112,17 +123,13 @@ export const handleUpdate = async function (req, res) {
       if (!error.status) {
         // Checks for database related errors
         if (error.meta != undefined) {
-          return res
-            .status(409)
-            .json({
-              message: `The unique input ${error.meta.target[0]} already exists for another user`,
-            });
+          return res.status(409).json({
+            message: `The unique input ${error.meta.target[0]} already exists for another user`,
+          });
         } else {
-          return res
-            .status(400)
-            .json({
-              message: `An argument or input value does not exist or cannot be edited in the database ${error.message}`,
-            });
+          return res.status(400).json({
+            message: `An argument or input value does not exist or cannot be edited in the database ${error.message}`,
+          });
         }
       } else {
         if (error.status) {
@@ -131,7 +138,6 @@ export const handleUpdate = async function (req, res) {
       }
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ ...error, message: "Internal server error" });
   }
 };

@@ -1,7 +1,7 @@
 import request from "supertest";
 import * as dotenv from "dotenv";
 import jsonwebtoken from "jsonwebtoken";
-import { createTestDatabase } from "./createTestData.js";
+import { createListingsTestDatabase } from "./createListingTestData.js";
 const { sign } = jsonwebtoken;
 dotenv.config();
 
@@ -19,11 +19,11 @@ const signToken = function (id, email) {
 };
 
 let listingTest;
-let testAdmin,
-  testApplicant1,
-  testClient1,
-  testClient2,
-  testClient3,
+let testListingsAdmin,
+  testListingsApplicant1,
+  testListingsClient1,
+  testListingsClient2,
+  testListingsClient3,
   client1Token,
   client2Token,
   client3Token,
@@ -49,17 +49,25 @@ const testListings4 = { ...testListings, deadline: "2021-11-30T20:57:00.000Z" };
 // Create listing tests
 describe("POST /listings", () => {
   beforeAll(async () => {
-    ({ testAdmin, testApplicant1, testClient1, testClient2, testClient3 } =
-      await createTestDatabase());
-    client1Token = signToken(testClient1.id, testClient1.email);
-    client2Token = signToken(testClient2.id, testClient2.email);
-    client3Token = signToken(testClient3.id, testClient3.email);
-    applicantToken = signToken(testApplicant1.id, testApplicant1.email);
+    ({
+      testListingsAdmin,
+      testListingsApplicant1,
+      testListingsClient1,
+      testListingsClient2,
+      testListingsClient3,
+    } = await createListingsTestDatabase());
+    client1Token = signToken(testListingsClient1.id, testListingsClient1.email);
+    client2Token = signToken(testListingsClient2.id, testListingsClient2.email);
+    client3Token = signToken(testListingsClient3.id, testListingsClient3.email);
+    applicantToken = signToken(
+      testListingsApplicant1.id,
+      testListingsApplicant1.email
+    );
     testListings4.company =
       testListings3.company =
       testListings2.company =
       testListings.company =
-        testClient1.companyId;
+        testListingsClient1.companyId;
   });
 
   it("should return 201 and the listing, when creating", async () => {
@@ -77,7 +85,7 @@ describe("POST /listings", () => {
       .post("/listings")
       .set("Authorization", `${client2Token}`)
       .send(testListings2);
-    console.log(response.body);
+   
     expect(response.statusCode).toBe(401);
     expect(response.body.message).toEqual("You must create a company first.");
   });

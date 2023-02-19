@@ -17,6 +17,17 @@ export const handleRegister = async function (req, res) {
     }
 
     const { firstName, lastName, email, password, role, avatar } = req.body;
+    if (firstName === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Missing required field, firstName." });
+    }
+    if (lastName === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Missing required field, lastName." });
+    }
+
     // Check if user exists
     const existingUser = await databasePrisma.user.count({ where: { email } });
     if (existingUser > 0) {
@@ -39,7 +50,6 @@ export const handleRegister = async function (req, res) {
       try {
         data.avatar = await mediaGuard(avatar);
       } catch (err) {
-        console.log(err);
         return res.status(400).json({ message: "Bad image URL" });
       }
     }
@@ -55,7 +65,6 @@ export const handleRegister = async function (req, res) {
     return res.status(201).json(result);
   } catch (error) {
     // Send a 500 error if there was a problem with the insertion
-    console.error(error);
     res.status(500).json({ ...error, message: "Internal server error" });
   }
 };

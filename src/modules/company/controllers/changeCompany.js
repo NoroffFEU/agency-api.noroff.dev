@@ -1,45 +1,51 @@
-import { verifyToken } from "../../../utilities/jsonWebToken.js";
+import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 export const changeCompany = async (databasePrisma, req, res) => {
-  const { name, sector, logo, phone, admin } = req.body;
-  const id = req.params.id;
-  // Validate to see if inputs are provided correctly
-  if (!id) {
-    return res.status(400).send({ error: "Company id is required" });
-  }
-  //Validate to see if a user is logged in
-  const token = req.headers.authorization;
-  let JWT = token;
-  if (!token) {
-    return res.status(401).send({
-      error: "User has to be authenticated to make this request",
-    });
-  } else if (token.includes("Bearer")) {
-    JWT = token.slice(7);
-  }
-  if (JWT === undefined) {
-    return res.status(401).send({
-      message: "No authorization header provided.",
-    });
-  }
-  var verified = await verifyToken(JWT);
-  if (!verified) {
-    return res.status(401).send({
-      message: "Authorization token is not valid.",
-    });
-  }
+  try {
+    const { name, sector, logo, phone } = req.body;
+    const id = req.params.id;
+    // Validate to see if inputs are provided correctly
+    if (!id) {
+      return res.status(400).send({ error: "Company id is required" });
+    }
 
-  //   Check if the user that wants to delete is the owner of the company or is an admin
-  if (verified.companyId === id || verified.role === "Admin") {
+    let data = {};
+    //check is name is present and name is not already in use.
+    if (name !== undefined) {
+      const company = await databasePrisma.company.findUnique({
+        where: { name },
+      });
+      if (company) {
+        return res
+          .status(400)
+          .json({ message: "This company name already exists." });
+      }
+      data.name = name;
+    }
+
+    if (sector !== undefined) {
+      data.sector = sector;
+    }
+
+    if (phone !== undefined) {
+      data.phone = phone;
+    }
+
+    if (logo !== undefined) {
+      try {
+        let checkedLogo = await mediaGuard(logo);
+        data.logo = checkedLogo;
+      } catch (err) {
+        return res
+          .status(400)
+          .send({ message: "Image Url is not an approved image" });
+      }
+    }
+
     try {
       const company = await databasePrisma.company.update({
         where: { id },
-        data: {
-          name,
-          sector,
-          logo,
-          phone,
-        },
+        data,
         include: {
           admin: {
             select: {
@@ -58,9 +64,7 @@ export const changeCompany = async (databasePrisma, req, res) => {
         return res.status(409).send({ error: "Company doesn't exist" });
       }
     }
-  } else {
-    return res.status(401).send({
-      error: "User is not authorized to make this request",
-    });
+  } catch (error) {
+    res.status(500).json({ ...error, message: "Internal server error" });
   }
 };

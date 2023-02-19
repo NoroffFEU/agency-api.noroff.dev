@@ -5,10 +5,10 @@ export const deleteAdminFromCompany = async (databasePrisma, req, res) => {
   const id = req.params.id;
   // Validate to see if inputs are provided correctly
   if (!id) {
-    return res.status(400).send({ error: "Company id is required" });
+    return res.status(400).send({ message: "Company id is required" });
   }
   if (!admin) {
-    return res.status(400).send({ error: "Admin id is required" });
+    return res.status(400).send({ message: "Admin id is required" });
   }
   //Validate to see if a user is logged in
   const token = req.headers.authorization;
@@ -35,51 +35,64 @@ export const deleteAdminFromCompany = async (databasePrisma, req, res) => {
   //Check if company exists
   const companyExists = await databasePrisma.company.findUnique({
     where: { id },
+    include: { admin: true },
   });
   if (!companyExists) {
-    return res.status(400).send({ error: "Company doesn't exist" });
+    return res.status(400).send({ message: "Company doesn't exist" });
   }
 
   // Check if admin id is valid
   const userExists = await databasePrisma.user.findUnique({
     where: { id: admin },
   });
+
   if (!userExists) {
-    return res.status(400).send({ error: "User doesn't exist" });
+    return res.status(400).send({ message: "User doesn't exist" });
   } else if (userExists.companyId !== id) {
-    return res.status(400).send({ error: "User doesn't belong to this company" });
+    return res
+      .status(400)
+      .send({ message: "User doesn't belong to this company" });
   }
 
-  //   Check if the user that wants to delete is the owner of the company or is an admin
-  if (verified.companyId === id || verified.role === "Admin") {
-    try {
-      const company = await databasePrisma.company.update({
-        where: { id },
-        data: {
-          admin: { disconnect: { id: admin } },
-        },
-        include: {
-          admin: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-              role: true,
+  if (companyExists.admin.length === 1) {
+    return res
+      .status(400)
+      .send({ message: "A company requires at least 1 admin." });
+  }
+
+  if (companyExists)
+    if (verified.companyId === id || verified.role === "Admin") {
+      //   Check if the user that wants to delete is the owner of the company or is an admin
+      try {
+        const company = await databasePrisma.company.update({
+          where: { id },
+          data: {
+            admin: { disconnect: { id: admin } },
+          },
+          include: {
+            admin: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                role: true,
+              },
             },
           },
-        },
-      });
-      //   return res.status(200).send({ message: "Admin deleted successfully" });
-      return res.status(200).send({ message: "Admin deleted successfully", company });
-    } catch (err) {
-      if (err) {
-        return res.status(409).send({ message: "Bad request", error: err });
+        });
+        //   return res.status(200).send({ message: "Admin deleted successfully" });
+        return res
+          .status(200)
+          .send({ message: "Admin deleted successfully", company });
+      } catch (err) {
+        if (err) {
+          return res.status(409).send({ message: "Bad request", error: err });
+        }
       }
+    } else {
+      return res.status(401).send({
+        message: "User is not authorized to delete an admin",
+      });
     }
-  } else {
-    return res.status(401).send({
-      error: "User is not authorized to delete an admin",
-    });
-  }
 };
