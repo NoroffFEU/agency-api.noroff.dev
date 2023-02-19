@@ -5,7 +5,7 @@ import { databasePrisma } from "../../../prismaClient.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 /**
- * validates request body, signs jwt token and returns response object
+ * validates request body and returns response object
  * @param {Object} req API Request
  */
 export const handleUpdate = async function (req, res) {

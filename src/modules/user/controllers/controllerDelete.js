@@ -1,5 +1,3 @@
-import { findUserById } from "../../../utilities/findUser.js";
-import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 
 export const handleDelete = async function (req, res) {
