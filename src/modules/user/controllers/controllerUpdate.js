@@ -1,6 +1,4 @@
 import { generateHash, verifyPassword } from "../../../utilities/password.js";
-import { findUserById } from "../../../utilities/findUser.js";
-import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
