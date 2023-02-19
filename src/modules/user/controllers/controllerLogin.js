@@ -1,33 +1,42 @@
 import { signToken } from "../../../utilities/jsonWebToken.js";
 import { verifyPassword } from "../../../utilities/password.js";
 import { findUserByEmail } from "../../../utilities/findUser.js";
-
+import validator from "express-validator";
+const { validationResult } = validator;
 /**
  * validates request body, signs jwt token and returns response object
  * @param {Object} req API Request
  * @returns {Object} returns response object to be sent to frontend
  */
-export const handleLogin = async function (req) {
-  const { email, password } = req.body;
-  const profile = await findUserByEmail(email);
+export const handleLogin = async function (req, res) {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: `${errors.array()[0].msg} in ${errors.array()[0].param}${
+          errors.array()[1] ? " and " + errors.array()[1].param : ""
+        } field(s)`,
+      });
+    }
 
-  // verify email exists
-  if (!profile) {
-    return { status: 403, data: { message: `Invalid email or password.` } };
-  }
+    const { email, password } = req.body;
+    const profile = await findUserByEmail(email);
 
-  // verify password
-  const correctPassword = await verifyPassword(profile, password);
-  if (!correctPassword) {
-    return { status: 403, data: { message: `Invalid email or password.` } };
-  }
+    // verify email exists
+    if (!profile) {
+      return res.status(403).json({ message: `Invalid email or password.` });
+    }
 
-  //Creating jwt token
-  const token = signToken(profile);
+    // verify password
+    const correctPassword = await verifyPassword(profile, password);
+    if (!correctPassword) {
+      return res.status(403).json({ message: `Invalid email or password.` });
+    }
 
-  return {
-    status: 200,
-    data: {
+    //Creating jwt token
+    const token = signToken(profile);
+
+    return res.status(200).json({
       id: profile.id,
       firstName: profile.firstName,
       lastName: profile.lastName,
@@ -35,6 +44,8 @@ export const handleLogin = async function (req) {
       avatar: profile.avatar,
       token: token,
       role: profile.role,
-    },
-  };
+    });
+  } catch (error) {
+    res.status(500).json({ ...error, message: "Internal server error." });
+  }
 };

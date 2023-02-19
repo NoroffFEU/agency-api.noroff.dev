@@ -26,7 +26,6 @@ export async function updateOffer(prismaClient, req, res) {
     });
     res.status(200).json(updateOffer);
   } catch (error) {
-    console.log(error);
     res.status(400);
   }
 }

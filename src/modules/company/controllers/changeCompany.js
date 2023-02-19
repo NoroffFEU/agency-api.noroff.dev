@@ -65,7 +65,6 @@ export const changeCompany = async (databasePrisma, req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ ...error, message: "Internal server error" });
   }
 };
