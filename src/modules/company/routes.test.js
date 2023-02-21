@@ -60,6 +60,8 @@ const updateCompany = {
   logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2ChocolateChipCookies.jpg/1280px-2ChocolateChipCookies.jpg",
 };
 
+jest.useRealTimers();
+
 // Create listing tests
 describe("POST /company", () => {
   beforeAll(async () => {
@@ -80,7 +82,7 @@ describe("POST /company", () => {
     );
     testCompany.admin = testCompanyClient1.id;
     testCompany3.admin = testCompany2.admin = testCompanyClient2.id;
-  });
+  }, 15000);
 
   it("should return 201 and the company, when creating", async () => {
     const response = await request(baseURL)
