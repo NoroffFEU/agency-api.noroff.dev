@@ -1,5 +1,4 @@
 import jsonwebtoken from "jsonwebtoken";
-import * as dotenv from "dotenv";
 const { sign, decode, verify } = jsonwebtoken;
 import { findUserById } from "./findUser.js";
 
