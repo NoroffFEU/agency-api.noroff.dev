@@ -10,7 +10,7 @@ app.get(`users/`, (req, res) => {
 });
 ```
 
-In order to try and modularise the code and avoid having all routes in the main `app.js` file we have split them up into routes.
+In order to try and modularise the code and avoid having all the endpoints in the main `app.js` file we have split them up into routes.
 The code is structure in a way that each main table in the database has its own route. To create a route we import express and use `Router()`.
 
 ```js
