@@ -137,7 +137,59 @@ usersRouter.put("/:id", checkIfUserIdExist, validateUserPermissions, handleUpdat
 usersRouter.delete("/:id", checkIfUserIdExist, validateUserPermissions, handleDelete);
 ```
 
-So in the validateUserPermissions function we can pick up the user
+## Json Web Tokens
+
+For this project we are using [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) package to validate a users requests. In the `src/utilities/jsonWebToken.js` file you will 3 functions for dealing with these tokens. I go over the two important ones for what we are doing. First we have the signToken function this takes the `sign` function from the package and uses the users id and email plus a secret key `(SECRETSAUCE)` to create a unique token for the user. Currently set to expire in 24hrs.
+
+```js
+import jsonwebtoken from "jsonwebtoken";
+const { sign, decode, verify } = jsonwebtoken;
+
+export function signToken({ id, email }) {
+  const token = sign({ userId: id, email: email }, process.env.SECRETSAUCE, {
+    expiresIn: "24h",
+  });
+  return token;
+}
+```
+
+If any of the user data in this key is modified it will return as an invalid token, we store the id and email in it as these are unique identifiers for a user and can be used to find them in the database. The secret key is used as the encoding key for the token so without it a token can't be verified.
+
+Bring us the second important function, verifyToken. Here we use the `verify` function taking the secret key to validate the token, if it is a valid token it returns the encoded users id and email, otherwise it will return null/false. To prevent problems with users being able to delete themselves and still technically have a valid token, an additional check was added to make sure the user still exists in the database.
+
+```js
+import jsonwebtoken from "jsonwebtoken";
+const { sign, decode, verify } = jsonwebtoken;
+import { findUserById } from "./findUser.js";
+
+export async function verifyToken(token) {
+  try {
+    // verify token using secret key, returning user id and email on success or false on failure
+    const data = verify(token, process.env.SECRETSAUCE);
+
+    // if the token is verified the data is checked against the database
+    if (data) {
+      const user = await findUserById(data.userId);
+      //if the user exist we return the user profile
+      if (user) {
+        return Promise.resolve(user);
+      }
+    }
+    //if the token isn't valid or the user doesn't exist returns false
+    return false;
+  } catch (error) {
+    return false;
+  }
+}
+```
+
+So lets look at a practical use, using the validateUserPermissions function mentioned in the previous example. So are endpoint is setup like so
+
+```js
+usersRouter.delete("/:id", checkIfUserIdExist, validateUserPermissions, handleDelete);
+```
+
+We can pick up the user info using `req.user` from the checkIfUserIdExists middleware, then we can get the authorization header in express using `req.headers.authorization`.
 
 ```js
 export const validateUserPermissions = async function (req, res, next) {
@@ -146,5 +198,40 @@ export const validateUserPermissions = async function (req, res, next) {
   ......
 
   next()
+};
+```
+
+Taking this token verify the users identity, and match it to the target of the request before allowing the request to be passed onto the controller.
+
+```js
+export const validateUserPermissions = async function (req, res, next) {
+  const user = req.user;
+  const token = req.headers.authorization;
+
+  //first we check the token is present, if it is not provided it will be undefined.
+  let readyToken = token;
+  if (token === undefined) {
+    return res.status(401).json({ message: "No authorization header provided." });
+
+    // In this case we check for "Bearer" being present, but front end was told to add this for all requests.
+  } else if (token.includes("Bearer")) {
+    readyToken = token.slice(7);
+  }
+
+  //With Bearer removed we use the verifyToken function to validate the token, return error message on failure
+  const verified = await verifyToken(readyToken);
+  if (!verified) {
+    return res.status(401).json({
+      message: "Invalid authorization token provided, please re-log.",
+    });
+  }
+
+  // we then check that the verified users id matches the id of the user, with an exception for admins.
+  if (verified.id !== user.id && verified.role !== "Admin") {
+    return res.status(401).json({ message: "You can not edit another users profile." });
+  }
+
+  // with the token verified, and matched to the target user the request can be passed to the controller.
+  next();
 };
 ```
