@@ -1,5 +1,11 @@
 # Express and Prisma
 
+## Table of Contents
+
+1. [Routes](#routes)
+2. [Middleware](#middleware)
+3. [Json Web Tokens](#json-web-tokens)
+
 ## Routes
 
 You have probably seen `app.get(...)` in the examples you have been studying,
