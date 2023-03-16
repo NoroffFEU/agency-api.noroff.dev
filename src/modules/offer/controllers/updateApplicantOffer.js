@@ -3,7 +3,7 @@ import { OfferState } from "@prisma/client";
 export async function updateApplicantOffer(prismaClient, req, res) {
   const { id } = req.params;
 
-  const originalOffer = await prismaClient.offer.findUnique({
+  const originalOffer = await prismaClient.offer.findFirst({
     where: {
       id: id,
       state: OfferState.Pending,
