@@ -11,8 +11,8 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
+  id           String         @id @default(uuid())
+  email        String         @unique
   title        String?
   firstName    String
   lastName     String
@@ -21,16 +21,22 @@ model User {
   salt         String?
   about        String?
   avatar       String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  role         UserRole      @default(Applicant)
-  skills       String[]      @default([])
+  github       String?
+  portfolio    String?
+  linkedin     String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  role         UserRole       @default(Applicant)
+  skills       String[]       @default([])
+  languages    UserLanguage[]
+  experience   Experience[]
+  education    Education[]
   applications Application[]
   offers       Offer[]
-  company      Company?      @relation(fields: [companyId], references: [id])
+  company      Company?       @relation(fields: [companyId], references: [id])
   companyId    String?
-  created      DateTime      @default(now())
-  updated      DateTime      @updatedAt
+  created      DateTime       @default(now())
+  updated      DateTime       @updatedAt
 }
 
 enum UserRole {
@@ -39,13 +45,64 @@ enum UserRole {
   Admin
 }
 
+model Experience {
+  id               String   @id @default(uuid())
+  user             User     @relation(fields: [userId], references: [id])
+  userId           String
+  company          String
+  location         String
+  start            String
+  end              String?
+  current          Boolean
+  title            String
+  description      String?
+  responsibilities String[]
+}
+
+model Education {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  institution String
+  location    String
+  start       String
+  end         String?
+  current     Boolean
+  course      String
+  description String?
+  skills      String[]
+}
+
+model UserLanguage {
+  id       String        @id @default(uuid())
+  language String
+  level    LanguageLevel
+  user     User          @relation(fields: [userId], references: [id])
+  userId   String
+}
+
+// beginner, elementary, lower intermediate, upper intermediate, advanced, fluent.
+enum LanguageLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
 model Company {
   id           String        @id @default(uuid())
   name         String        @unique
   admin        User[]
-  sector       String?
-  logo         String?
+  sector       String
+  logo         String
+  banner       String?
   phone        String
+  email        String
+  locations    String[]
+  about        String
+  website      String       @unique
   applications Application[]
   offers       Offer[]
   listings     Listing[]
@@ -71,15 +128,17 @@ model Offer {
   id            String      @id @default(uuid())
   listingId     String
   listing       Listing     @relation(fields: [listingId], references: [id])
-  application   Application @relation(fields: [applicantId], references: [id])
+  application   Application @relation(fields: [applicationId], references: [id])
   applicationId String
   company       Company     @relation(fields: [companyId], references: [id])
   companyId     String
   user          User        @relation(fields: [userId], references: [id])
   userId        String
-  applicantId   String
-  applicant     UserRole
-  state         OfferState
+  state         OfferState  @default(Pending)
+  // add message and date time
+  message       String
+  response      String?
+  deadline      DateTime
   created       DateTime    @default(now())
   updated       DateTime    @updatedAt
 }
@@ -91,22 +150,44 @@ enum OfferState {
 }
 
 model Listing {
-  id            String        @id @default(uuid())
-  title         String
-  tags          String[]
-  description   String
-  requirements  String[]
-  deadline      DateTime
-  created       DateTime      @default(now())
-  updated       DateTime      @updatedAt
-  applications  Application[]
-  offer         Offer[]
-  company       Company       @relation(fields: [companyId], references: [id])
-  companyId     String
-  listingsState ListingState  @default(Active)
+  id               String         @id @default(uuid())
+  title            String
+  type             EmploymentType @default(Fulltime)
+  // possibly multiple locations to work at?
+  location         String[]
+  locationtype     LocationType @default(Onsite)
+  tags             String[]
+  description      String
+  //possible additional optional data
+  responsibilities String?
+  salary           String?
+  positions        Int?
+  incentives       String?
+  requirements     String[]
+  deadline         DateTime
+  created          DateTime       @default(now())
+  updated          DateTime       @updatedAt
+  applications     Application[]
+  offer            Offer[]
+  company          Company        @relation(fields: [companyId], references: [id])
+  companyId        String
+  listingsState    ListingState   @default(Active)
 }
 
 enum ListingState {
   Active
   Ended
+}
+
+enum EmploymentType {
+  Fulltime
+  Parttime
+  Contract
+  Internship
+}
+
+enum LocationType {
+  Onsite
+  Hybrid
+  Remote
 }

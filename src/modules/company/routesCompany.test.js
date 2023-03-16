@@ -35,12 +35,17 @@ const testCompany = {
   sector: "tester",
   phone: "tester",
   logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2ChocolateChipCookies.jpg/1280px-2ChocolateChipCookies.jpg",
+  email: "testCompany1Email@Company.com",
+  about: "About Company1",
+  website: "www.testCompany1website.com",
 };
 
 const testCompany2 = {
   ...testCompany,
   name: "BadLogoCompany",
   logo: "errm?",
+  email: "badLogo@Company.com",
+  website: "www.badlogowebsite.com",
 };
 
 const testCompany3 = {
@@ -51,6 +56,8 @@ const testCompany3 = {
 const testCompany4 = {
   ...testCompany,
   name: "NoAdminCompany",
+  email: "NoAdmin@Company.com",
+  website: "www.NoAdminwebsite.com",
 };
 
 const updateCompany = {

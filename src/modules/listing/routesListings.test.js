@@ -85,7 +85,7 @@ describe("POST /listings", () => {
       .post("/listings")
       .set("Authorization", `${client2Token}`)
       .send(testListings2);
-   
+
     expect(response.statusCode).toBe(401);
     expect(response.body.message).toEqual("You must create a company first.");
   });
