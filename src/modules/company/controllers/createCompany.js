@@ -1,30 +1,31 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
+import validator from "express-validator";
+const { body, validationResult } = validator;
 
 export const createCompany = async (databasePrisma, req, res) => {
   const { name, sector, logo, phone, admin, email, about, website } = req.body;
   const user = req.user;
 
-  // Validate to see if inputs are provided correctly
-  if (logo) {
-    try {
-      await mediaGuard(logo);
-    } catch (err) {
-      return res
-        .status(400)
-        .send({ message: "Image Url is not an approved image" });
-    }
-  }
-
-  if (phone && (phone.length < 4 || phone.length > 15)) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return res
       .status(400)
-      .send({ message: "Phone number must be between 4 and 15 digits" });
+      .json({ message: "Bad value in body", errors: errors.array() });
+  }
+
+  try {
+    await mediaGuard(logo);
+  } catch (err) {
+    return res
+      .status(400)
+      .send({ message: "Image Url is not an approved image" });
   }
 
   if (admin === undefined) {
     return res.status(400).send({ message: "No admin id provided." });
   }
+
   if (admin !== user.id && user.role !== "Admin") {
     return res
       .status(400)

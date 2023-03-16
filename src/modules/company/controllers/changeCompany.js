@@ -1,46 +1,51 @@
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
+import validator from "express-validator";
+const { body, validationResult } = validator;
 
 export const changeCompany = async (databasePrisma, req, res) => {
   try {
-    const { name, sector, logo, phone } = req.body;
+    const { name, sector, logo, phone, email, locations, about, website } =
+      req.body;
     const id = req.params.id;
-    // Validate to see if inputs are provided correctly
-    if (!id) {
-      return res.status(400).send({ error: "Company id is required" });
-    }
+    const data = {
+      name,
+      sector,
+      logo,
+      phone,
+      email,
+      locations,
+      about,
+      website,
+    };
 
-    let data = {};
-    //check is name is present and name is not already in use.
-    if (name !== undefined) {
-      const company = await databasePrisma.company.findUnique({
-        where: { name },
-      });
-      if (company) {
-        return res
-          .status(400)
-          .json({ message: "This company name already exists." });
-      }
-      data.name = name;
-    }
-
-    if (sector !== undefined) {
-      data.sector = sector;
-    }
-
-    if (phone !== undefined) {
-      data.phone = phone;
+    // Get the express-validator errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: "Bad value in body", errors: errors.array() });
     }
 
     if (logo !== undefined) {
       try {
-        let checkedLogo = await mediaGuard(logo);
-        data.logo = checkedLogo;
+        await mediaGuard(logo);
       } catch (err) {
         return res
           .status(400)
           .send({ message: "Image Url is not an approved image" });
       }
     }
+
+    [
+      "name",
+      "sector",
+      "logo",
+      "phone",
+      "email",
+      "locations",
+      "about",
+      "website",
+    ].forEach((field) => (data[field] === undefined ? delete data[field] : ""));
 
     try {
       const company = await databasePrisma.company.update({

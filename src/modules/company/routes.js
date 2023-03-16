@@ -12,6 +12,8 @@ import {
   companyExists,
   verifyAccess,
 } from "./middleware/checkAuth.js";
+import validator from "express-validator";
+const { body, validationResult } = validator;
 
 export const companyRouter = express.Router();
 
@@ -29,9 +31,23 @@ companyRouter.get("/:id", async (req, res) => {
 
 // Endpoint to create a company
 
-companyRouter.post("/", validateUser, async (req, res) => {
-  createCompany(databasePrisma, req, res);
-});
+companyRouter.post(
+  "/",
+  validateUser,
+  [
+    body("name").isString().isLength({ min: 2 }),
+    body("sector").isString(),
+    body("logo").isString(),
+    body("phone").isString(),
+    body("email").isEmail(),
+    body("locations").isArray(),
+    body("about").isString(),
+    body("website").isURL(),
+  ],
+  async (req, res) => {
+    createCompany(databasePrisma, req, res);
+  }
+);
 
 // Endpoint to update a company
 
@@ -40,6 +56,17 @@ companyRouter.put(
   validateUser,
   companyExists,
   verifyAccess,
+  [
+    body("name").optional().isString().isLength({ min: 2 }),
+    body("sector").optional().isString(),
+    body("logo").optional().isString(),
+    body("banner").optional().isString(),
+    body("phone").optional().isString(),
+    body("email").optional().isEmail(),
+    body("locations").optional().isArray(),
+    body("about").optional().isString(),
+    body("website").optional().isURL(),
+  ],
   async (req, res) => {
     changeCompany(databasePrisma, req, res);
   }
