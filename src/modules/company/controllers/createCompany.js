@@ -2,7 +2,7 @@ import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 export const createCompany = async (databasePrisma, req, res) => {
-  const { name, sector, logo, phone, admin } = req.body;
+  const { name, sector, logo, phone, admin, email, about, website } = req.body;
   const user = req.user;
 
   // Validate to see if inputs are provided correctly
@@ -34,7 +34,16 @@ export const createCompany = async (databasePrisma, req, res) => {
   // Validate to see i f the company name is unique and the admin id is valid
   try {
     const company = await databasePrisma.company.create({
-      data: { name, sector, logo, phone, admin: { connect: { id: admin } } },
+      data: {
+        name,
+        sector,
+        logo,
+        phone,
+        admin: { connect: { id: admin } },
+        email,
+        about,
+        website,
+      },
       include: { admin: true },
     });
 

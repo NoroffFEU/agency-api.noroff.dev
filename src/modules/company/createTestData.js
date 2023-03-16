@@ -116,6 +116,9 @@ export const createTestDatabase = async function () {
     sector: "tester",
     phone: "tester",
     logo: "tester",
+    email: "testCompany3Email@Company.com",
+    about: "About Company",
+    website: "www.testCompany3website.com",
   };
 
   let testClient3Company = testCompanyClient3.companyId;
