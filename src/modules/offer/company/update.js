@@ -1,7 +1,6 @@
-import { OfferState } from '@prisma/client';
-
 export async function updateCompanyOffer(prismaClient, req, res) {
 	const { companyId, offerId, state } = req.body;
+
 	if (!companyId) {
 		res.status(400).json({
 			message: 'Company ID is missing from the request body.',
@@ -12,11 +11,7 @@ export async function updateCompanyOffer(prismaClient, req, res) {
 			message: 'Offer ID is missing from the request body.',
 		});
 	}
-	if (!state) {
-		res.status(400).json({
-			message: 'State is missing from the request body.',
-		});
-	}
+
 	try {
 		// Check if company exists
 		const company = await prismaClient.company.findUnique({
@@ -39,6 +34,7 @@ export async function updateCompanyOffer(prismaClient, req, res) {
 				companyId: true,
 			},
 		});
+
 		if (!offer) {
 			res.status(404).json({
 				message: `Offer with ID ${offerId} not found.`,
@@ -59,7 +55,7 @@ export async function updateCompanyOffer(prismaClient, req, res) {
 				state: state,
 			},
 		});
-		console.log('its this one success');
+
 		res.status(200).json(updatedOffer);
 	} catch (error) {
 		console.log(error);
