@@ -5,6 +5,7 @@ import { createOffer } from "./controllers/create.js";
 import { removeOffer } from "./controllers/delete.js";
 import { updateOffer } from "./controllers/update.js";
 import { updateApplicantOffer } from "./controllers/updateApplicantOffer.js";
+import { validateAdminCreate } from "./middleware/validateAdminCreate.js";
 
 export const offersRouter = express.Router();
 
@@ -16,7 +17,7 @@ offersRouter.get("/:id", async (req, res) => {
   offerGetId(databasePrisma, req, res);
 });
 
-offersRouter.post("/", async (req, res) => {
+offersRouter.post("/", validateAdminCreate, async (req, res) => {
   createOffer(databasePrisma, req, res);
 });
 
