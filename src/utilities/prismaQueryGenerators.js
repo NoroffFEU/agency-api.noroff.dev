@@ -53,10 +53,16 @@ export const createPrismaQueryListings = function (req) {
     }
   }
 
-  // Add sorting
-  if (sortBy && orderBy) {
+  if (orderBy === "asc" || orderBy === "desc") {
+    // Add sorting
+    if (sortBy && orderBy) {
+      prismaQuery.orderBy = {
+        [sortBy]: orderBy,
+      };
+    }
+  } else if (sortBy) {
     prismaQuery.orderBy = {
-      [sortBy]: orderBy,
+      [sortBy]: "asc",
     };
   }
 
@@ -122,10 +128,16 @@ export const createPrismaQueryCompany = function (req) {
     }
   }
 
-  // Add sorting
-  if (sortBy && orderBy) {
+  if (orderBy === "asc" || orderBy === "desc") {
+    // Add sorting
+    if (sortBy && orderBy) {
+      prismaQuery.orderBy = {
+        [sortBy]: orderBy,
+      };
+    }
+  } else if (sortBy) {
     prismaQuery.orderBy = {
-      [sortBy]: orderBy,
+      [sortBy]: "asc",
     };
   }
 
@@ -195,10 +207,16 @@ export const createPrismaQueryUsers = function (req) {
     }
   }
 
-  // Add sorting
-  if (sortBy && orderBy) {
+  if (orderBy === "asc" || orderBy === "desc") {
+    // Add sorting
+    if (sortBy && orderBy) {
+      prismaQuery.orderBy = {
+        [sortBy]: orderBy,
+      };
+    }
+  } else if (sortBy) {
     prismaQuery.orderBy = {
-      [sortBy]: orderBy,
+      [sortBy]: "asc",
     };
   }
 
