@@ -28,7 +28,7 @@ export const validateAdminCreate = async function (req, res, next) {
 		// return user
 		req.user = verified;
 
-		// check that the application exists
+		// get the application
 		const id = req.body.applicationId;
 		const application = await databasePrisma.application.findUnique({
 			where: {
@@ -36,7 +36,12 @@ export const validateAdminCreate = async function (req, res, next) {
 			},
 		});
 
-		// check if users companyId matches the applications companyId.
+    // check that the application exists
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found.' });
+    }
+
+		// check if users companyId matches the applications companyId
 		if (application.companyId !== req.user.companyId) {
 			return res
 				.status(401)
