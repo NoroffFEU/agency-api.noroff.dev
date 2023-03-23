@@ -59,7 +59,7 @@ export const createPrismaQuery = function (req, endPoint) {
       break;
   }
 
-  // includes key is an array
+  // check for includes key types
   if (arrays) {
     // Add filtering for arrays
     if (includes && includesValue) {
@@ -69,10 +69,7 @@ export const createPrismaQuery = function (req, endPoint) {
         },
       };
     }
-  }
-
-  // includes key is an string
-  if (strings) {
+  } else if (strings) {
     // Add filtering for strings
     if (includes && includesValue) {
       prismaQuery.where = {
