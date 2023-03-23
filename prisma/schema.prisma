@@ -71,15 +71,13 @@ model Offer {
   id            String      @id @default(uuid())
   listingId     String
   listing       Listing     @relation(fields: [listingId], references: [id])
-  application   Application @relation(fields: [applicantId], references: [id])
+  application   Application @relation(fields: [applicationId], references: [id])
   applicationId String
   company       Company     @relation(fields: [companyId], references: [id])
   companyId     String
   user          User        @relation(fields: [userId], references: [id])
   userId        String
-  applicantId   String
-  applicant     UserRole
-  state         OfferState
+  state         OfferState  @default(Pending)
   created       DateTime    @default(now())
   updated       DateTime    @updatedAt
 }
