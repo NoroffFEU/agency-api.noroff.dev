@@ -1,4 +1,4 @@
-Offer---PUT---Company
+
 import express from 'express';
 import { databasePrisma } from '../../prismaClient.js';
 import { offersGet, offerGetId } from './controllers/read.js';
@@ -26,7 +26,7 @@ offersRouter.put('/:id', async (req, res) => {
 	updateOffer(databasePrisma, req, res);
 });
 
-Offer---PUT---Company
+
 offersRouter.delete('/:id', async (req, res) => {
 	removeOffer(databasePrisma, req, res);
 });
