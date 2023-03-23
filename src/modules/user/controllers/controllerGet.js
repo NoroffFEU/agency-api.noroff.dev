@@ -1,10 +1,10 @@
 import { databasePrisma } from "../../../prismaClient.js";
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
-import { createPrismaQueryUsers } from "../../../utilities/prismaQueryGenerators.js";
+import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
 
 export const getAllUsers = async function (req, res) {
   try {
-    const { prismaQuery, page, limit } = createPrismaQueryUsers(req);
+    const { prismaQuery, page, limit } = createPrismaQuery(req, "users");
     prismaQuery.include = {
       company: true,
     };

@@ -1,13 +1,29 @@
+// schema variables to check on based on models
+const listingsStrings = ["title", "description"];
+const listingsArrays = ["tags", "requirements"];
+const usersStrings = ["firstName", "lastName", "email"];
+const usersArrays = ["skills"];
+const companyStrings = ["name", "sector"];
+const companyArrays = [];
+
 /**
  * Returns a prisma query object, with current page and results limit for listings
  * @param {Object} req object
+ * @param {String} endpoint which route you building for listings/users/company
  * @returns {Object} containing query object, current page, results limit.
  * @example
- * const { prismaQuery, page, limit } = createPrismaQueryListings(req);
+ * const { prismaQuery, page, limit } = createPrismaQuery(req, "listings");
  */
-export const createPrismaQueryListings = function (req) {
-  const { sortBy, orderBy, includes, includesValue, startDate, endDate } =
-    req.query;
+export const createPrismaQuery = function (req, endPoint) {
+  const {
+    sortBy,
+    orderBy,
+    includes,
+    includesValue,
+    startDate,
+    endDate,
+    expired,
+  } = req.query;
 
   // Set default values for page and limit if not provided
   const page = req.query.page ? parseInt(req.query.page) : 1;
@@ -18,7 +34,33 @@ export const createPrismaQueryListings = function (req) {
 
   // Build query object for Prisma
   const prismaQuery = {};
-  if (includes === "tags" || includes === "requirements") {
+
+  // determines which values to use for includes check
+  let strings;
+  let arrays;
+  switch (endPoint) {
+    case "users":
+      strings = usersStrings.includes(includes);
+      arrays = usersArrays.includes(includes);
+      break;
+    case "company":
+      strings = companyStrings.includes(includes);
+      arrays = companyArrays.includes(includes);
+      break;
+    case "listings":
+      strings = listingsStrings.includes(includes);
+      arrays = listingsArrays.includes(includes);
+      // filter out expired listings by default
+      prismaQuery.where = prismaQuery.where || {};
+      prismaQuery.where.deadline = { gte: new Date() };
+      if (expired === "false") {
+        delete prismaQuery.where.deadline;
+      }
+      break;
+  }
+
+  // includes key is an array
+  if (arrays) {
     // Add filtering for arrays
     if (includes && includesValue) {
       prismaQuery.where = {
@@ -29,7 +71,8 @@ export const createPrismaQueryListings = function (req) {
     }
   }
 
-  if (includes === "title" || includes === "description") {
+  // includes key is an string
+  if (strings) {
     // Add filtering for strings
     if (includes && includesValue) {
       prismaQuery.where = {
@@ -40,6 +83,7 @@ export const createPrismaQueryListings = function (req) {
     }
   }
 
+  // date range filters
   if (startDate || endDate) {
     prismaQuery.where = prismaQuery.where || {};
     prismaQuery.where.createdAt = {};
@@ -53,160 +97,7 @@ export const createPrismaQueryListings = function (req) {
     }
   }
 
-  if (orderBy === "asc" || orderBy === "desc") {
-    // Add sorting
-    if (sortBy && orderBy) {
-      prismaQuery.orderBy = {
-        [sortBy]: orderBy,
-      };
-    }
-  } else if (sortBy) {
-    prismaQuery.orderBy = {
-      [sortBy]: "asc",
-    };
-  }
-
-  // Add pagination
-  prismaQuery.skip = offset;
-  prismaQuery.take = limit;
-
-  return { prismaQuery, page, limit };
-};
-
-/**
- * Returns a prisma query object, with current page and results limit for company
- * @param {Object} req object
- * @returns {Object} containing query object, current page, results limit.
- * @example
- *const { prismaQuery, page, limit } = createPrismaQueryCompany(req);
- */
-export const createPrismaQueryCompany = function (req) {
-  const { sortBy, orderBy, includes, includesValue, startDate, endDate } =
-    req.query;
-
-  // Set default values for page and limit if not provided
-  const page = req.query.page ? parseInt(req.query.page) : 1;
-  const limit = req.query.limit ? parseInt(req.query.limit) : 100;
-
-  // Calculate the offset for pagination
-  const offset = (page - 1) * limit;
-
-  // Build query object for Prisma
-  const prismaQuery = {};
-  // if ((includes === "tags", includes === "requirements")) {
-  //   // Add filtering for arrays
-  //   if (includes && includesValue) {
-  //     prismaQuery.where = {
-  //       [includes]: {
-  //         has: includesValue,
-  //       },
-  //     };
-  //   }
-  // }
-
-  if (includes === "name" || includes === "sector") {
-    // Add filtering for strings
-    if (includes && includesValue) {
-      prismaQuery.where = {
-        [includes]: {
-          contains: includesValue,
-        },
-      };
-    }
-  }
-
-  if (startDate || endDate) {
-    prismaQuery.where = prismaQuery.where || {};
-    prismaQuery.where.createdAt = {};
-
-    if (startDate) {
-      prismaQuery.where.createdAt.gte = new Date(startDate);
-    }
-
-    if (endDate) {
-      prismaQuery.where.createdAt.lte = new Date(endDate);
-    }
-  }
-
-  if (orderBy === "asc" || orderBy === "desc") {
-    // Add sorting
-    if (sortBy && orderBy) {
-      prismaQuery.orderBy = {
-        [sortBy]: orderBy,
-      };
-    }
-  } else if (sortBy) {
-    prismaQuery.orderBy = {
-      [sortBy]: "asc",
-    };
-  }
-
-  // Add pagination
-  prismaQuery.skip = offset;
-  prismaQuery.take = limit;
-
-  return { prismaQuery, page, limit };
-};
-
-/**
- * Returns a prisma query object, with current page and results limit for Users
- * @param {Object} req object
- * @returns {Object} containing query object, current page, results limit.
- * @example
- * const { prismaQuery, page, limit } = createPrismaQueryUsers(req);
- */
-export const createPrismaQueryUsers = function (req) {
-  const { sortBy, orderBy, includes, includesValue, startDate, endDate } =
-    req.query;
-
-  // Set default values for page and limit if not provided
-  const page = req.query.page ? parseInt(req.query.page) : 1;
-  const limit = req.query.limit ? parseInt(req.query.limit) : 100;
-
-  // Calculate the offset for pagination
-  const offset = (page - 1) * limit;
-
-  // Build query object for Prisma
-  const prismaQuery = {};
-  if (includes === "skills") {
-    // Add filtering for arrays
-    if (includes && includesValue) {
-      prismaQuery.where = {
-        [includes]: {
-          has: includesValue,
-        },
-      };
-    }
-  }
-
-  if (
-    includes === "firstName" ||
-    includes === "lastName" ||
-    includes === "email"
-  ) {
-    // Add filtering for strings
-    if (includes && includesValue) {
-      prismaQuery.where = {
-        [includes]: {
-          contains: includesValue,
-        },
-      };
-    }
-  }
-
-  if (startDate || endDate) {
-    prismaQuery.where = prismaQuery.where || {};
-    prismaQuery.where.createdAt = {};
-
-    if (startDate) {
-      prismaQuery.where.createdAt.gte = new Date(startDate);
-    }
-
-    if (endDate) {
-      prismaQuery.where.createdAt.lte = new Date(endDate);
-    }
-  }
-
+  // sorting the data
   if (orderBy === "asc" || orderBy === "desc") {
     // Add sorting
     if (sortBy && orderBy) {

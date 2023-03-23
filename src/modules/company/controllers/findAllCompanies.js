@@ -1,7 +1,7 @@
-import { createPrismaQueryCompany } from "../../../utilities/prismaQueryGenerators.js";
+import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
 
 export const findAllCompanies = async (databasePrisma, req, res) => {
-  const { prismaQuery, page, limit } = createPrismaQueryCompany(req);
+  const { prismaQuery, page, limit } = createPrismaQuery(req, "company");
   prismaQuery.include = {
     listings: true,
     admin: {

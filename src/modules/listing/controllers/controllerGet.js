@@ -1,12 +1,11 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
-import { createPrismaQueryListings } from "../../../utilities/prismaQueryGenerators.js";
+import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
 
 export const getAllListings = async function (req, res) {
   try {
-    const { prismaQuery, page, limit } = createPrismaQueryListings(req);
+    const { prismaQuery, page, limit } = createPrismaQuery(req, "listings");
     prismaQuery.include = { company: true };
-    console.log(prismaQuery);
 
     // Fetch filtered listings and total count
     const [listings, totalCount] = await Promise.all([
@@ -26,6 +25,7 @@ export const getAllListings = async function (req, res) {
     // Show the listings in browser
     res.status(200).json(listings);
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ message: `Internal server error`, statusCode: "500", ...error });
