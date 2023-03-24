@@ -1,5 +1,5 @@
 /**
- * Creates a new offer using the provided application ID and offer state.
+ * Creates an offer in the database for the given application ID and returns the created offer.
  * @async
  * @function createOffer
  * @param {Object} prismaClient - The prisma client instance
@@ -36,12 +36,19 @@ response.status(400);
  */
 export async function createOffer(prismaClient, request, response) {
   try {
-    const { applicationId, offerState } = request.body;
+    const { applicationId } = request.body;
 
+    const application = await prismaClient.application.findUnique({
+      where: {
+        id: applicationId,
+      },
+    });
     const offer = await prismaClient.offer.create({
       data: {
         applicationId: applicationId,
-        state: offerState,
+        listingId: application.listingId,
+        companyId: application.companyId,
+        userId: application.applicantId,
       },
     });
 
