@@ -2,6 +2,13 @@ import { verifyToken } from "../../utilities/jsonWebToken";
 export async function removeOffer(prismaClient, request, response) {
   const { id } = request.params; //this might need to be moved out of this function and into the offerRouter.delete function in routes.js
   let verified = await verifyToken(JWT);
+
+  // incorrect id throw error
+  if (!id) {
+    return response.status(400).send({ message: "offer id is required" });
+  }
+
+  // check that the user is admin of offer company
   if (verified.companyId === id || verified.role === "Admin") {
     try {
       const offer = await prismaClient.offer.delete({
