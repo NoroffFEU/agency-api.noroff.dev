@@ -2,6 +2,27 @@ import { verifyToken } from "../../utilities/jsonWebToken";
 export async function removeOffer(prismaClient, request, response) {
   const { id } = request.params; //this might need to be moved out of this function and into the offerRouter.delete function in routes.js
   let verified = await verifyToken(JWT);
+  const token = request.headers.authorization;
+  let JWT = token;
+
+  // check if token is valid
+  if (!token) {
+    return res.status(401).send({
+      error: "User has to be authenticated to make this request",
+    });
+  } else if (token.includes("Bearer")) {
+    JWT = token.slice(7);
+  }
+  if (JWT === undefined) {
+    return res.status(401).send({
+      message: "No authorization header provided.",
+    });
+  }
+  if (!verified) {
+    return res.status(401).send({
+      message: "Authorization token is not valid.",
+    });
+  }
 
   // incorrect id throw error
   if (!id) {
