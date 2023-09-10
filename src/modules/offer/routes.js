@@ -36,6 +36,6 @@ offersRouter.delete(
 );
 
 //use this when user is updating offer status
-offersRouter.put("/user/:id", async (req, res) => {
+offersRouter.put("/user/:id", checkUpdate, async (req, res) => {
   updateOffer(databasePrisma, req, res);
 });
