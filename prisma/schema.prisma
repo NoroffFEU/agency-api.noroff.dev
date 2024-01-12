@@ -31,6 +31,7 @@ model User {
   companyId    String?
   created      DateTime      @default(now())
   updated      DateTime      @updatedAt
+  BlogPost     BlogPost[]
 }
 
 enum UserRole {
@@ -109,4 +110,15 @@ model Listing {
 enum ListingState {
   Active
   Ended
+}
+
+model BlogPost {
+  id       String   @id @default(uuid())
+  title    String
+  content  String
+  media    String[] @default([])
+  author   User     @relation(fields: [authorId], references: [id])
+  authorId String
+  created  DateTime @default(now())
+  updated  DateTime @updatedAt
 }
