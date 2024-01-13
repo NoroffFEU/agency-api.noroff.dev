@@ -71,7 +71,7 @@ model Offer {
   id            String      @id @default(uuid())
   listingId     String
   listing       Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  application   Application @relation(fields: [applicantId], references: [id])
+  application   Application @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   applicationId String
   company       Company     @relation(fields: [companyId], references: [id])
   companyId     String
