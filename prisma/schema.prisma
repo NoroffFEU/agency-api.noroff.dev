@@ -55,7 +55,7 @@ model Company {
 
 model Application {
   id          String   @id @default(uuid())
-  applicant   User     @relation(fields: [applicantId], references: [id])
+  applicant   User     @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   applicantId String
   company     Company  @relation(fields: [companyId], references: [id])
   companyId   String
@@ -75,7 +75,7 @@ model Offer {
   applicationId String
   company       Company     @relation(fields: [companyId], references: [id])
   companyId     String
-  user          User        @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
   applicantId   String
   applicant     UserRole
