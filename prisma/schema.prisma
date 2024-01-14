@@ -31,12 +31,18 @@ model User {
   companyId    String?
   created      DateTime      @default(now())
   updated      DateTime      @updatedAt
+  verified     verified      @default(false)
 }
 
 enum UserRole {
   Applicant
   Client
   Admin
+}
+
+enum verified {
+  true
+  false
 }
 
 model Company {
