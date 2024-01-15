@@ -4,6 +4,7 @@ services:
   api:
     container_name: noroff_agency_api
     restart: on-failure
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile.dev
