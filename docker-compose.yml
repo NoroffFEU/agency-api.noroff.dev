@@ -6,7 +6,7 @@ services:
     restart: on-failure
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
     env_file:
@@ -15,6 +15,9 @@ services:
       - noroff
     depends_on:
       - db
+    volumes:
+      - .:/app
+      - /app/node_modules
 
   db:
     image: postgres:15-alpine
