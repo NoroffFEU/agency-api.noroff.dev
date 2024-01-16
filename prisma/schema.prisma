@@ -11,27 +11,28 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  title        String?
-  firstName    String
-  lastName     String
-  password     String
-  profile      String?
-  salt         String?
-  about        String?
-  avatar       String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  role         UserRole      @default(Applicant)
-  skills       String[]      @default([])
-  applications Application[]
-  offers       Offer[]
-  company      Company?      @relation(fields: [companyId], references: [id])
-  companyId    String?
-  created      DateTime      @default(now())
-  updated      DateTime      @updatedAt
-  verified     verified      @default(false)
+  id                String        @id @default(uuid())
+  email             String        @unique
+  title             String?
+  firstName         String
+  lastName          String
+  password          String
+  profile           String?
+  salt              String?
+  about             String?
+  avatar            String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  role              UserRole      @default(Applicant)
+  skills            String[]      @default([])
+  applications      Application[]
+  offers            Offer[]
+  company           Company?      @relation(fields: [companyId], references: [id])
+  companyId         String?
+  created           DateTime      @default(now())
+  updated           DateTime      @updatedAt
+  verified          verified      @default(false)
+  verificationToken String        @unique
 }
 
 enum UserRole {
