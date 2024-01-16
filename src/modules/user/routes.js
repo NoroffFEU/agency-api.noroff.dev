@@ -9,6 +9,7 @@ import { checkIfUserIdExist } from "./middleware/userExists.js";
 import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
 import { getAllUsers, getAUser } from "./controllers/controllerGet.js";
 import controllerVerify from "./controllers/controllerVerify.js";
+import sendVerificationEmail from "./middleware/sendVerificationEmail.js";
 
 export const usersRouter = express.Router();
 
@@ -17,7 +18,8 @@ usersRouter.post(
   "/",
   body("email").isEmail(),
   body("password").isLength({ min: 5, max: 20 }),
-  handleRegister
+  handleRegister,
+  sendVerificationEmail
 );
 
 //  POST /users/login
