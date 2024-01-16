@@ -1,11 +1,10 @@
-import { signToken } from "../../../utilities/jsonWebToken.js";
 import { generateHash } from "../../../utilities/password.js";
 import { databasePrisma } from "../../../prismaClient.js";
 import { mediaGuard } from "../../../utilities/mediaGuard.js";
 import validator from "express-validator";
 const { validationResult } = validator;
 
-export const handleRegister = async function (req, res) {
+export const handleRegister = async function (req, res, next) {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -54,17 +53,13 @@ export const handleRegister = async function (req, res) {
       }
     }
 
-    const result = await databasePrisma.user.create({
+    await databasePrisma.user.create({
       data,
     });
-    const { id } = result;
-    result["token"] = signToken({ id, email });
-    ["title", "password", "salt", "about", "createdAt", "updatedAt"].forEach(
-      (field) => delete result[field]
-    );
-    return res.status(201).json(result);
+
+    next();
   } catch (error) {
     // Send a 500 error if there was a problem with the insertion
-    res.status(500).json({ ...error, message: "Internal server error" });
+    return res.status(500).json({ ...error, message: "Internal server error" });
   }
 };
