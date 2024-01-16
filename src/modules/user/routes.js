@@ -8,6 +8,7 @@ import { handleRegister } from "./controllers/controllerRegister.js";
 import { checkIfUserIdExist } from "./middleware/userExists.js";
 import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
 import { getAllUsers, getAUser } from "./controllers/controllerGet.js";
+import controllerVerify from "./controllers/controllerVerify.js";
 
 export const usersRouter = express.Router();
 
@@ -48,3 +49,6 @@ usersRouter.delete(
   validateUserPermissions,
   handleDelete
 );
+
+//Get /users/verify/:VerificationToken
+usersRouter.get("/verify/:VerificationToken", controllerVerify);
