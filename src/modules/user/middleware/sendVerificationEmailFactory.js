@@ -1,12 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
 
+/**
+ * Factory function to create a middleware for sending a verification email.
+ * @param {Object} dependency - The dependency object.
+ * @param {Object} dependency.databasePrisma - The PrismaClient instance.
+ * @param {Function} dependency.sendEmail - The function to send an email.
+ * @returns {Function} Express middleware function that sends a verification email.
+ */
+
 export default function sendVerificationEmailFactory(dependency) {
   const { databasePrisma, sendEmail } = dependency;
   return async function (req, res) {
     try {
       token = uuidv4();
       await databasePrisma.user.update({
-        where: { id: req.user.id },
+        where: { email: req.body.email },
         data: {
           verificationToken: token,
         },
