@@ -11,7 +11,7 @@ import swaggerJsDoc from "swagger-jsdoc";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 // options for swagger jsdocs
 const options = {
