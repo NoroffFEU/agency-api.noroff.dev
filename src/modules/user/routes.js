@@ -9,8 +9,7 @@ import { checkIfUserIdExist } from "./middleware/userExists.js";
 import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
 import { getAllUsers, getAUser } from "./controllers/controllerGet.js";
 import controllerVerify from "./controllers/controllerVerify.js";
-import sendVerificationEmail from "./middleware/sendVerificationEmail.js";
-
+import sendVerificationEmail from "./middleware/sendVerificationEmai.js";
 export const usersRouter = express.Router();
 
 // POST /users

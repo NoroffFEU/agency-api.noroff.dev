@@ -1,16 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 
-export default function sendVerificationEmail(dependency) {
+export default function sendVerificationEmailFactory(dependency) {
   const { databasePrisma, sendEmail } = dependency;
-  return async function (req, res, next) {
+  return async function (req, res) {
     try {
+      token = uuidv4();
       await databasePrisma.user.update({
         where: { id: req.user.id },
         data: {
-          verificationToken: uuidv4(),
+          verificationToken: token,
         },
       });
-      const url = process.env.BASEURL + "/user/verify/" + req.user.id;
+      const url = process.env.BASEURL + "/user/verify/" + req.user.token;
       sendEmail({
         to: req.user.email,
         subject: "Verify your email",
