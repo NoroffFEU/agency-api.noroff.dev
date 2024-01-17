@@ -8,7 +8,8 @@ import { handleRegister } from "./controllers/controllerRegister.js";
 import { checkIfUserIdExist } from "./middleware/userExists.js";
 import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
 import { getAllUsers, getAUser } from "./controllers/controllerGet.js";
-
+import controllerVerify from "./controllers/controllerVerify.js";
+import sendVerificationEmail from "./middleware/sendVerificationEmai.js";
 export const usersRouter = express.Router();
 
 // POST /users
@@ -18,7 +19,8 @@ usersRouter.post(
   body("firstName").isAlpha("nb-NO", { ignore: " -" }),
   body("lastName").isAlpha("nb-NO", { ignore: " -" }),
   body("password").isLength({ min: 5, max: 20 }),
-  handleRegister
+  handleRegister,
+  sendVerificationEmail
 );
 
 //  POST /users/login
@@ -50,3 +52,6 @@ usersRouter.delete(
   validateUserPermissions,
   handleDelete
 );
+
+//Get /users/verify/:VerificationToken
+usersRouter.get("/verify/:VerificationToken", controllerVerify);
