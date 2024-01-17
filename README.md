@@ -98,14 +98,14 @@ You can further test on the `GET` `/users` endpoint to get the user you just reg
 
 ### Docker and Development Possible Issues
 
-When running the dev version I find unless I restart the server container manually, it will not update the server with any changes made to the code. This is not ideal my work around is to modify the .env database url.
-My work around is to manually stop the server container update the .env file.
+When running the dev version I find unless I restart the server container manually, it will not update the server with any changes made to the code. This is not ideal, my work around is to stop the docker server container and
+modify the .env database url to this.
 
 ```
 DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/postgres?schema=schema"
 ```
 
-Then in VSC terminal run the following command so my changes take effect without needing to constantly restart the server container.
+Then run the server from VSC run the following command so my changes take effect without needing to constantly restart the server container.
 
 ```
 npm run watch
