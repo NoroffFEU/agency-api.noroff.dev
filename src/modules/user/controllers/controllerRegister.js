@@ -56,6 +56,7 @@ export const handleRegister = async function (req, res, next) {
     const user = await databasePrisma.user.create({
       data,
     });
+    req.user = user
 
     next();
   } catch (error) {
