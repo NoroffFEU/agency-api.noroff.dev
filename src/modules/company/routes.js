@@ -7,11 +7,7 @@ import { findAllCompanies } from "./controllers/findAllCompanies.js";
 import { changeCompany } from "./controllers/changeCompany.js";
 import { addAdminToCompany } from "./controllers/addAdmin.js";
 import { deleteAdminFromCompany } from "./controllers/deleteAdmin.js";
-import {
-  validateUser,
-  companyExists,
-  verifyAccess,
-} from "./middleware/checkAuth.js";
+import { validateUser, companyExists, verifyAccess } from "./middleware/checkAuth.js";
 
 export const companyRouter = express.Router();
 
