@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 
 /**
  * Factory function to create a middleware for sending a verification email.
@@ -12,14 +11,7 @@ export default function sendVerificationEmailFactory(dependency) {
   const { databasePrisma, sendEmail } = dependency;
   return async function (req, res) {
     try {
-      token = uuidv4();
-      await databasePrisma.user.update({
-        where: { email: req.body.email },
-        data: {
-          verificationToken: token,
-        },
-      });
-      const url = process.env.BASEURL + "/user/verify/" + req.user.token;
+      const url = process.env.BASEURL + "/user/verify/" + req.user.verificationToken;
       sendEmail({
         to: req.user.email,
         subject: "Verify your email",
