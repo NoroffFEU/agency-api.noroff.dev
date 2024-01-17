@@ -32,7 +32,7 @@ model User {
   created           DateTime      @default(now())
   updated           DateTime      @updatedAt
   verified          verified      @default(false)
-  verificationToken String        @unique
+  verificationToken String        @default(uuid()) @unique
 }
 
 enum UserRole {
