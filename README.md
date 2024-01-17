@@ -20,54 +20,58 @@ Install dependencies
 npm i
 ```
 
-You will need a PostgresSQL database setup and running. Can be downloaded from here, https://www.postgresql.org/.
+We have a docker container for both the database and the server, so you will need to have docker, preferably docker desktop as well.
+https://www.docker.com/products/docker-desktop/
 
-Make note of the port number and password you use, you will need them.
-
-- Guide to getting started with your database. (In guide when creating a server it says use create/server, where as for me it was under register/server)
-  https://www.postgresqltutorial.com/postgresql-getting-started/connect-to-postgresql-database/
-
-- Prisma doc on PostgresSQL data base connection setup
-  https://www.prisma.io/docs/concepts/database-connectors/postgresql
-
-Create a .env file and fill in require details from your. Make sure when assigning your PORT number for Express it is different to your database port number to avoid connection errors. Usually the database URL locally will be `127.0.0.1`
+Create a .env file copy over the .env.example file.
 
 ```
-DATABASE_URL="postgresql://username:password@databaseUrl:Port/databaseName?schema=schema"
-PORT=NUMBER
-SECRETSAUCE=RANDOMSTRING
+DATABASE_URL="postgresql://postgres:postgres@db:5432/postgres?schema=schema"
+PORT=3000
+
+SECRETSAUCE=SECRETKEY
+
+#docker
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
 ```
 
-When first connecting to your empty database generate the tables using
+To start the database and server run the following command in the root of the project.
 
+```bash
+docker-compose up
 ```
+
+For development you can run the following command to start the server in watch mode, (this will restart the server when changes are made to the code. #not working for me#)
+
+```bash
+docker-compose up -d
+```
+
+### First time setup for development
+
+When doing this for the first time you will need open`noroff_agency_api` container terminal and run the following commands to create the database and tables. You will also need to run this command when doing any updates to the prisma schema. (This might be fixable, with alteration to the dev docker-compose file.)
+
+```bash
 npx prisma migrate dev --name init
 ```
 
-Then generate the prisma client using
+![opening the container terminal](./readme-images/Screenshot%202024-01-17%20142118.jpg)
+![running command](./readme-images/Screenshot%202024-01-17%20142213.jpg)
 
-```
-npx prisma generate
-```
+### Accessing the API
 
-Start server with nodemon, this will automatically restart the server as changes are made.
-
-```
-npm run watch
-```
-
+Your database will now be running and your server will be running at 127.0.0.1:3000.
 You can check your server is running using Postman or similar. To test your database you can `POST` on the `/users` endpoint, in Postman with a Body set to `raw`, `JSON`, and setting the request headers `Content-Type` to `application/json`.
 
 ```
-http://localhost:PORT/users
-```
-
-```
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "something@something.com",
-  "password": "password"
+    "email": "example@example.com",
+    "firstName": "John",
+    "lastName": "Joe",
+    "password": "password",
+    "role": "Client"
 }
 ```
 
@@ -75,27 +79,36 @@ This should generate a response like so;
 
 ```json
 {
-  "id": "8ada9d4f-21eb-40c6-86d0-f9c10133305f",
-  "email": "something@something.com",
+  "id": "c2ee3340-b4da-467f-8e65-43b9a9f74319",
+  "email": "example@example.com",
   "firstName": "John",
-  "lastName": "Doe",
+  "lastName": "Joe",
+  "profile": null,
   "avatar": null,
-  "role": "Applicant",
+  "role": "Client",
   "skills": [],
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4YWRhOWQ0Zi0yMWViLTQwYzYtODZkMC1mOWMxMDEzMzMwNWYiLCJlbWFpbCI6InNvbWV0aGluZ0Bzb21ldGhpbmcuY29tIiwiaWF0IjoxNjc0NjcyMzUwLCJleHAiOjE2NzQ3NTg3NTB9.6X9m8NXJtDa45iQ76imrwLlgVLLoiTpJaBaxQ9ZirAM"
+  "companyId": null,
+  "created": "2024-01-17T13:25:33.173Z",
+  "updated": "2024-01-17T13:25:33.173Z",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjMmVlMzM0MC1iNGRhLTQ2N2YtOGU2NS00M2I5YTlmNzQzMTkiLCJlbWFpbCI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJpYXQiOjE3MDU0OTc5MzMsImV4cCI6MTcwNTU4NDMzM30.2nPRV_Xy-vaZR3MUbAKvjcY36otI9nDfuy4lXFpqMME"
 }
 ```
 
 You can further test on the `GET` `/users` endpoint to get the user you just registered back.
 
-## Common Problems <a id="problems"></a>
+### Docker and Development Possible Issues
 
-- Ensure Express is running and the database is running, in the pgAdmin 4 program if your database has a red x on it you should just need to click on it and enter a password to start it.
-- The Prisma schema are not set in stone, and will likely be updated regularly, make sure when changing branches or updating the schema, to do the following;
-  1. Terminate your express server, if its currently running.
-  2. Re-generate your database tables and prisma client with `npx prisma migrate dev --name init` and `npx prisma generate`
-  3. Some times migrations clear the whole database, so you will need to recreate your users/lists/applications/etc...
-- When updating .env file variables you should terminate the express server and if you have updated the database URL, regenerate the prisma client using `npx prisma generate`
+When running the dev version I find unless I restart the server container manually, it will not update the server with any changes made to the code. This is not ideal my work around is to modify the .env database url.
+
+```
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/postgres?schema=schema"
+```
+
+The in VSC terminal run the following command so my changes take effect without restarting the server container.
+
+```
+npm run watch
+```
 
 ## Repository Etiquette <a id="Etiquette"></a>
 
@@ -104,40 +117,15 @@ You can further test on the `GET` `/users` endpoint to get the user you just reg
 
 ## QA Testing <a id="testing"></a>
 
-Most endpoint should have a selection of basic tests made using Jest and Supertest. Useful link from the Jest docs.
+All endpoint aside from Offers should have a selection of tests made using Jest and Supertest. Useful link from the Jest docs.
 
 - https://www.albertgao.xyz/2017/05/24/how-to-test-expressjs-with-jest-and-supertest/
 
-QA aims for upcoming sprints
-
-- Ensure all endpoints are using token verification where required.
-- Ensure users is the creator of said resource when updating or deleting.
-- Come to an agreement on error outputs to give a consistent feedback format to the frontend, /users currently all provide a message with additional error details as needed like so; `{message:"Bad request, invalid URL.", ...errors}`
-- Create additional tests for a variety of invalid requests and unauthorized requests.
-- Review all requests into your endpoint's branch and request review from other QA's/Scrum masters when merging into the main branch.
-
-## Backend Board & Task Overview <a id="overview"></a>
-
-Main discussion board for backend, additional boards linked under teams.
-
-https://github.com/orgs/NoroffFEU/teams/backend
+## Backend Board <a id="overview"></a>
 
 Project board, add your task, iteration, status and assign yourself to them here;
 
 https://github.com/orgs/NoroffFEU/projects/12/views/1
-
-Current sprint;
-
-https://github.com/orgs/NoroffFEU/projects/12/views/2
-
-### Overview of objectives for coming sprints
-
-- Create a more detailed test suite for endpoints.
-- Implement company model and routes.
-- Validate tokens on authenticated endpoints.
-- Add email verification and password reset by email.
-- Implement a search strategy.
-- Deal with issues raised by front end.
 
 ## Current Utility Functions <a id="utilities"></a>
 
@@ -221,3 +209,9 @@ https://www.npmjs.com/package/bcrypt
 jsonwebtoken, token handling for logged in users:
 
 https://www.npmjs.com/package/jsonwebtoken
+
+- Guide to getting started with your database. (In guide when creating a server it says use create/server, where as for me it was under register/server)
+  https://www.postgresqltutorial.com/postgresql-getting-started/connect-to-postgresql-database/
+
+- Prisma doc on PostgresSQL data base connection setup
+  https://www.prisma.io/docs/concepts/database-connectors/postgresql
