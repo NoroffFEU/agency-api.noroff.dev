@@ -16,7 +16,7 @@
     "test": "npm run test-unit",
     "test-user": "jest --coverage --verbose --forceExit src/modules/user/routes.test.js",
     "test-company": "jest --coverage --verbose --forceExit src/modules/company/routes.test.js",
-    "test-application": "jest --coverage --verbose --forceExit src/modules/application/routes.test.js",
+    "test-application": "jest --coverage --verbose --forceExit src/modules/application/test/routes.test.js",
     "test-listing": "jest --coverage --verbose --forceExit src/modules/listing/routes.test.js",
     "test-offer": "jest --coverage --verbose --forceExit src/modules/offer/routes.test.js",
     "test-unit": "jest --coverage --verbose --forceExit"
