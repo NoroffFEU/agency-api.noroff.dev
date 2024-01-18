@@ -8,9 +8,13 @@ import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 import swaggerUI from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
+import cors from "cors";
 dotenv.config();
 
+// prevents CORS errors
 const app = express();
+app.use(cors());
+
 const PORT = process.env.PORT;
 
 // options for swagger jsdocs
