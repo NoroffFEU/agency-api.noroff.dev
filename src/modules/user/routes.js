@@ -15,6 +15,8 @@ export const usersRouter = express.Router();
 usersRouter.post(
   "/",
   body("email").isEmail(),
+  body("firstName").isAlpha("nb-NO", { ignore: " -" }),
+  body("lastName").isAlpha("nb-NO", { ignore: " -" }),
   body("password").isLength({ min: 5, max: 20 }),
   handleRegister
 );

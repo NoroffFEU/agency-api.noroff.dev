@@ -55,11 +55,11 @@
  *               applicantId:
  *                 type: string
  *                 description: users ID
- *                 example string
+ *                 example: string
  *               listingId:
  *                 type: string
  *                 description: listing ID
- *                 example string
+ *                 example: string
  *               coverLetter:
  *                 type: string
  *                 description: coverLetter on the application

@@ -74,7 +74,9 @@ describe("POST /users", () => {
       lastName: testUser.lastName,
       password: testUser.password,
     });
-    expect(response.body.message).toEqual("Missing required field, firstName.");
+    expect(response.body.message).toEqual(
+      "Invalid value in firstName field(s)"
+    );
     expect(response.statusCode).toBe(400);
   });
 
@@ -84,7 +86,7 @@ describe("POST /users", () => {
       firstName: testUser.firstName,
       password: testUser.password,
     });
-    expect(response.body.message).toEqual("Missing required field, lastName.");
+    expect(response.body.message).toEqual("Invalid value in lastName field(s)");
     expect(response.statusCode).toBe(400);
   });
 
@@ -137,12 +139,10 @@ describe("POST /users/login", () => {
   });
 
   it("should not return user details if incorrect email is provided, and also return a 403 response", async () => {
-    const response = await request(baseURL)
-      .post("/users/login")
-      .send({
-        email: "badtesting313212@something.com",
-        password: "badPassword",
-      });
+    const response = await request(baseURL).post("/users/login").send({
+      email: "badtesting313212@something.com",
+      password: "badPassword",
+    });
     expect(response.body.email).toEqual(undefined);
     expect(response.body.lastName).toEqual(undefined);
     expect(response.body.message).toEqual("Invalid email or password.");
@@ -238,7 +238,6 @@ describe("PUT /users/:id", () => {
       .put(`/users/${id}`)
       .set("Authorization", `Bearer ${signedToken2}`)
       .send(data);
-    console.log(response.body);
     expect(response.body.message).toEqual("Incorrect Password.");
     expect(response.statusCode).toBe(401);
   });
@@ -253,7 +252,6 @@ describe("PUT /users/:id", () => {
       .put(`/users/${id}`)
       .set("Authorization", `Bearer ${signedToken2}`)
       .send(data);
-    console.log(response.body);
     expect(response.body.message).toEqual(
       "Password does not meet required parameters length: min 5, max 20."
     );
@@ -276,7 +274,6 @@ describe("PUT /users/:id", () => {
       .put(`/users/${id}`)
       .set("Authorization", `Bearer ${signedToken2}`)
       .send(data);
-    console.log(response.body);
     expect(response.body.title).toEqual("Queen");
     expect(response.body.firstName).toEqual("Leslie");
     expect(response.body.lastName).toEqual("Lie");

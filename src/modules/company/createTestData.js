@@ -66,6 +66,34 @@ export const createTestDatabase = async function () {
     return user;
   };
 
+  // const deleteUsers = async function (user) {
+  //   const exists = await databasePrisma.user.findUnique({
+  //     where: {
+  //       email: user,
+  //     },
+  //   });
+  //   if (exists) {
+  //     await databasePrisma.user.delete({ where: { email: user } });
+  //   }
+  // };
+
+  // const deleteCompany = async function (company) {
+  //   const exists = await databasePrisma.company.findUnique({
+  //     where: {
+  //       name: company,
+  //     },
+  //   });
+  //   if (exists) {
+  //     await databasePrisma.company.delete({ where: { name: company } });
+  //   }
+  // };
+
+  // const companies = ["CompanyClientTest1", "CompanyClientTest2", "CompanyClientTest3"];
+  // companies.forEach((company) => deleteCompany(company));
+
+  // const users = [("testCompanyApplicant1@test.com", "testCompanyClient1@test.com", "testCompanyClient2@test.com", "testCompanyClient3@test.com", "testCompanyClient4@test.com")];
+  // users.forEach((user) => deleteUsers(user));
+
   testCompanyAdmin = await getUser(testCompanyAdmin);
   testCompanyApplicant1 = await getUser(testCompanyApplicant1);
   testCompanyClient1 = await getUser(testCompanyClient1);
