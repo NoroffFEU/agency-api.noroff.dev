@@ -57,10 +57,10 @@ export const getAUser = async function (req, res) {
       }
 
       //verify token
-      const verification = await verifyToken(readyToken);
-      if (verification.id === id) {
-        verified = true;
-      }
+      // const verification = await verifyToken(readyToken);
+      // if (verification.id === id) {
+      //   verified = true;
+      // }
     }
 
     const user = await databasePrisma.user.findUnique({
