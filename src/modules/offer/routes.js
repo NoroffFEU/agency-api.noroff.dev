@@ -5,8 +5,7 @@ import { createOffer } from './controllers/create.js';
 import { removeOffer } from './controllers/delete.js';
 import { updateOffer } from './controllers/update.js';
 import { updateCompanyOffer } from './company/update.js';
-
-
+import { checkUserIsApplicantOfOffer } from "./middleware/checkUserIsApplicantOfOffer.js";
 
 export const offersRouter = express.Router();
 
@@ -23,8 +22,9 @@ offersRouter.post('/', async (req, res) => {
 
 });
 
-offersRouter.put('/:id', async (req, res) => {
-	updateOffer(databasePrisma, req, res);
+
+offersRouter.put("/:id", checkUserIsApplicantOfOffer, async (req, res) => {
+  updateOffer(databasePrisma, req, res);
 });
 
 
