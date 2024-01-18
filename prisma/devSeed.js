@@ -2,17 +2,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.user.delete({
-    where: {
-      email: "JohnCool@Client.com",
-    },
-  });
+  // await prisma.user.delete({
+  //   where: {
+  //     email: "JohnCool@Client.com",
+  //   },
+  // });
 
-  await prisma.user.delete({
-    where: {
-      email: "EggsBenedict@Applicant.com",
-    },
-  });
+  // await prisma.user.delete({
+  //   where: {
+  //     email: "EggsBenedict@Applicant.com",
+  //   },
+  // });
 
   // Your data seeding logic goes here
   const clientUser = await prisma.user.create({
