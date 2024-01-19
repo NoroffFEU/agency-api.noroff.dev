@@ -8,10 +8,10 @@ import { databasePrisma } from "../../../prismaClient.js";
  * @param {*} next
  * @returns "status 400" with error message if offer doesn't exist or "status 401" with error message if user doesn't exist or is not the applicant of the specified offer.
  */
-export async function checkUserIsApplicantOfOffer(req, res, next) {
+export async function checkUserIsUserOfOffer(req, res, next) {
   //Extract jwt from HTTP headers of request. Verify token and use response to resolve userId
   const token = req.headers.authorization;
-  const userData = verifyToken(token);
+  const userData = await verifyToken(token);
   if (!userData) {
     return res
       .status(401)
@@ -32,7 +32,7 @@ export async function checkUserIsApplicantOfOffer(req, res, next) {
   }
 
   //If the offers applicantId is the same as the userId of the request, we move on to next middleware or endpoint implementation.
-  if (offer.applicantId === userId) {
+  if (offer.userId === userId) {
     next();
   } else {
     return res
