@@ -4,9 +4,8 @@ import { verifyToken } from "../../../utilities/jsonWebToken.js";
 export const validateApplicantUpdate = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-    const userInfo = verifyToken(token);
+    const userInfo = await verifyToken(token);
     const userId = userInfo.id;
-    const isAdmin = userInfo.role === "admin";
 
     const id = req.params.id;
     const offer = await databasePrisma.offer.findUnique({
@@ -15,7 +14,7 @@ export const validateApplicantUpdate = async (req, res, next) => {
       },
     });
 
-    if (!isAdmin && offer.userId !== userId) {
+    if (offer.userId !== userId) {
       return res.status(401).json({ error: "Unauthorized access" });
     }
 
