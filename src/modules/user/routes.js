@@ -55,4 +55,4 @@ usersRouter.delete(
 usersRouter.get("/resetPassword", sendResetPassword)
 
 //post /users/newPassword
-usersRouter.get("/newPassword:resetToken",)
+usersRouter.get("/newPassword/:resetToken",)
