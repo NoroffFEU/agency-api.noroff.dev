@@ -29,16 +29,20 @@ const saltRounds = 14;
 bcrypt.hash(newPassword, saltRounds, async function(err, hash) {
 if(err){
     return res.status(500).json({
-        message: 'Internal server error'
-    })
+        message: 'Error hashing password'
+    })}
+try{
 
-}
     await databasePrisma.user.update({where: {email:email}, data: {password: hash}})
     
-res.status(200).json({
-    message: 'Password updated successfully'
-})
-});
+    res.status(200).json({
+        message: 'Password updated successfully'
+    })
+
+}catch(err){
+   return res.status(500).json({
+        message: "Error updating database"
+    })}});
 
 
 }

@@ -9,6 +9,7 @@ import { checkIfUserIdExist } from "./middleware/userExists.js";
 import { validateUserPermissions } from "./middleware/validateUserPermissions.js";
 import { getAllUsers, getAUser } from "./controllers/controllerGet.js";
 import sendResetPassword from "./middleware/sendResetPasswordMail.js";
+import newPassword from "./middleware/newPassword.js";
 
 export const usersRouter = express.Router();
 
@@ -54,4 +55,4 @@ usersRouter.delete(
 usersRouter.get("/resetPassword", sendResetPassword)
 
 //post /users/newPassword
-usersRouter.get("/newPassword",)
+usersRouter.get("/newPassword:resetToken",)
