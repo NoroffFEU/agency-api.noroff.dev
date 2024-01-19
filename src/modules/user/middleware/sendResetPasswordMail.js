@@ -4,6 +4,8 @@ function sendResetPasswordFactory(dependency){
     return async function sendResetPassword(req, res, ){
         const { sendMail } = dependency;
         try{
+            const token = crypto.randomBytes(20).toString('hex');
+            const hash = crypto.createHash('sha256').update(token).digest('hex');
             const { email } = req.body;
             const user = await databasePrisma.user.update({
                 where: {
@@ -19,8 +21,6 @@ function sendResetPasswordFactory(dependency){
                 return res.status(400).json({message: 'Invalid email'});
             }
             
-            const token = crypto.randomBytes(20).toString('hex');
-            const hash = crypto.createHash('sha256').update(token).digest('hex');
 const resetUrl = process.env.BASE_URL + '/users/newPassword/' + token;
 
 const mailOptions = {
