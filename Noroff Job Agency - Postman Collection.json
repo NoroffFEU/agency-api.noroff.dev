@@ -1,0 +1,437 @@
+{
+	"info": {
+		"_postman_id": "935858fc-e965-4534-b9dd-2f63b789e696",
+		"name": "Noroff Job Agency",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "19439664",
+		"_collection_link": "https://grey-crescent-281477.postman.co/workspace/Noroff-Jobs-API~8124349f-7f1d-45f6-9a69-9667df68e94c/collection/19439664-935858fc-e965-4534-b9dd-2f63b789e696?action=share&source=collection_link&creator=19439664"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Users - Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"Example@example.com\",\r\n    \"firstName\": \"John\",\r\n    \"lastName\": \"Doe\",\r\n    \"password\": \"password\",\r\n    \"role\": \"Client\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users"
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"Example@example.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Appleton\",\r\n    \"lastName\": \"Stroodle\",\r\n    \"title\": \"Lord\",\r\n    \"about\": \"wooooo\",\r\n    \"avatar\": \"https://www.eatingwell.com/thmb/1XsyDLulOUGr61MOhz7_CXCdhnU=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/fresh-apples-41deb698ccc4481fbe7eee1bac72795f.jpg\",\r\n    \"skills\": \"Applogy, Fruitology, Applenautics\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/users/3e0db30c-e468-4f9d-8948-1370afaf1158"
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Get All",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text",
+								"description": "Not strictly required"
+							}
+						],
+						"url": "{{baseURL}}/users/"
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Get id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text",
+								"description": "Not strictly required but will provide sensetive user data if viewing own profile"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users - Delete id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Listings",
+			"item": [
+				{
+					"name": "Listings - Get all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text",
+								"description": "Not required but a applicant/client might get more data on own listings, applications etc.."
+							}
+						],
+						"url": "{{baseURL}}/listings"
+					},
+					"response": []
+				},
+				{
+					"name": "Listings - Get id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/listings/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"listings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listing - Create listing",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Apple Orbital Launcher Specialist\",\r\n    \"description\":\"At Crab Apple Inc., where apples aren’t just fruits – they’re a lifestyle, we’re searching for a highly specialized individual to join our elite Appletonaut team. As an Apple Orbital Launcher Specialist, you'll play a pivotal role in our secret mission: Project Appollo, aimed at making Crab Apples the first interstellar fruit. Use our patented “Apple-pult” to send apples into the stratosphere and beyond.  Ensure that the launched apples avoid interstellar worm-eating space worms and navigate through the Milky Way. Collaborate with our Starfish division to recover apples once they have orbited and completed their space mission. Craft cosmic apple jams using the interstellar ingredients the apples collect on their journeys. Ensure all apples are equipped with tiny apple-sized space helmets and O2 packs. Crab Apple Inc. is an equal fruit opportunity employer. We celebrate diversity and are committed to creating an inclusive environment for all apple-thusiasts. Interested applicants may apply by sending their CVs attached to a helium balloon or by pigeon mail to our Treehouse #7. Only those applicants shortlisted for the next round – the Great Apple Juggle – will be contacted.\",\r\n    \"requirements\": [\"Minimum of 3 years experience in fruit-based propulsion systems.\", \"Degree in Astrofruitology or related field is a plus.\", \"Ability to communicate with extraterrestrial fruit enthusiasts.\", \"Expertise in Apple-nautics and apple-centric gravitational theories.\", \"Must be comfortable working at heights, especially on top of apple trees.\", \"Passion for apples (if you’re more of a pear person, this might not be the job for you).\"],\r\n    \"tags\": [\"Astrofruitology\", \"Apples\", \"Apple-nautics\"],\r\n    \"deadline\": \"2024-12-26T12:19:48.625Z\",\r\n    \"company\": \"{Company id}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/listings/"
+					},
+					"response": []
+				},
+				{
+					"name": "Listing - Delete id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/listing/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"listing",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Applications",
+			"item": [
+				{
+					"name": "Application - Create application",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{applicantToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"applicantId\": \"Users ID\",\r\n    \"listingId\": \"Listing ID\",\r\n    \"companyId\": \"Company ID\",\r\n    \"coverLetter\": \"Text Content\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Applications - Get all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{applicantToken}}",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Applications - Get id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text",
+								"description": "can also user {{applicantToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/applications/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"applications",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Applications - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{applicantToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/applications/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"applications",
+								":id"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "company - Get all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text",
+								"description": "not strictly needed but will provide more details to relevant users"
+							}
+						],
+						"url": "{{baseURL}}/company"
+					},
+					"response": []
+				},
+				{
+					"name": "company - Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Crab Apple Inc\",\r\n    \"sector\": \"Apples\",\r\n    \"phone\": \"420 800713\",\r\n    \"logo\": \"https://images.unsplash.com/photo-1591154669695-5f2a8d20c089?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80\",\r\n    \"email\": \"company_email@email.com\",\r\n    \"website\": \"www.website.com\",\r\n    \"admin\": \"fcb3c088-a37a-4b1e-a514-08f7041bdd5b\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseURL}}/company/"
+					},
+					"response": []
+				},
+				{
+					"name": "company - Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": "{{baseURL}}/company/fbdf8344-9a07-4c09-a728-7840e0e56040"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
