@@ -20,7 +20,8 @@
     "test-listing": "jest --coverage --verbose --forceExit src/modules/listing/routes.test.js",
     "test-offer": "jest --coverage --verbose --forceExit src/modules/offer/routes.test.js",
     "test-unit": "jest --coverage --verbose --forceExit",
-    "start:migrate:prod": "npx prisma migrate deploy && npm run start"
+    "start:migrate:prod": "npx prisma migrate deploy && npm run start",
+    "dev-seed": "node prisma/devSeed.js"
   },
   "repository": {
     "type": "git",
