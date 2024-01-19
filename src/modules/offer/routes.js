@@ -4,6 +4,8 @@ import { offersGet, offerGetId } from "./controllers/read.js";
 import { createOffer } from "./controllers/create.js";
 import { removeOffer } from "./controllers/delete.js";
 import { updateOffer } from "./controllers/update.js";
+import { updateCompanyOffer } from "./company/update.js";
+import { checkUserIsUserOfOffer } from "./middleware/checkUserIsUserOfOffer.js";
 import { checkUpdate } from "./middleware/checkUpdate.js";
 import { validateAdminUpdate } from "./middleware/validateAdminUpdate.js";
 
@@ -21,8 +23,8 @@ offersRouter.post("/", async (req, res) => {
   createOffer(databasePrisma, req, res);
 });
 
-//use this when admin is updating offer
-offersRouter.put("/:id", checkUpdate, validateAdminUpdate, async (req, res) => {
+//update offer as Applicant.
+offersRouter.put("/:id", checkUserIsUserOfOffer, async (req, res) => {
   updateOffer(databasePrisma, req, res);
 });
 
@@ -35,7 +37,12 @@ offersRouter.delete(
   }
 );
 
-//use this when user is updating offer status
-offersRouter.put("/user/:id", checkUpdate, async (req, res) => {
-  updateOffer(databasePrisma, req, res);
-});
+// update offer as Company Admin.
+offersRouter.put(
+  "/company/:id",
+  checkUpdate,
+  validateAdminUpdate,
+  async (req, res) => {
+    updateCompanyOffer(databasePrisma, req, res);
+  }
+);
