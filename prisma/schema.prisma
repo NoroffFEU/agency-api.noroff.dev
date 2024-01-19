@@ -31,6 +31,8 @@ model User {
   companyId    String?
   created      DateTime      @default(now())
   updated      DateTime      @updatedAt
+  passwordResetToken String?
+  passWordResetTokenExpiry DateTime ? 
 }
 
 enum UserRole {
