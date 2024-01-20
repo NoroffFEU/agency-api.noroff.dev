@@ -74,7 +74,9 @@ describe("POST /users", () => {
       lastName: testUser.lastName,
       password: testUser.password,
     });
-    expect(response.body.message).toEqual("Missing required field, firstName.");
+    expect(response.body.message).toEqual(
+      "Invalid value in firstName field(s)"
+    );
     expect(response.statusCode).toBe(400);
   });
 
@@ -84,7 +86,7 @@ describe("POST /users", () => {
       firstName: testUser.firstName,
       password: testUser.password,
     });
-    expect(response.body.message).toEqual("Missing required field, lastName.");
+    expect(response.body.message).toEqual("Invalid value in lastName field(s)");
     expect(response.statusCode).toBe(400);
   });
 
