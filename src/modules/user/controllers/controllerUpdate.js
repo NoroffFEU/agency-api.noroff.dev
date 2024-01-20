@@ -105,7 +105,11 @@ export const handleUpdate = async function (req, res) {
     }
 
     if (skills !== undefined) {
-      details.skills = skills.split(",");
+      if (Array.isArray(skills)) {
+        details.skills = skills;
+      } else {
+        return res.status(400).json({ message: "skills must be an array." });
+      }
     }
 
     // Updates the user
