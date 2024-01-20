@@ -1,60 +1,51 @@
 import jwt from "jsonwebtoken";
 import request from "supertest";
 import * as dotenv from "dotenv";
+import { databasePrisma } from "../../../prismaClient";
 
 dotenv.config();
 
 const PORT = process.env.PORT;
 const base_URL = `http://localhost:${PORT}`;
 
-// Create a testUser in your local database and place the following here.
-const testUser = {
-  id: "ed078fb0-7af1-44e3-9af3-5d6d0ebd3530",
-  email: "applicantTestUser@email.com",
-  firstName: "applicantTestUser",
-  lastName: "test",
-};
-
-//Create a test user with the role of 'Client' in your database
-/* {
-  firstName: "clientTestUser",
-  lastName: "test",
-  email: "clientTestUser@email.com",
+/*---------------- Test Data -----------------------*/
+let testApplicationApplicant1 = {
+  email: "testApplicationApplicant1@test.com",
+  firstName: "John",
+  lastName: "Doe",
   password: "password",
-  role: "Client"
-} */
-
-//Use this user to create a company and replace the id here
-const testCompany = "e44f1c33-13ed-4432-81ae-156ac0170287";
-
-// Create a listing f.eks like this using the company's id you've just created
-// const testListing = {
-//   title: "Test listing",
-//   tags: "test, listing, jest",
-//   description: "listing test with jest",
-//   requirements: "t, e, s, t",
-//   deadline: "2025-11-30T20:55:00.000Z",
-//   company: "e44f1c33-13ed-4432-81ae-156ac0170287"
-// };
-
-//Replace listing's id here
-const testListing = "e7f7851d-1ad1-4b9a-9885-fb467293bcba";
-
-//Create a second applicant and replace id and email here
-const secondUserTest = {
-  id: "cfa8e34c-7efc-4a34-a070-7887c6220811",
-  email: "secondUserTest@email.com",
 };
 
-const token = jwt.sign(
-  { userId: testUser.id, email: testUser.email },
-  process.env.SECRETSAUCE
-);
+let testApplicationApplicant2 = {
+  email: "testApplicationApplicant2@test.com",
+  firstName: "Jane",
+  lastName: "Doe",
+  password: "password",
+};
 
-const secondUsersToken = jwt.sign(
-  { userId: secondUserTest.id, email: secondUserTest.email },
-  process.env.SECRETSAUCE
-);
+let testApplicationClient = {
+  email: "testApplicationClient@test.com",
+  firstName: "John",
+  lastName: "Doe",
+  role: "Client",
+  password: "password",
+};
+
+let testCompany = {
+  name: "testApplicationCompany",
+  sector: "test",
+  phone: "123",
+};
+
+let testListing = {
+  title: "Test listing",
+  tags: "test, listing, jest",
+  description: "listing test with jest",
+  requirements: "t, e, s, t",
+  deadline: "2025-11-30T20:55:00.000Z",
+};
+
+let token, secondUsersToken;
 
 const invalidToken = "test-token-1234";
 
@@ -69,55 +60,131 @@ let offersCountTest = {
 };
 
 describe("POST /applications", () => {
+  beforeAll(async () => {
+    const Client = await databasePrisma.user.findUnique({
+      where: {
+        email: testApplicationClient.email,
+      },
+    });
+    if (!Client) {
+      testApplicationClient = await databasePrisma.user.create({
+        data: testApplicationClient,
+      });
+    } else {
+      testApplicationClient = Client;
+    }
+
+    const company = await databasePrisma.company.findUnique({
+      where: {
+        name: testCompany.name,
+      },
+    });
+    if (!company) {
+      testCompany = await databasePrisma.company.create({
+        data: {
+          ...testCompany,
+          admin: { connect: { id: testApplicationClient.id } },
+        },
+      });
+    } else {
+      testCompany = company;
+    }
+
+    testListing = await databasePrisma.listing.create({
+      data: { ...testListing, company: { connect: { id: testCompany.id } } },
+    });
+
+    const applicant1 = await databasePrisma.user.findUnique({
+      where: {
+        email: testApplicationApplicant1.email,
+      },
+    });
+    if (!applicant1) {
+      testApplicationApplicant1 = await databasePrisma.user.create({
+        data: testApplicationApplicant1,
+      });
+    } else {
+      testApplicationApplicant1 = applicant1;
+    }
+
+    const applicant2 = await databasePrisma.user.findUnique({
+      where: {
+        email: testApplicationApplicant2.email,
+      },
+    });
+    if (!applicant2) {
+      testApplicationApplicant2 = await databasePrisma.user.create({
+        data: testApplicationApplicant2,
+      });
+    } else {
+      testApplicationApplicant2 = applicant2;
+    }
+
+    secondUsersToken = jwt.sign(
+      {
+        userId: testApplicationApplicant2.id,
+        email: testApplicationApplicant2.email,
+      },
+      process.env.SECRETSAUCE
+    );
+    token = jwt.sign(
+      {
+        userId: testApplicationApplicant1.id,
+        email: testApplicationApplicant1.email,
+      },
+      process.env.SECRETSAUCE
+    );
+  });
+
   describe("when not provided with either applicant, listing, company, or cover letter", () => {
     test("should respond with 400 status code", async () => {
       const data = [
-        { applicant: testUser.id },
-        { listing: testListing },
-        { company: testCompany },
+        { applicant: testApplicationApplicant1.id },
+        { listing: testListing.id },
+        { company: testCompany.id },
         { coverLetter: letter },
         {
-          applicant: testUser.id,
-          listing: testListing,
+          applicant: testApplicationApplicant1.id,
+          listing: testListing.id,
         },
         {
-          applicant: testUser.id,
-          company: testCompany,
+          applicant: testApplicationApplicant1.id,
+          company: testCompany.id,
         },
         {
-          applicant: testUser.id,
+          applicant: testApplicationApplicant1.id,
           coverLetter: letter,
         },
         {
-          listing: testListing,
-          company: testCompany,
+          listing: testListing.id,
+          company: testCompany.id,
         },
         {
-          listing: testListing,
+          listing: testListing.id,
           coverLetter: letter,
         },
         {
-          company: testCompany,
+          company: testCompany.id,
           coverLetter: letter,
         },
         {
-          applicant: testUser.id,
-          listing: testListing,
-          company: testCompany,
+          applicant: testApplicationApplicant1.id,
+          listing: testListing.id,
+          company: testCompany.id,
         },
         {
-          applicant: testUser.id,
-          listing: testListing,
+          applicant: testApplicationApplicant1.id,
+          listing: testListing.id,
           coverLetter: letter,
         },
         {
-          applicant: testUser.id,
-          company: testCompany,
+          applicant: testApplicationApplicant1.id,
+          company: testCompany.id,
           coverLetter: letter,
         },
         {
-          listing: testListing,
-          company: testCompany,
+          listing: testListing.id,
+          company: testCompany.id,
           coverLetter: letter,
         },
         {},
@@ -139,7 +206,7 @@ describe("POST /applications", () => {
       const response = await request(base_URL)
         .post("/applications")
         .send({
-          applicantId: testUser.id,
+          applicantId: testApplicationApplicant1.id,
           listingId: "fake-listing",
           companyId: testCompany,
           coverLetter: letter,
@@ -156,8 +223,8 @@ describe("POST /applications", () => {
       const response = await request(base_URL)
         .post("/applications")
         .send({
-          applicantId: testUser.id,
-          listingId: testListing,
+          applicantId: testApplicationApplicant1.id,
+          listingId: testListing.id,
           companyId: "fake-company",
           coverLetter: letter,
         })
@@ -174,8 +241,8 @@ describe("POST /applications", () => {
         .post("/applications")
         .send({
           applicantId: "fake-user",
-          listingId: testListing,
-          companyId: testCompany,
+          listingId: testListing.id,
+          companyId: testCompany.id,
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
@@ -190,9 +257,9 @@ describe("POST /applications", () => {
       const res = await request(base_URL)
         .post("/applications")
         .send({
-          applicantId: testUser.id,
-          listingId: testListing,
-          companyId: testCompany,
+          applicantId: testApplicationApplicant1.id,
+          listingId: testListing.id,
+          companyId: testCompany.id,
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
@@ -201,7 +268,7 @@ describe("POST /applications", () => {
 
       expect(res.status).toBe(201);
       expect(res.body.id).toEqual(applicationTest.id);
-      expect(res.body.applicantId).toEqual(testUser.id);
+      expect(res.body.applicantId).toEqual(testApplicationApplicant1.id);
       expect(res.body.companyId).toEqual(applicationTest.companyId);
       expect(res.body.listingId).toEqual(applicationTest.listingId);
       expect(res.body.coverLetter).toEqual(applicationTest.coverLetter);
@@ -215,9 +282,9 @@ describe("POST /applications", () => {
       const res = await request(base_URL)
         .post("/applications")
         .send({
-          applicantId: testUser.id,
-          listingId: testListing,
-          companyId: testCompany,
+          applicantId: testApplicationApplicant1.id,
+          listingId: testListing.id,
+          companyId: testCompany.id,
           coverLetter: letter,
         })
         .set("Authorization", `Bearer ${token}`);
@@ -244,7 +311,6 @@ describe("GET /applications", () => {
       const res = await request(base_URL)
         .get(`/applications`)
         .set("Authorization", `Bearer ${token}`);
-
       expect(res.status).toBe(200);
     });
   });
@@ -252,7 +318,6 @@ describe("GET /applications", () => {
   describe("when authorisation token is missing", () => {
     it("a 401 response code", async () => {
       const res = await request(base_URL).get(`/applications`);
-
       expect(res.status).toBe(401);
     });
   });

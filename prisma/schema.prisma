@@ -55,12 +55,12 @@ model Company {
 
 model Application {
   id          String   @id @default(uuid())
-  applicant   User     @relation(fields: [applicantId], references: [id])
+  applicant   User     @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   applicantId String
-  company     Company  @relation(fields: [companyId], references: [id])
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId   String
   offers      Offer[]
-  listing     Listing  @relation(fields: [listingId], references: [id])
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
   listingId   String
   coverLetter String
   created     DateTime @default(now())
@@ -70,16 +70,14 @@ model Application {
 model Offer {
   id            String      @id @default(uuid())
   listingId     String
-  listing       Listing     @relation(fields: [listingId], references: [id])
-  application   Application @relation(fields: [applicantId], references: [id])
+  listing       Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   applicationId String
-  company       Company     @relation(fields: [companyId], references: [id])
+  company       Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId     String
-  user          User        @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
-  applicantId   String
-  applicant     UserRole
-  state         OfferState
+  state         OfferState  @default(Pending)
   created       DateTime    @default(now())
   updated       DateTime    @updatedAt
 }
@@ -101,7 +99,7 @@ model Listing {
   updated       DateTime      @updatedAt
   applications  Application[]
   offer         Offer[]
-  company       Company       @relation(fields: [companyId], references: [id])
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId     String
   listingsState ListingState  @default(Active)
 }

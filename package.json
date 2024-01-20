@@ -14,8 +14,14 @@
     "lint-fix": "eslint src/**/*.js --cache --fix",
     "prepare": "husky install",
     "test": "npm run test-unit",
+    "test-user": "jest --coverage --verbose --forceExit src/modules/user/routes.test.js",
+    "test-company": "jest --coverage --verbose --forceExit src/modules/company/routes.test.js",
+    "test-application": "jest --coverage --verbose --forceExit src/modules/application/test/routes.test.js",
+    "test-listing": "jest --coverage --verbose --forceExit src/modules/listing/routes.test.js",
+    "test-offer": "jest --coverage --verbose --forceExit src/modules/offer/routes.test.js",
     "test-unit": "jest --coverage --verbose --forceExit",
-    "start:migrate:prod": "npx prisma migrate deploy && npm run start"
+    "start:migrate:prod": "npx prisma migrate deploy && npm run start",
+    "dev-seed": "node prisma/devSeed.js"
   },
   "repository": {
     "type": "git",
@@ -32,9 +38,10 @@
   },
   "homepage": "https://github.com/NoroffFEU/agency-api.noroff.dev#readme",
   "dependencies": {
-    "@prisma/client": "^4.9.0",
+    "@prisma/client": "^4.11.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
     "jsonwebtoken": "^9.0.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.0"
@@ -53,7 +60,7 @@
     "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.2",
-    "prisma": "^4.9.0",
+    "prisma": "^4.11.0",
     "supertest": "^6.3.3"
   },
   "lint-staged": {
