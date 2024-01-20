@@ -1,6 +1,8 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
 import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
+import { Prisma } from "@prisma/client";
+import { handlePrismaErrorResponse } from "../../../utilities/handlePrismaErrorResponse.js";
 
 export const getAllListings = async function (req, res) {
   try {
@@ -25,10 +27,7 @@ export const getAllListings = async function (req, res) {
     // Show the listings in browser
     res.status(200).json(listings);
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: `Internal server error`, statusCode: "500", ...error });
+    handlePrismaErrorResponse(error, res);
   }
 };
 

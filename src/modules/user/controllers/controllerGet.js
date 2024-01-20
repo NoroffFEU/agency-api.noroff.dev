@@ -1,6 +1,7 @@
 import { databasePrisma } from "../../../prismaClient.js";
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
+import { handlePrismaErrorResponse } from "../../../utilities/handlePrismaErrorResponse.js";
 
 export const getAllUsers = async function (req, res) {
   try {
@@ -28,7 +29,7 @@ export const getAllUsers = async function (req, res) {
 
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ ...error, message: "Internal server error" });
+    handlePrismaErrorResponse(error, res);
   }
 };
 

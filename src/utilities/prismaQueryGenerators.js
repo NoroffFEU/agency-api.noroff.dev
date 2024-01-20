@@ -53,7 +53,7 @@ export const createPrismaQuery = function (req, endPoint) {
       // filter out expired listings by default
       prismaQuery.where = prismaQuery.where || {};
       prismaQuery.where.deadline = { gte: new Date() };
-      if (expired === "false") {
+      if (expired === "true") {
         delete prismaQuery.where.deadline;
       }
       break;

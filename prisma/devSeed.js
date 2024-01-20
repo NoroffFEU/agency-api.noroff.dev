@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { generateHash } from "../src/utilities/password";
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -14,13 +16,15 @@ async function main() {
   //   },
   // });
 
+  const password = await generateHash(password);
+
   // Your data seeding logic goes here
   const clientUser = await prisma.user.create({
     data: {
       email: "JohnCool@Client.com",
       firstName: "John",
       lastName: "Cool",
-      password: "password",
+      password: password,
       role: "Client",
     },
   });
@@ -30,7 +34,7 @@ async function main() {
       email: "EggsBenedict@Applicant.com",
       firstName: "Eggs",
       lastName: "Benedict",
-      password: "password",
+      password: password,
       role: "Applicant",
     },
   });
