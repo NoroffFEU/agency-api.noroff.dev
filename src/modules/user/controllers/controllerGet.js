@@ -1,46 +1,35 @@
 import { databasePrisma } from "../../../prismaClient.js";
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
+import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
+import { handlePrismaErrorResponse } from "../../../utilities/handlePrismaErrorResponse.js";
 
 export const getAllUsers = async function (req, res) {
-  let sort = req.query.sort;
-  let order = req.query.order;
-  if (order !== "asc" && order !== "desc") {
-    order = undefined;
-  }
-
-  const validValue = [
-    "firstName",
-    "lastName",
-    "companyId",
-    "created",
-    "updated",
-  ].filter((sortValue) => sortValue === sort);
-
-  if (validValue.length === 0) {
-    sort = undefined;
-  }
-
-  if (sort === undefined || order === undefined) {
-    sort = "firstName";
-    order = "asc";
-  }
-
   try {
-    const users = await databasePrisma.user.findMany({
-      include: {
-        company: true,
-      },
-      orderBy: [{ [sort]: order }],
-    });
+    const { prismaQuery, page, limit } = createPrismaQuery(req, "users");
+    prismaQuery.include = {
+      company: true,
+    };
 
+    const [users, totalCount] = await Promise.all([
+      databasePrisma.user.findMany(prismaQuery),
+      databasePrisma.user.count(
+        prismaQuery.where ? { where: prismaQuery.where } : {}
+      ),
+    ]);
     users.forEach((user) => {
       delete user.password;
       delete user.salt;
     });
+    // Calculate total pages
+    const totalPages = Math.ceil(totalCount / limit);
+
+    //Set response headers
+    res.set("X-Current-Page", page);
+    res.set("X-Total-Pages", totalPages);
 
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ ...error, message: "Internal server error" });
+    handlePrismaErrorResponse(error, res);
   }
 };
 

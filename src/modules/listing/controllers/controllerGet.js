@@ -1,19 +1,33 @@
 import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { databasePrisma } from "../../../prismaClient.js";
+import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
+import { Prisma } from "@prisma/client";
+import { handlePrismaErrorResponse } from "../../../utilities/handlePrismaErrorResponse.js";
 
 export const getAllListings = async function (req, res) {
   try {
-    // Get listings from database
-    const listings = await databasePrisma.listing.findMany({
-      include: { company: true },
-    });
+    const { prismaQuery, page, limit } = createPrismaQuery(req, "listings");
+    prismaQuery.include = { company: true };
+
+    // Fetch filtered listings and total count
+    const [listings, totalCount] = await Promise.all([
+      databasePrisma.listing.findMany(prismaQuery),
+      databasePrisma.listing.count(
+        prismaQuery.where ? { where: prismaQuery.where } : {}
+      ),
+    ]);
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalCount / limit);
+
+    //Set response headers
+    res.set("X-Current-Page", page);
+    res.set("X-Total-Pages", totalPages);
 
     // Show the listings in browser
     res.status(200).json(listings);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: `Internal server error`, statusCode: "500" });
+    handlePrismaErrorResponse(error, res);
   }
 };
 
