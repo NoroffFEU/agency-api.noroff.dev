@@ -10,7 +10,7 @@
 6. [Testing & Test Data](#testing)
    - [Test Data](#test-data)
    - [Postman](#postman)
-7. [Routes](#routes)
+7. [Routes & API Usage](#routes)
 8. [Backend Board & Task Overview](#overview)
 9. [Utility Functions](#utilities)
 10. [Useful Links & Resources](#resources)
@@ -265,7 +265,43 @@ When testing or working on the api I suggest using Postman or similar to test th
 You will want to also create an environment in Postman with the following variables, updating your tokens and urls to match your setup
 ![variables image](./readme-images/Screenshot%202024-01-19%20120505.jpg)
 
-## Routes <a id="routes"></a>
+## Routes & API usage <a id="routes"></a>
+
+Minion will be appointed to update this section with the routes and how to use them.
+
+### Users
+
+### Company
+
+### Listing
+
+### Application
+
+### Offer
+
+### Sorting and Filtering Get All Routes
+
+At the moment there is sorting and filtering when getting all users, listings and companies. The sorting and filtering is done using query parameters. The following query parameters are available for each route.
+I've added pagination, sorting, filtering like so, and expired flag for listings. You will find the page number and total pages in the response headers. Here is an example of how to use the query parameters.
+
+```
+page=1               // selects the page number
+limit=5              // limits how many results you want
+
+//these two both need to be included to work
+includes=firstName   // A parameter that is non-relational (for the moment) on the model
+includesValue=Alex   // The value to search for with the parameter
+
+// how to sort the data
+sortBy=created      // key to sort by
+orderBy=asc         // how to sort it asc/desc
+
+// on listings if you add this flag listing that have passed their deadlines will appear.
+expired=true
+
+//example fetch for users
+http://127.0.0.1:4000/users?page=1&limit=5&includes=firstName&includesValue=Alex&sortBy=created&orderBy=asc
+```
 
 ## Issues & Backend Project Board <a id="overview"></a>
 
@@ -281,6 +317,8 @@ In the `src/utilities` folder you will find a selection of reusable functions. C
 2. jsonWebToken.js - Sign and verify tokens.
 3. mediaGuard.js - Verify a provided url is accessible.
 4. password.js - Generate password hash, and compare plain text password to hash.
+5. handlePrismaErrorResponses.js - Handle Prisma error responses and return a more user friendly error message.
+6. prismaQueryGenerator.js - Generate a Prisma query based on query parameters, currently support users, companies and listings endpoints.
 
 ## Useful Links & Resources <a id="resources"></a>
 
