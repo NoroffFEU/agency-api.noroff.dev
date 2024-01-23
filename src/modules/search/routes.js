@@ -1,5 +1,5 @@
 import express from "express";
-import { searchListings } from "./controllers/searchListings";
+import { searchListings } from "./controllers/searchListings.js";
 
 //listings router
 export const searchRouter = express.Router();
