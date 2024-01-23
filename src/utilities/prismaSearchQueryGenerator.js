@@ -7,7 +7,7 @@
  * @param {Object} includeConditions - Object containing the conditions for inclusion in the search.
  *   The format is { [fieldName]: string }, where fieldName is a field to be searched and the value is the search term.
  * @param {Object} excludeConditions - Object containing the conditions for exclusion from the search.
- *   Similar to includeConditions, the format is { [fieldName]: string }.
+ *   Similar to includeConditions, the format is { [fieldName]: {value:string, type:"string"/"array" }}.
  *
  * @returns {Object} A Prisma query object to be used in findMany() or similar queries.
  */
@@ -41,19 +41,16 @@ export const createPrismaSearchQuery = function (
   let excludeWhereConditions = [];
 
   // Construct exclude conditions based on the 'excludeConditions'
-  // This is similar to the include condition construction
-  excludeConditions.forEach((param) => {
-    const { key, type } = param;
-    const condition = includeConditions[key];
-
-    if (condition) {
-      if (type === "string") {
+  Object.keys(excludeConditions).forEach((key) => {
+    const condition = excludeConditions[key];
+    if (condition && condition.value) {
+      if (condition.type === "string") {
         excludeWhereConditions.push({
-          [key]: { contains: condition, mode: "insensitive" },
+          [key]: { contains: condition.value, mode: "insensitive" },
         });
-      } else if (type === "array") {
+      } else if (condition.type === "array") {
         excludeWhereConditions.push({
-          [key]: { hasSome: condition.split(" ") },
+          [key]: { hasSome: condition.value },
         });
       }
     }
