@@ -279,6 +279,124 @@ Minion will be appointed to update this section with the routes and how to use t
 
 ### Offer
 
+### Search
+
+The search endpoints allow for querying different models based on specified conditions. Due to some limitation in the prisma and postgresql, searches on data arrays can't be made case insensitive. All value being applied to an array field will be converted to lowercase and the endpoints updating and accepting this data will need to be updated to reflect this.
+
+Below are the details for using these endpoints:
+
+#### General Request Format
+
+The request body for the search endpoints should follow this JSON structure:
+
+- `searchParams` (Array<string>): Specifies the fields to search within. Use `"all"` to search across all fields, or specify individual field names.
+- `includeConditions` (Object): Conditions for including items in the search results. Key-value pairs where the key is the field name and the value is the search term.
+- `excludeConditions` (Object): Conditions for excluding items from the search results. Key-value pairs where the key is the field name and the value is the term to exclude.
+- `exactMatch` (boolean): Specifies whether to use exact matching (true) or partial matching (false) for the search terms.
+
+#### `includeConditions` and `excludeConditions` Details
+
+- Use `"all"` as a key in `includeConditions` or `excludeConditions` to apply a term across all searchable fields unless overridden by specific field conditions.
+
+```
+"includeConditions": { "all": "Apples", "tags": "JavaScript" },
+// Searches all fields for "Apples" and "JavaScript" in the "tags" field.
+```
+
+#### `POST /search/listings`
+
+##### `searchParams` Details
+
+- When `searchParams` includes `"all"`, the search applies to all searchable fields: `title`, `description`, `tags`, `requirements`.
+
+#### Example Request
+
+```json
+{
+  "searchParams": ["all"],
+  "includeConditions": { "all": "Apples", "tags": "JavaScript" },
+  "excludeConditions": { "tags": "astro" },
+  "exactMatch": false
+}
+```
+
+#### Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "1",
+      "title": "Apples",
+      "description": "Apples are great.",
+      "tags": ["JavaScript", "Apples"],
+      "requirements": ["Apples", "JavaScript"],
+      "companyId": "1",
+      "created": "2021-10-12T12:00:00.000Z",
+      "updated": "2021-10-12T12:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "title": "Apples",
+      "description": "Apples are great.",
+      "tags": ["JavaScript", "Apples"],
+      "requirements": ["Apples", "JavaScript"],
+      "companyId": "2",
+      "created": "2021-10-12T12:00:00.000Z",
+      "updated": "2021-10-12T12:00:00.000Z"
+    }
+  ]
+}
+```
+
+#### `POST /search/companies`
+
+##### `searchParams` Details
+
+- When `searchParams` includes `"all"`, the search applies to all searchable fields: `name`, `sector`.
+
+#### Example Request
+
+```json
+{
+  "searchParams": ["all"],
+  "includeConditions": { "all": "Apple", "sector": "Apples" },
+  "excludeConditions": { "sector": "Pears" },
+  "exactMatch": false
+}
+```
+
+#### Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "Apples",
+      "sector": "Apples",
+      "logo": "https://www.example.com/logo.png",
+      "phone": "123456789",
+      "created": "2021-10-12T12:00:00.000Z",
+      "updated": "2021-10-12T12:00:00.000Z",
+      "listings": [],
+      "admin": []
+    },
+    {
+      "id": "2",
+      "name": "Crab Apple Inc",
+      "sector": "Apples",
+      "logo": "https://www.example.com/logo.png",
+      "phone": "123456789",
+      "created": "2021-10-12T12:00:00.000Z",
+      "updated": "2021-10-12T12:00:00.000Z",
+      "listings": [],
+      "admin": []
+    }
+  ]
+}
+```
+
 ### Sorting and Filtering Get All Routes
 
 At the moment there is sorting and filtering when getting all users, listings and companies. The sorting and filtering is done using query parameters. The following query parameters are available for each route.
