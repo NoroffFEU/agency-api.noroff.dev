@@ -2,7 +2,7 @@ import { mediaGuard } from "../../../utilities/mediaGuard.js";
 
 export const changeCompany = async (databasePrisma, req, res) => {
   try {
-    const { name, sector, logo, phone } = req.body;
+    const { name, sector, logo, phone, about } = req.body;
     const id = req.params.id;
     // Validate to see if inputs are provided correctly
     if (!id) {
@@ -29,6 +29,10 @@ export const changeCompany = async (databasePrisma, req, res) => {
 
     if (phone !== undefined) {
       data.phone = phone;
+    }
+
+    if (about !== undefined) {
+      data.about = about;
     }
 
     if (logo !== undefined) {
