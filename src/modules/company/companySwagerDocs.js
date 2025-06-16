@@ -27,6 +27,10 @@
  *           type: number
  *           description: The company's number.
  *           example: 242424242424
+ *         about:
+ *           type: string
+ *           description: A short description of the company.
+ *           example: We are a web development agency that specializes in building high-quality websites and applications.
  *         logo:
  *           type: string (url)
  *           description: Image link for logo.
@@ -130,6 +134,10 @@
  *                       type: number
  *                       description: The company's number.
  *                       example: 242424242424
+ *                     about:
+ *                       type: string
+ *                       description: A short description of the company.
+ *                       example: We are a web development agency that specializes in building high-quality websites and applications.
  *                     logo:
  *                       type: string (url)
  *                       description: Image link for logo.
@@ -199,6 +207,10 @@
  *                 type: number
  *                 description: The company's number.
  *                 example: 242424242424
+ *               about:
+ *                 type: string
+ *                 description: A short description of the company.
+ *                 example: We are a web development agency that specializes in building high-quality websites and applications.
  *               logo:
  *                 type: string (url)
  *                 description: Image link for logo.
@@ -227,6 +239,10 @@
  *                       type: number
  *                       description: The company's number.
  *                       example: 242424242424
+ *                     about:
+ *                       type: string
+ *                       description: A short description of the company.
+ *                       example: We are a web development agency that specializes in building high-quality websites and applications.
  *                     logo:
  *                       type: string (url)
  *                       description: Image link for logo.
@@ -286,6 +302,10 @@
  *                           type: number
  *                           description: The company's number.
  *                           example: 242424242424
+ *                         about:
+ *                           type: string
+ *                           description: A short description of the company.
+ *                           example: We are a web development agency that specializes in building high-quality websites and applications.
  *                         logo:
  *                           type: string (url)
  *                           description: Image link for logo.
@@ -352,6 +372,10 @@
  *                       type: number
  *                       description: The company's number.
  *                       example: 242424242424
+ *                     about:
+ *                       type: string
+ *                       description: A short description of the company.
+ *                       example: We are a web development agency that specializes in building high-quality websites and applications.
  *                     logo:
  *                       type: string (url)
  *                       description: Image link for logo.
