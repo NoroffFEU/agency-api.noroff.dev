@@ -31,6 +31,7 @@ model User {
   companyId    String?
   created      DateTime      @default(now())
   updated      DateTime      @updatedAt
+  favorites    FavoriteListing[]
 }
 
 enum UserRole {
@@ -46,6 +47,7 @@ model Company {
   sector       String?
   logo         String?
   phone        String
+  about        String?
   applications Application[]
   offers       Offer[]
   listings     Listing[]
@@ -102,9 +104,22 @@ model Listing {
   company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId     String
   listingsState ListingState  @default(Active)
+  favoritedBy   FavoriteListing[]
 }
 
 enum ListingState {
   Active
   Ended
+}
+
+model FavoriteListing {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  created   DateTime @default(now())
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, listingId])
 }
