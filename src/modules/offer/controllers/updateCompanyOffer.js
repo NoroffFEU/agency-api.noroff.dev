@@ -1,66 +1,61 @@
 export async function updateCompanyOffer(prismaClient, req, res) {
-  const { companyId, offerId, state } = req.body;
+  const { id } = req.params; // Get offer ID from URL params
+  const { state } = req.body; // Only get state from body
 
-  if (!companyId) {
-    res.status(400).json({
-      message: "Company ID is missing from the request body.",
-    });
-  }
-  if (!offerId) {
-    res.status(400).json({
-      message: "Offer ID is missing from the request body.",
+  if (!state) {
+    return res.status(400).json({
+      message: "State is required in the request body.",
     });
   }
 
   try {
-    // Check if company exists
-    const company = await prismaClient.company.findUnique({
-      where: {
-        id: companyId,
-      },
-    });
-    if (!company) {
-      res.status(404).json({
-        message: `Company with ID ${companyId} not found.`,
-      });
-    }
-
-    // Check if offer exists and belongs to the company
+    // Check if offer exists first
     const offer = await prismaClient.offer.findUnique({
       where: {
-        id: offerId,
+        id: id,
       },
-      select: {
-        companyId: true,
+      include: {
+        company: true,
       },
     });
 
     if (!offer) {
-      res.status(404).json({
-        message: `Offer with ID ${offerId} not found.`,
+      return res.status(404).json({
+        message: `Offer with ID ${id} not found.`,
       });
     }
-    if (offer.companyId !== companyId) {
-      res.status(404).json({
-        message: `Offer with ID ${offerId} does not belong to company with ID ${companyId}.`,
+
+    // Check if offer is still pending (companies should only update pending offers)
+    if (offer.state !== "Pending") {
+      return res.status(400).json({
+        message: "Only pending offers can be updated by companies.",
+      });
+    }
+
+    // Validate state values for company updates (they might withdraw or modify)
+    if (!["Pending", "Withdrawn"].includes(state)) {
+      return res.status(400).json({
+        message:
+          "Companies can only set offer state to 'Pending' or 'Withdrawn'.",
       });
     }
 
     // Update offer state
     const updatedOffer = await prismaClient.offer.update({
       where: {
-        id: offerId,
+        id: id,
       },
       data: {
         state: state,
+        updated: new Date(),
       },
     });
 
     res.status(200).json(updatedOffer);
   } catch (error) {
-    console.log(error);
     res.status(500).json({
-      error: "An unexpected error occurred while updating the offer.",
+      message: "An unexpected error occurred while updating the offer.",
+      error: error.message,
     });
   }
 }

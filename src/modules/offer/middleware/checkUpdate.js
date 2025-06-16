@@ -1,66 +1,42 @@
 import { databasePrisma } from "../../../prismaClient.js";
 
 export async function checkUpdate(req, res, next) {
-  const { companyId, offerId, state } = req.body;
-
-  //check if the request body contains the required fields
-  if (!companyId) {
-    res.status(400).json({
-      message: "Company ID is missing from the request body.",
-    });
-  }
-
-  if (!offerId) {
-    res.status(400).json({
-      message: "Offer ID is missing from the request body.",
-    });
-  }
+  const { id } = req.params;
+  const { state } = req.body;
 
   if (!state) {
-    res.status(400).json({
-      message: "No state has been provided for the update.",
+    return res.status(400).json({
+      message: "State is required in the request body.",
     });
   }
 
   try {
-    // Check if company exists
-    const company = await databasePrisma.company.findUnique({
-      where: {
-        id: companyId,
-      },
-    });
-    if (!company) {
-      res.status(404).json({
-        message: `Company with ID ${companyId} not found.`,
-      });
-    }
-
-    // Check if offer exists and belongs to the company
     const offer = await databasePrisma.offer.findUnique({
       where: {
-        id: offerId,
+        id: id,
       },
-      select: {
-        companyId: true,
+      include: {
+        application: {
+          include: {
+            applicant: true,
+          },
+        },
+        company: true,
       },
     });
 
     if (!offer) {
-      res.status(404).json({
-        message: `Offer with ID ${offerId} not found.`,
-      });
-    }
-    if (offer.companyId !== companyId) {
-      res.status(404).json({
-        message: `Offer with ID ${offerId} does not belong to company with ID ${companyId}.`,
+      return res.status(404).json({
+        message: `Offer with ID ${id} not found.`,
       });
     }
 
+    req.offer = offer;
     next();
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "An unexpected error occurred while updating the offer.",
+    return res.status(500).json({
+      message: "An unexpected error occurred while checking the offer.",
+      error: error.message,
     });
   }
 }
