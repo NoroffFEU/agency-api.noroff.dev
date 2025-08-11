@@ -546,3 +546,94 @@
  *     security:
  *       - bearerAuth: []
  */
+
+/**
+ * @swagger
+ * /users/favorites:
+ *   post:
+ *     summary: Toggle a listing in user's favorites (Applicants only)
+ *     tags: [Users]
+ *     description: |
+ *       **Toggle Functionality**: This endpoint adds or removes a listing from favorites.
+ *       **Applicants Only**: Only users with role "Applicant" can manage favorite listings.
+ *       - If the listing is NOT in favorites → it will be ADDED
+ *       - If the listing is ALREADY in favorites → it will be REMOVED
+ *
+ *       Perfect for implementing a favorite button that toggles on each click.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - listingId
+ *             properties:
+ *               listingId:
+ *                 type: string
+ *                 description: ID of the listing to toggle in favorites
+ *                 example: "fcadcac5-b894-4150-818c-7d6f0e730c59"
+ *     responses:
+ *       200:
+ *         description: Favorite removed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 action:
+ *                   type: string
+ *                   description: Action performed
+ *                   example: "removed"
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                   example: "Favorite removed successfully"
+ *       201:
+ *         description: Favorite added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 action:
+ *                   type: string
+ *                   description: Action performed
+ *                   example: "added"
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                   example: "Favorite added successfully"
+ *                 favorite:
+ *                   type: object
+ *                   description: The created favorite record with listing details
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "fcadcac5-b894-4150-818c-7d6f0e730c59"
+ *                     userId:
+ *                       type: string
+ *                       example: "fcadcac5-b894-4150-818c-7d6f0e730c59"
+ *                     listingId:
+ *                       type: string
+ *                       example: "fcadcac5-b894-4150-818c-7d6f0e730c59"
+ *                     created:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-01-16T19:55:13.609Z"
+ *                     listing:
+ *                       type: object
+ *                       description: The favorited listing details
+ *       400:
+ *         description: Listing ID is required
+ *       401:
+ *         description: Authorization token required
+ *       403:
+ *         description: Only Applicant users can manage favorite listings
+ *       404:
+ *         description: Listing not found
+ *       500:
+ *         description: Internal server error
+ */

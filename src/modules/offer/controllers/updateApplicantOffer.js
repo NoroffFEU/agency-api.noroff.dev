@@ -9,32 +9,37 @@ export async function updateApplicantOffer(prismaClient, req, res) {
       state: OfferState.Pending,
     },
   });
+
   if (!originalOffer) {
     return res
       .status(400)
-      .json({ message: "Only pending offers can be updated" });
+      .json({ message: "Only pending offers can be updated by applicants" });
   }
 
-  const { state, ...offer } = req.body;
+  const { state } = req.body;
 
-  if (!(state == "Accepted" || state == "Rejected")) {
+  if (state !== "Accepted" && state !== "Rejected") {
     return res
       .status(400)
       .json({ message: "State must be either 'Accepted' or 'Rejected'" });
   }
 
   try {
-    const updateApplicantOffer = await prismaClient.offer.update({
+    const updatedOffer = await prismaClient.offer.update({
       where: {
         id: id,
       },
       data: {
         state,
-        ...offer,
+        updated: new Date(),
       },
     });
-    res.status(200).json(updateApplicantOffer);
+
+    res.status(200).json(updatedOffer);
   } catch (error) {
-    res.status(400);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 }

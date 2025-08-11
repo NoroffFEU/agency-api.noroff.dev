@@ -10,21 +10,40 @@ import { databasePrisma } from "../../../prismaClient.js";
  */
 export async function checkUserIsUserOfOffer(req, res, next) {
   try {
-    //Extract jwt from HTTP headers of request. Verify token and use response to resolve userId
     const token = req.headers.authorization;
-    const userData = await verifyToken(token);
-    if (!userData) {
-      return res
-        .status(401)
-        .json({ message: "Missing valid authorization header" });
-    }
-    const userId = userData.id;
 
-    //Use offerId from path-variable of request to find offer in database
+    if (!token) {
+      return res.status(401).json({
+        message: "Missing valid authorization header",
+      });
+    }
+
+    let readyToken = token;
+    if (token.includes("Bearer")) {
+      readyToken = token.slice(7);
+    }
+
+    const userData = await verifyToken(readyToken);
+    if (!userData) {
+      return res.status(401).json({
+        message: "Missing valid authorization header",
+      });
+    }
+
+    req.user = userData;
+
     const offerId = req.params.id;
     const offer = await databasePrisma.offer.findUnique({
       where: {
         id: offerId,
+      },
+      include: {
+        application: {
+          include: {
+            applicant: true,
+          },
+        },
+        company: true,
       },
     });
 
@@ -32,16 +51,19 @@ export async function checkUserIsUserOfOffer(req, res, next) {
       return res.status(404).json({ message: "Invalid id for offer" });
     }
 
-    //If the offers applicantId is the same as the userId of the request, we move on to next middleware or endpoint implementation.
-    if (offer.userId === userId) {
+    const isApplicant = offer.userId === userData.id;
+    const isCompanyAdmin =
+      userData.role === "Client" && offer.companyId === userData.companyId;
+
+    if (isApplicant || isCompanyAdmin) {
       next();
     } else {
-      return res
-        .status(401)
-        .json({ message: "Not authorized to perform the requested operation" });
+      return res.status(401).json({
+        message: "Not authorized to perform the requested operation",
+      });
     }
   } catch (error) {
-    console.error("Error in validateApplicantUpdate:", error);
+    console.error("Error in checkUserIsUserOfOffer:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
