@@ -10,27 +10,7 @@ export const addAdminToCompany = async (databasePrisma, req, res) => {
   if (!admin) {
     return res.status(400).send({ error: "Admin id is required" });
   }
-  //Validate to see if a user is logged in
-  const token = req.headers.authorization;
-  let JWT = token;
-  if (!token) {
-    return res.status(401).send({
-      message: "User has to be authenticated to make this request",
-    });
-  } else if (token.includes("Bearer")) {
-    JWT = token.slice(7);
-  }
-  if (JWT === undefined) {
-    return res.status(401).send({
-      message: "No authorization header provided.",
-    });
-  }
-  var verified = await verifyToken(JWT);
-  if (!verified) {
-    return res.status(401).send({
-      message: "Authorization token is not valid.",
-    });
-  }
+
 
   //Check if company exists
   const companyExists = await databasePrisma.company.findUnique({
