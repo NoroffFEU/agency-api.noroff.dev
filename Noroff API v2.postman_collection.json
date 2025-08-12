@@ -1,0 +1,996 @@
+{
+	"info": {
+		"_postman_id": "2ee8130c-6b07-4e97-a81e-c26f584e291f",
+		"name": "Noroff API v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2899941",
+		"_collection_link": "https://noroff-api-team.postman.co/workspace/Noroff-API-Team-Workspace~35561016-7a48-49ef-9437-bbea060c692c/collection/2899941-2ee8130c-6b07-4e97-a81e-c26f584e291f?action=share&source=collection_link&creator=2899941"
+	},
+	"item": [
+		{
+			"name": "Auction listing",
+			"item": [
+				{
+					"name": "Search listing {{BASE_URL}}/auction/listings/search?q=baby",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"amount\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings/search?q=baby",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "baby"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bid on listing {{BASE_URL}}/auction/listings/9cfa4c07-2520-411d-94f3-477eb99ccdfb/bids",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"amount\": 100\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings/9cfa4c07-2520-411d-94f3-477eb99ccdfb/bids",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings",
+								"9cfa4c07-2520-411d-94f3-477eb99ccdfb",
+								"bids"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing listing {{BASE_URL}}/auction/listings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon updated\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings/2e60ccce-f94c-4a41-a06b-5fd8645b6f86",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings",
+								"2e60ccce-f94c-4a41-a06b-5fd8645b6f86"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new listing {{BASE_URL}}/auction/listings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Listing with sellers and bids {{BASE_URL}}/auction/listings/16108a8b-b8eb-4ef8-9c81-21a2bcc2e994?_seller=true&_bids=true",
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings/16108a8b-b8eb-4ef8-9c81-21a2bcc2e994?_seller=true&_bids=true",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings",
+								"16108a8b-b8eb-4ef8-9c81-21a2bcc2e994"
+							],
+							"query": [
+								{
+									"key": "_seller",
+									"value": "true"
+								},
+								{
+									"key": "_bids",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Listing {{BASE_URL}}/auction/listings/16108a8b-b8eb-4ef8-9c81-21a2bcc2e994?_seller=true&_bids=true",
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete existing listing {{BASE_URL}}/auction/listings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/listings/ee3f7220-4e43-4f64-8d2a-d95616fd896f",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"listings",
+								"ee3f7220-4e43-4f64-8d2a-d95616fd896f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Profiles {{BASE_URL}}/auction/listings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/profiles?listings=true&_wins=true",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"profiles"
+							],
+							"query": [
+								{
+									"key": "listings",
+									"value": "true"
+								},
+								{
+									"key": "_wins",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Profiles {{BASE_URL}}/auction/listings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/profiles/search?q=abiodun",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"profiles",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "abiodun"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile by name {{BASE_URL}}/auction/listings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/profiles/abiodun",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"profiles",
+								"abiodun"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Listings by profile {{BASE_URL}}/auction/listings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/profiles/abiodun/listings",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"profiles",
+								"abiodun",
+								"listings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All bids by profile {{BASE_URL}}/auction/listings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/profiles/abiodun/bids",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"profiles",
+								"abiodun",
+								"bids"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All wins by profile {{BASE_URL}}/auction/listings",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{API_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"SP2 Cartoon\", // Required\r\n  \"description\": \"The only cartoon for the sp2 students\", // Optional\r\n  \"tags\": [\"sp2\"], // Optional\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"endsAt\": \"2024-12-01T00:00:00.000Z\" // Required - Instance of new Date()\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auction/profiles/abiodun/wins",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auction",
+								"profiles",
+								"abiodun",
+								"wins"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "https://v2.api.noroff.dev/auth/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"abiodun\", // Required\r\n  \"email\": \"abiodun.abudu@stud.noroff.no\", // Required\r\n  \"password\": \"UzI1NiIsInR5cCI\", // Required\r\n  \"bio\": \"This is my profile bio\", // Optional\r\n  \"avatar\": {\r\n    \"url\": \"https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg\", // Optional\r\n    \"alt\": \"My avatar alt text\" // Optional\r\n  },\r\n  \"banner\": {\r\n    \"url\": \"https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg\", // Optional\r\n    \"alt\": \"My banner alt text\" // Optional\r\n  },\r\n  \"venueManager\": true // Optional\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://v2.api.noroff.dev/auth/register",
+							"protocol": "https",
+							"host": [
+								"v2",
+								"api",
+								"noroff",
+								"dev"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "https://v2.api.noroff.dev/auth/create-api-key",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://v2.api.noroff.dev/auth/create-api-key",
+							"protocol": "https",
+							"host": [
+								"v2",
+								"api",
+								"noroff",
+								"dev"
+							],
+							"path": [
+								"auth",
+								"create-api-key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "https://v2.api.noroff.dev/auth/login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"abiodun.abudu@stud.noroff.no\",\r\n  \"password\": \"UzI1NiIsInR5cCI\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://v2.api.noroff.dev/auth/login",
+							"protocol": "https",
+							"host": [
+								"v2",
+								"api",
+								"noroff",
+								"dev"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Holidaze",
+			"item": [
+				{
+					"name": "{{BASE_URL}}/holidaze/bookings/fc90bb77-871e-4a65-9f8c-8254e5e5403b",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-NOROFF-API-KEY",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/bookings/fc90bb77-871e-4a65-9f8c-8254e5e5403b",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"bookings",
+								"fc90bb77-871e-4a65-9f8c-8254e5e5403b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/holidaze/bookings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Noroff-API-Key",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/bookings",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/holidaze/bookings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-NOROFF-API-KEY",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"dateFrom\": \"string\",\r\n  \"dateTo\": \"string\",\r\n  \"guests\": 0,\r\n  \"venueId\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/bookings",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/holidaze/venues",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-NOROFF-API-KEY",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/venues",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"venues"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/holidaze/venues/45ac47d2-54d3-4255-b2b8-ddd4f39885f4",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/venues/45ac47d2-54d3-4255-b2b8-ddd4f39885f4",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"venues",
+								"45ac47d2-54d3-4255-b2b8-ddd4f39885f4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/holidaze/venues/",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/venues/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"venues",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{BASE_URL}}/holidaze/venues/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyNzk0MzU5OX0.xikKo-Fq7fGikkQl80h3Shwfsm9WGRAHOfwuTWRap28",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-NOROFF-API-KEY",
+								"value": "{{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"oOslo Slot\", // Required\r\n  \"description\": \"A bungalow at Oslo central\", // Required\r\n  \"media\": [\r\n    {\r\n      \"url\": \"https://url.com/image.jpg\",\r\n      \"alt\": \"string\"\r\n    }\r\n  ], // Optional\r\n  \"price\": 5000, // Required\r\n  \"maxGuests\": 5, // Required\r\n  \"rating\": 5, // Optional (default: 0)\r\n  \"meta\": {\r\n    \"wifi\": true, // Optional (default: false)\r\n    \"parking\": true, // Optional (default: false)\r\n    \"breakfast\": true, // Optional (default: false)\r\n    \"pets\": true // Optional (default: false)\r\n  },\r\n  \"location\": {\r\n    \"address\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/holidaze/profiles/abiodun/venues",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"holidaze",
+								"profiles",
+								"abiodun",
+								"venues"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWJpb2R1biIsImVtYWlsIjoiYWJpb2R1bi5hYnVkdUBzdHVkLm5vcm9mZi5ubyIsImlhdCI6MTcyOTU5MzE0NH0.5ALYcxDDEIWEdgDYSIF1RIuWRJxwA1w3SwYwQ_-2klw",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

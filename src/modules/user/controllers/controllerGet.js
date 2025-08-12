@@ -1,5 +1,4 @@
 import { databasePrisma } from "../../../prismaClient.js";
-import { verifyToken } from "../../../utilities/jsonWebToken.js";
 import { createPrismaQuery } from "../../../utilities/prismaQueryGenerators.js";
 import { handlePrismaErrorResponse } from "../../../utilities/handlePrismaErrorResponse.js";
 
@@ -7,7 +6,12 @@ export const getAllUsers = async function (req, res) {
   try {
     const { prismaQuery, page, limit } = createPrismaQuery(req, "users");
     prismaQuery.include = {
-      company: true,
+      company: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     };
 
     const [users, totalCount] = await Promise.all([
@@ -20,10 +24,9 @@ export const getAllUsers = async function (req, res) {
       delete user.password;
       delete user.salt;
     });
-    // Calculate total pages
+
     const totalPages = Math.ceil(totalCount / limit);
 
-    //Set response headers
     res.set("X-Current-Page", page);
     res.set("X-Total-Pages", totalPages);
 
@@ -36,36 +39,66 @@ export const getAllUsers = async function (req, res) {
 export const getAUser = async function (req, res) {
   try {
     const id = req.params.id;
-    //check if it is users profile, returns offers and application data if true
-    let verified = false;
-    const token = req.headers.authorization;
-    let readyToken = token;
-    if (token !== undefined) {
-      if (token.includes("Bearer")) {
-        readyToken = token.slice(7);
-      }
-
-      //verify token
-      const verification = await verifyToken(readyToken);
-      if (verification.id === id) {
-        verified = true;
-      }
-    }
 
     const user = await databasePrisma.user.findUnique({
       where: {
         id,
       },
       include: {
-        company: true,
-        offers: verified,
-        applications: verified,
+        company: {
+          include: {
+            listings: true,
+          },
+        },
+        offers: true,
+        applications: true,
+        favorites: {
+          include: {
+            listing: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                tags: true,
+                requirements: true,
+                deadline: true,
+                created: true,
+                updated: true,
+                companyId: true,
+              },
+            },
+          },
+        },
       },
     });
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     ["password", "salt"].forEach((field) => delete user[field]);
+
+    if (user.role === "Applicant") {
+      if (user.favorites) {
+        user.listings = user.favorites.map((fav) => fav.listing);
+        delete user.favorites;
+      } else {
+        user.listings = [];
+      }
+    } else if (user.role === "Client" && user.company) {
+      user.listings = user.company.listings || [];
+      if (user.company.listings) {
+        delete user.company.listings;
+      }
+      delete user.favorites;
+    } else {
+      user.listings = [];
+      delete user.favorites;
+    }
+
     res.status(200).json(user);
   } catch (error) {
+    console.error("Error in getAUser:", error);
     res.status(500).json({ ...error, message: "Internal server error" });
   }
 };

@@ -1,10 +1,9 @@
 import express from "express";
 import { databasePrisma } from "../../prismaClient.js";
-import { offersGet, offerGetId } from "./controllers/read.js";
-import { createOffer } from "./controllers/create.js";
-import { removeOffer } from "./controllers/delete.js";
-import { updateOffer } from "./controllers/update.js";
-import { updateCompanyOffer } from "./controllers/updateCompanyOffer.js";
+import { offersGet, offerGetId } from "./controllers/controllerRead.js";
+import { createOffer } from "./controllers/controllerCreate.js";
+import { removeOffer } from "./controllers/controllerDelete.js";
+import { updateOffer } from "./controllers/controllerUpdate.js";
 import { checkUserIsUserOfOffer } from "./middleware/checkUserIsUserOfOffer.js";
 import { checkUpdate } from "./middleware/checkUpdate.js";
 import { validateAdminUpdate } from "./middleware/validateAdminUpdate.js";
@@ -23,26 +22,11 @@ offersRouter.post("/", async (req, res) => {
   createOffer(databasePrisma, req, res);
 });
 
-//update offer as Applicant.
 offersRouter.put("/:id", checkUserIsUserOfOffer, async (req, res) => {
-  updateOffer(databasePrisma, req, res);
+  const userId = req.user?.id;
+  updateOffer(databasePrisma, req, res, userId);
 });
 
-offersRouter.delete(
-  "/:id",
-  checkUpdate,
-  validateAdminUpdate,
-  async (req, res) => {
-    removeOffer(databasePrisma, req, res);
-  }
-);
-
-// update offer as Company Admin.
-offersRouter.put(
-  "/company/:id",
-  checkUpdate,
-  validateAdminUpdate,
-  async (req, res) => {
-    updateCompanyOffer(databasePrisma, req, res);
-  }
-);
+offersRouter.delete("/:id", validateAdminUpdate, async (req, res) => {
+  removeOffer(databasePrisma, req, res);
+});

@@ -1,17 +1,15 @@
 import { databasePrisma } from "../../../prismaClient.js";
 
 export const handleCreate = async function (req, res) {
-  const { applicantId, listingId, coverLetter, companyId } = req.body;
+  const { applicantId, listingId, coverLetter } = req.body;
 
   if (
     applicantId === undefined ||
     listingId === undefined ||
-    coverLetter === undefined ||
-    companyId === undefined
+    coverLetter === undefined
   ) {
     return res.status(400).json({
-      message:
-        "application ID, listing ID, cover letter, and company ID are required",
+      message: "applicant ID, listing ID, and cover letter are required",
     });
   }
 
@@ -25,9 +23,7 @@ export const handleCreate = async function (req, res) {
     return res.status(400).json({ message: "Listing doesn't exist" });
   }
 
-  if (listing.companyId !== companyId) {
-    return res.status(400).json({ message: "Company doesn't exist" });
-  }
+  const companyId = listing.companyId;
 
   const user = await databasePrisma.user.findUnique({
     where: {
